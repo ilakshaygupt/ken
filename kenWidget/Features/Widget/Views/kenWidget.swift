@@ -89,17 +89,27 @@ struct kenWidgetEntryView: View {
     @Environment(\.widgetFamily) var family
     
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
-            
+        VStack(spacing: 0) { // Added spacing for better layout
+            HStack(spacing: 5) {
+                Image("leetcode")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+
                 Text(entry.username)
                     .font(.caption2)
                     .bold()
-            ContributionGridView(contributions: entry.contributions)
+            }
+            .frame(maxWidth: .infinity) // Center horizontally
+
+            ContributionGridWidgetView(contributions: entry.contributions)
+                .frame(maxWidth: .infinity) // Center horizontally
         }
-//        .padding(.horizontal, 30)
-//        .padding(.vertical, 20)
+        .frame(maxWidth: .infinity, alignment: .center) // Ensure VStack takes full width
+        .multilineTextAlignment(.center) // Align text content to center
         .widgetURL(URL(string: "leetcode://user/\(entry.username)"))
     }
+
 }
 
 struct kenWidget: Widget {
@@ -109,7 +119,10 @@ struct kenWidget: Widget {
         AppIntentConfiguration(kind: kind, intent: SelectUserIntent.self, provider: UserProvider()) { entry in
             if #available(iOS 17.0, *) {
                 kenWidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                    .containerBackground(Color(UIColor(hex: "#202020") ?? UIColor.white), for: .widget)
+
+
+
             } else {
                 kenWidgetEntryView(entry: entry)
                     .padding()
@@ -118,7 +131,7 @@ struct kenWidget: Widget {
         }
         .configurationDisplayName("LeetCode Activity")
         .description("Shows your LeetCode contribution graph")
-        .supportedFamilies([.systemLarge,.systemMedium])
+        .supportedFamilies([.systemLarge,.systemMedium,.systemSmall])
     }
 }
 

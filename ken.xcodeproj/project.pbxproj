@@ -46,6 +46,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5C94E2592D68630700000CEA /* Exceptions for "ken" folder in "ken" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Const/UICOlors.swift,
+			);
+			target = 5C9BBB892D44121C008F5A1D /* ken */;
+		};
 		5CD1B1162D4CAE0A00AC9398 /* Exceptions for "kenWidget" folder in "kenWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -57,6 +64,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Const/AppGroup.swift,
+				Const/UICOlors.swift,
 				Features/Contributions/Views/ContributionGridView.swift,
 				Network/LeetCode.swift,
 				Views/Contribution/Components/ContributionCell.swift,
@@ -67,11 +75,31 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		5C94E25A2D68630700000CEA /* Exceptions for "ken" folder in "Copy Bundle Resources" phase from "ken" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 5C9BBB882D44121C008F5A1D /* Resources */;
+			membershipExceptions = (
+				Const/UICOlors.swift,
+			);
+		};
+		5C94E25B2D68630700000CEA /* Exceptions for "ken" folder in "Copy Bundle Resources" phase from "kenWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 5CD1B1032D4CAE0700AC9398 /* Resources */;
+			membershipExceptions = (
+				Const/UICOlors.swift,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5C9BBB8C2D44121C008F5A1D /* ken */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				5C94E2592D68630700000CEA /* Exceptions for "ken" folder in "ken" target */,
+				5C94E25A2D68630700000CEA /* Exceptions for "ken" folder in "Copy Bundle Resources" phase from "ken" target */,
 				5CD1B1212D4CB52500AC9398 /* Exceptions for "ken" folder in "kenWidgetExtension" target */,
+				5C94E25B2D68630700000CEA /* Exceptions for "ken" folder in "Copy Bundle Resources" phase from "kenWidgetExtension" target */,
 			);
 			path = ken;
 			sourceTree = "<group>";

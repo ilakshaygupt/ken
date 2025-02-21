@@ -2,6 +2,14 @@
 //  ContributionGridView.swift
 //  ken
 //
+//  Created by Lakshay Gupta on 21/02/25.
+//
+
+
+//
+//  ContributionGridView.swift
+//  ken
+//
 //  Created by Lakshay Gupta on 31/01/25.
 //
 
@@ -9,14 +17,18 @@
 
 import SwiftUI
 
-struct ContributionGridView: View {
+struct ContributionGridWidgetView: View {
     let contributions: [LeetCode.UserCalendar.DailyContribution]
     
     //
     private let cellSize: CGFloat = 11
     private let spacing: CGFloat = 3
     private let monthSpacing: CGFloat = 10
-    private let monthsToShow = 3
+    private var monthsToShow: Int {
+            widgetFamily == .systemSmall ? 1 : 3
+        }
+
+    @Environment(\.widgetFamily) private var widgetFamily
     
     
     @Environment(\.colorScheme) private var colorScheme
