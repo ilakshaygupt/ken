@@ -11,26 +11,30 @@ import WidgetKit
 
 
 struct BadgeView: View {
+    let baseURL = "https://leetcode.com"
+
     let badge: LeetCode.UserCalendar.Badge
     
     var body: some View {
         VStack(spacing: 4) {
-            AsyncImage(url: URL(string: badge.icon)) { image in
+            
+            AsyncImage(url: URL(string: baseURL + badge.icon)) { image in
                 image
                     .resizable()
                     .scaledToFit()
+                    .background(Color.clear)
+                    .blendMode(.multiply)
+                    .clipShape(Circle())
+                    .shadow(radius: 5)
+
             } placeholder: {
                 ProgressView()
             }
-            .frame(width: 40, height: 40)
-            
-            Text(badge.name)
-                .font(.caption)
-                .multilineTextAlignment(.center)
+            .frame(width: 70, height: 70)
         }
         .frame(width: 80)
         .padding(8)
-        .background(Color.white)
+        .background(Color.clear)
         .cornerRadius(8)
         .shadow(radius: 2)
     }

@@ -8,7 +8,6 @@
 
 import SwiftUI
 import Combine
-import WidgetKit
 
 
 struct CalendarView: View {
