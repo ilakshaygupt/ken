@@ -1,5 +1,5 @@
 //
-//  ContributionLegendView.swift
+//  ContributionsColorsHelpView.swift
 //  ken
 //
 //  Created by Lakshay Gupta on 31/01/25.
@@ -7,7 +7,7 @@
 
 
 import SwiftUI
-struct ContributionLegendView: View {
+struct ContributionsColorsHelpView: View {
     private let cellSize: CGFloat = 10
     
     var body: some View {

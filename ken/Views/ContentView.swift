@@ -35,6 +35,7 @@ struct ContentView: View {
                 }
                 .navigationTitle("Search")
             }
+            .navigationViewStyle(.stack)
             .tabItem {
                 Label("Search", systemImage: "magnifyingglass")
             }
@@ -44,9 +45,11 @@ struct ContentView: View {
                 SavedUsersView(savedUsersVM: savedUsersVM, leetCodeVM: leetCodeVM)
                     .navigationTitle("Saved Users")
             }
+            .navigationViewStyle(.stack)
             .tabItem {
                 Label("Saved", systemImage: "star.fill")
             }
         }
+        .tabViewStyle(.tabBarOnly)
     }
 } 

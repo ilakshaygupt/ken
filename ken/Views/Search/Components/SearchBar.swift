@@ -19,8 +19,16 @@ struct SearchBar: View {
             TextField("Enter LeetCode username", text: $username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .autocapitalization(.none)
+                .submitLabel(.search) 
+                .onSubmit {
+                    if !username.isEmpty {
+                        onSearch()
+                    }
+                }
             
-            Button(action: onSearch) {
+            Button(action: {
+                onSearch()
+            }) {
                 Text("Search")
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)

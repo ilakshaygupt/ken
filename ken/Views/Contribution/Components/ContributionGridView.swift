@@ -11,6 +11,8 @@ import SwiftUI
 
 struct ContributionGridView: View {
     let contributions: [LeetCode.UserCalendar.DailyContribution]
+    @Binding var hoveredContribution: LeetCode.UserCalendar.DailyContribution?
+
     
     //
     private let cellSize: CGFloat = 11
@@ -109,6 +111,10 @@ struct ContributionGridView: View {
                                                 RoundedRectangle(cornerRadius: 2)
                                                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                             )
+                                            .onTapGesture {
+                                                hoveredContribution = contribution
+                                            }
+
                                         } else {
                                             Color.clear
                                                 .frame(width: cellSize, height: cellSize)

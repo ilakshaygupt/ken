@@ -214,7 +214,6 @@ public enum LeetCode  {
                         let streak = calendar["streak"] as? Int ?? 0
                         let totalActiveDays = calendar["totalActiveDays"] as? Int ?? 0
                         let submissionCalendar = calendar["submissionCalendar"] as? String ?? "{}"
-                        
                         let dccBadgesData = calendar["dccBadges"] as? [[String: Any]] ?? []
                         let dccBadges = dccBadgesData.compactMap { badgeData -> UserCalendar.Badge? in
                             guard let timestamp = badgeData["timestamp"] as? Int,
@@ -233,7 +232,6 @@ public enum LeetCode  {
                             submissionCalendar: submissionCalendar,
                             dccBadges: dccBadges
                         )
-                        print(calendars.dccBadges)
                         
                         promise(.success(calendars))
                     } catch {
@@ -243,4 +241,4 @@ public enum LeetCode  {
             }
         }
     }
-} 
+}

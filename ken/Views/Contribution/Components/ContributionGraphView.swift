@@ -20,11 +20,10 @@ struct ContributionGraphView: View {
                 .font(.headline)
                 .foregroundColor(.primary)
              
-            
             ContributionGridView(
-                contributions: contributions)
+                contributions: contributions, hoveredContribution: $hoveredContribution)
             
-            ContributionLegendView()
+            ContributionsColorsHelpView()
         }
         .padding()
         .background(Color(.systemBackground))
@@ -34,6 +33,7 @@ struct ContributionGraphView: View {
             Group {
                 if let contribution = hoveredContribution {
                     ContributionTooltip(contribution: contribution)
+                        .position(hoverLocation)
                 }
             }
         )

@@ -65,9 +65,9 @@
 			membershipExceptions = (
 				Const/AppGroup.swift,
 				Const/UICOlors.swift,
-				Features/Contributions/Views/ContributionGridView.swift,
 				Network/LeetCode.swift,
 				Views/Contribution/Components/ContributionCell.swift,
+				Views/Contribution/Components/ContributionGridView.swift,
 				Views/Contribution/Components/ContributionTooltip.swift,
 				Views/Contribution/Helpers/ContributionColors.swift,
 			);
