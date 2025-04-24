@@ -5,7 +5,6 @@
 //  Created by Lakshay Gupta on 31/01/25.
 //
 
-
 import WidgetKit
 import AppIntents
 import Intents
@@ -14,6 +13,7 @@ import Combine
 class WidgetSavedUsersViewModel: ObservableObject {
     @Published var savedUsernames: [String] = []
     private let userDefaultsKey = "leetcode_usernames"
+    private let storageService = LeetCodeJSONStorageService()
     
     init() {
         loadSavedUsernames()
@@ -23,6 +23,20 @@ class WidgetSavedUsersViewModel: ObservableObject {
         if let usernames = UserDefaults(suiteName: AppGroup)!.stringArray(forKey: userDefaultsKey) {
             savedUsernames = usernames
         }
+    }
+    
+    func getUserCalendar(for username: String) -> LeetCode.UserCalendar? {
+        if let calendarData = storageService.getCalendarJSONResponse(forUsername: username) {
+            return storageService.parseUserCalendar(from: calendarData)
+        }
+        return nil
+    }
+    
+    func getUserStats(for username: String) -> LeetCode.UserStats? {
+        if let statsData = storageService.getStatsJSONResponse(forUsername: username) {
+            return storageService.parseUserStats(from: statsData)
+        }
+        return nil
     }
 }
 
@@ -62,7 +76,15 @@ struct UserProvider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: SelectUserIntent, in context: Context) async -> SimpleEntry {
-        return SimpleEntry(date: Date(), username: viewModel.savedUsernames.first ?? "NO USER", contributions: [])
+        let username = configuration.username ?? viewModel.savedUsernames.first ?? "NO USER"
+        
+        // 
+        if let calendar = viewModel.getUserCalendar(for: username) {
+            let contributions = LeetCode.UserCalendar.DailyContribution.parse(from: calendar.submissionCalendar)
+            return SimpleEntry(date: Date(), username: username, contributions: contributions)
+        }
+        
+        return SimpleEntry.placeholder
     }
 
     func timeline(for configuration: SelectUserIntent, in context: Context) async -> Timeline<SimpleEntry> {
@@ -71,14 +93,101 @@ struct UserProvider: AppIntentTimelineProvider {
         if username == "NO USER" {
             return Timeline(entries: [SimpleEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
         }
-
-        do {
-            let calendar = try await LeetCode.getUserCalendar(for: username, queue: .global()).value
+        
+        
+        if let calendar = viewModel.getUserCalendar(for: username) {
             let contributions = LeetCode.UserCalendar.DailyContribution.parse(from: calendar.submissionCalendar)
             let entry = SimpleEntry(date: Date(), username: username, contributions: contributions)
-            return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
-        } catch {
-            return Timeline(entries: [SimpleEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
+            
+            
+            let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+            
+            
+            Task {
+                do {
+                    
+                    let freshCalendarData = try await fetchCalendarJSONData(for: username)
+                    
+                    
+                    let storageService = LeetCodeJSONStorageService()
+                    storageService.saveCalendarJSONResponse(freshCalendarData, forUsername: username)
+                    
+                    
+                    WidgetCenter.shared.reloadTimelines(ofKind: "kenWidget")
+                } catch {
+                    
+                }
+            }
+            
+            return timeline
         }
+        
+        
+        do {
+            let calendarData = try await fetchCalendarJSONData(for: username)
+            
+            
+            let storageService = LeetCodeJSONStorageService()
+            storageService.saveCalendarJSONResponse(calendarData, forUsername: username)
+            
+            
+            if let calendar = storageService.parseUserCalendar(from: calendarData) {
+                let contributions = LeetCode.UserCalendar.DailyContribution.parse(from: calendar.submissionCalendar)
+                let entry = SimpleEntry(date: Date(), username: username, contributions: contributions)
+                
+                return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+            }
+        } catch {
+            
+        }
+        
+        return Timeline(entries: [SimpleEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
+    }
+    
+    
+    private func fetchCalendarJSONData(for username: String) async throws -> Data {
+        let query = """
+        query userProfileCalendar($username: String!, $year: Int) {
+            matchedUser(username: $username) {
+                userCalendar(year: $year) {
+                    activeYears
+                    streak
+                    totalActiveDays
+                    dccBadges {
+                        timestamp
+                        badge {
+                            name
+                            icon
+                        }
+                    }
+                    submissionCalendar
+                }
+            }
+        }
+        """
+        
+        let variables = ["username": username]
+        
+        var request = URLRequest(url: URL(string: "https://leetcode.com/graphql")!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("https://leetcode.com", forHTTPHeaderField: "Referer")
+        
+        let body = [
+            "query": query,
+            "variables": variables,
+            "operationName": "userProfileCalendar"
+        ] as [String : Any]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return data
     }
 }
