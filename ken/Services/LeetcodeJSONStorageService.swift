@@ -108,10 +108,12 @@ class LeetCodeJSONStorageService {
                   let matchedUser = data["matchedUser"] as? [String: Any],
                   let submitStats = matchedUser["submitStats"] as? [String: Any],
                   let acSubmissionNum = submitStats["acSubmissionNum"] as? [[String: Any]],
-                  let profile = matchedUser["profile"] as? [String: Any] else {
+                  let totalSubmissionNum = submitStats["totalSubmissionNum"] as? [[String: Any]],
+                  let allQuestionsCount = data["allQuestionsCount"] as? [[String: Any]] else {
                 return nil
             }
             
+           
             var easySolved = 0
             var mediumSolved = 0
             var hardSolved = 0
@@ -128,16 +130,51 @@ class LeetCodeJSONStorageService {
                 }
             }
             
+            
+            var easyTotal = 0
+            var mediumTotal = 0
+            var hardTotal = 0
+            
+            for questionCount in allQuestionsCount {
+                if let difficulty = questionCount["difficulty"] as? String,
+                   let count = questionCount["count"] as? Int {
+                    switch difficulty {
+                    case "Easy": easyTotal = count
+                    case "Medium": mediumTotal = count
+                    case "Hard": hardTotal = count
+                    default: break
+                    }
+                }
+            }
+            
+           
             let totalSolved = easySolved + mediumSolved + hardSolved
-            let ranking = (profile["ranking"] as? Int) ?? 0
+            let totalProblems = easyTotal + mediumTotal + hardTotal
+
+            var totalAccepted = 0
+            var totalSubmitted = 0
+            
+            for submission in totalSubmissionNum {
+                if let count = submission["count"] as? Int {
+                    totalSubmitted += count
+                }
+            }
+            
+            for submission in acSubmissionNum {
+                if let count = submission["count"] as? Int {
+                    totalAccepted += count
+                }
+            }
             
             return LeetCode.UserStats(
                 totalSolved: totalSolved,
                 easySolved: easySolved,
                 mediumSolved: mediumSolved,
                 hardSolved: hardSolved,
-                acceptanceRate: 0.0,
-                ranking: ranking
+                easyTotal: easyTotal,
+                mediumTotal: mediumTotal,
+                hardTotal: hardTotal,
+                totalProblems: totalProblems
             )
         } catch {
             print("Error parsing stats JSON: \(error)")

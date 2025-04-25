@@ -26,7 +26,6 @@ class LeetCodeViewModel: ObservableObject {
     }
     
     private func loadCachedData() {
-        // 
         if let usernames = UserDefaults(suiteName: AppGroup)!.stringArray(forKey: "leetcode_usernames") {
             
             for username in usernames {
@@ -105,23 +104,28 @@ class LeetCodeViewModel: ObservableObject {
         return Future<LeetCode.UserStats, Error> { promise in
             
             let query = """
-            query getUserProfile($username: String!) {
-                matchedUser(username: $username) {
-                    submitStats {
-                        totalSubmissionNum {
-                            difficulty
-                            count
-                        }
-                        acSubmissionNum {
-                            difficulty
-                            count
-                        }
-                    }
-                    profile {
-                        ranking
-                        reputation
-                    }
+            query userSessionProgress($username: String!) {
+              allQuestionsCount {
+                difficulty
+                count
+              }
+              matchedUser(username: $username) {
+                submitStats {
+                  acSubmissionNum {
+                    difficulty
+                    count
+                    submissions
+                  }
+                  totalSubmissionNum {
+                    difficulty
+                    count
+                    submissions
+                  }
                 }
+                profile {
+                  ranking
+                }
+              }
             }
             """
             

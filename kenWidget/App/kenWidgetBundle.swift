@@ -12,5 +12,6 @@ import SwiftUI
 struct kenWidgetBundle: WidgetBundle {
     var body: some Widget {
         kenWidget()
+        StatsWidget()
     }
 }

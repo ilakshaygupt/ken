@@ -1,0 +1,37 @@
+//
+//  ContributionWidgetEntryView.swift
+//  ken
+//
+//  Created by Lakshay Gupta on 25/04/25.
+//
+
+import WidgetKit
+import SwiftUI
+
+
+struct ContributionWidgetEntryView: View {
+    var entry: ContributionWidgetEntry
+    @Environment(\.widgetFamily) var family
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 5) {
+                Image("leetcode")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+
+                Text(entry.username)
+                    .font(.caption2)
+                    .bold()
+            }
+            .frame(maxWidth: .infinity)
+
+            ContributionGridWidgetView(contributions: entry.contributions)
+                .frame(maxWidth: .infinity)
+        }
+        .frame(maxWidth: .infinity, alignment: .center) 
+        .multilineTextAlignment(.center)
+        .widgetURL(URL(string: "leetcode://user/\(entry.username)"))
+    }
+}
