@@ -16,13 +16,14 @@ Ken is an iOS widget that displays your LeetCode contribution activity right on 
 
 ## Screenshots
 
+
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/0415e998-cce4-4137-a13b-1f4da37ed750" width="21%">
-  <img src="https://github.com/user-attachments/assets/6af88fee-620a-410d-8092-2e1f88e331c0" width="21%">
-  <img src="https://github.com/user-attachments/assets/3263d8b3-2b00-46c0-a9b1-42c87936da0e" width="21%">
-  <img src="https://github.com/user-attachments/assets/930ccb71-cc75-44c1-a36a-e87c6feec7d1" width="21%">
+  <img src="https://github.com/user-attachments/assets/0415e998-cce4-4137-a13b-1f4da37ed750" width="33%">
+  <img src="https://github.com/user-attachments/assets/6af88fee-620a-410d-8092-2e1f88e331c0" width="33%">
+  <img src="https://github.com/user-attachments/assets/3263d8b3-2b00-46c0-a9b1-42c87936da0e" width="33%">
 </p>
 
+<img src="https://github.com/user-attachments/assets/e14763b7-739b-4646-8a5e-9d82982aa130" >
 
 
 ### Built With
