@@ -99,7 +99,7 @@ class LeetCodeJSONStorageService {
     
     // MARK: - Data parsing helpers
     
-    func parseUserStats(from jsonData: Data?) -> LeetCode.UserStats? {
+    func parseUserStats(from jsonData: Data?) -> UserStats? {
         guard let jsonData = jsonData else { return nil }
         
         do {
@@ -166,7 +166,7 @@ class LeetCodeJSONStorageService {
                 }
             }
             
-            return LeetCode.UserStats(
+            return UserStats(
                 totalSolved: totalSolved,
                 easySolved: easySolved,
                 mediumSolved: mediumSolved,
@@ -182,7 +182,7 @@ class LeetCodeJSONStorageService {
         }
     }
     
-    func parseUserCalendar(from jsonData: Data?) -> LeetCode.UserCalendar? {
+    func parseUserCalendar(from jsonData: Data?) -> UserCalendar? {
         guard let jsonData = jsonData else { return nil }
         
         do {
@@ -199,17 +199,17 @@ class LeetCodeJSONStorageService {
             let submissionCalendar = calendar["submissionCalendar"] as? String ?? "{}"
             let dccBadgesData = calendar["dccBadges"] as? [[String: Any]] ?? []
             
-            let dccBadges = dccBadgesData.compactMap { badgeData -> LeetCode.UserCalendar.Badge? in
+            let dccBadges = dccBadgesData.compactMap { badgeData -> Badge? in
                 guard let timestamp = badgeData["timestamp"] as? Int,
                       let badge = badgeData["badge"] as? [String: Any],
                       let name = badge["name"] as? String,
                       let icon = badge["icon"] as? String else {
                     return nil
                 }
-                return LeetCode.UserCalendar.Badge(name: name, icon: icon, timestamp: timestamp)
+                return Badge(name: name, icon: icon, timestamp: timestamp)
             }
             
-            return LeetCode.UserCalendar(
+            return UserCalendar(
                 activeYears: activeYears,
                 streak: streak,
                 totalActiveDays: totalActiveDays,

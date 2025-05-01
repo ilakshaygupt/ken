@@ -69,28 +69,7 @@ struct StatsProvider: AppIntentTimelineProvider {
     }
     
     private func fetchStatsJSONData(for username: String) async throws -> Data {
-        let query = """
-        query userSessionProgress($username: String!) {
-          allQuestionsCount {
-            difficulty
-            count
-          }
-          matchedUser(username: $username) {
-            submitStats {
-              acSubmissionNum {
-                difficulty
-                count
-                submissions
-              }
-              totalSubmissionNum {
-                difficulty
-                count
-                submissions
-              }
-            }
-          }
-        }
-        """
+        let query = GraphQLQueries.userStats
         
         let variables = ["username": username]
         

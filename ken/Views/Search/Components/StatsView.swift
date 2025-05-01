@@ -11,7 +11,7 @@ import WidgetKit
 
 
 struct StatsView: View {
-    let stats: LeetCode.UserStats
+    let stats: UserStats
     
     var body: some View {
         VStack(spacing: 16) {

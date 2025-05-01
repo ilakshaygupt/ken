@@ -9,9 +9,9 @@
 import SwiftUI
 
 struct ContributionGraphView: View {
-    let contributions: [LeetCode.UserCalendar.DailyContribution]
+    let contributions: [DailyContribution]
     
-    @State private var hoveredContribution: LeetCode.UserCalendar.DailyContribution?
+    @State private var hoveredContribution: DailyContribution?
     @State private var hoverLocation: CGPoint = .zero
     
     var body: some View {

@@ -11,7 +11,7 @@ import Combine
 
 
 struct CalendarView: View {
-    let calendar: LeetCode.UserCalendar
+    let calendar: UserCalendar
     
     var body: some View {
         VStack(spacing: 16) {
@@ -61,7 +61,7 @@ struct CalendarView: View {
                 }
             }
             
-            let contributions = LeetCode.UserCalendar.DailyContribution.parse(from: calendar.submissionCalendar)
+            let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
             ContributionGraphView(contributions: contributions)
         }
         .padding()

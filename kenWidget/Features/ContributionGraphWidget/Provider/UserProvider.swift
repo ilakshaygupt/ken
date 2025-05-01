@@ -18,7 +18,7 @@ struct UserProvider: AppIntentTimelineProvider {
         let username = configuration.username ?? viewModel.savedUsernames.first ?? "NO USER"
         
         if let calendar = viewModel.getUserCalendar(for: username) {
-            let contributions = LeetCode.UserCalendar.DailyContribution.parse(from: calendar.submissionCalendar)
+            let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
             return ContributionWidgetEntry(date: Date(), username: username, contributions: contributions)
         }
         
@@ -34,7 +34,7 @@ struct UserProvider: AppIntentTimelineProvider {
         
         
         if let calendar = viewModel.getUserCalendar(for: username) {
-            let contributions = LeetCode.UserCalendar.DailyContribution.parse(from: calendar.submissionCalendar)
+            let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
             let entry = ContributionWidgetEntry(date: Date(), username: username, contributions: contributions)
             
             
@@ -70,7 +70,7 @@ struct UserProvider: AppIntentTimelineProvider {
             
             
             if let calendar = storageService.parseUserCalendar(from: calendarData) {
-                let contributions = LeetCode.UserCalendar.DailyContribution.parse(from: calendar.submissionCalendar)
+                let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
                 let entry = ContributionWidgetEntry(date: Date(), username: username, contributions: contributions)
                 
                 return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
@@ -84,25 +84,7 @@ struct UserProvider: AppIntentTimelineProvider {
     
     
     private func fetchCalendarJSONData(for username: String) async throws -> Data {
-        let query = """
-        query userProfileCalendar($username: String!, $year: Int) {
-            matchedUser(username: $username) {
-                userCalendar(year: $year) {
-                    activeYears
-                    streak
-                    totalActiveDays
-                    dccBadges {
-                        timestamp
-                        badge {
-                            name
-                            icon
-                        }
-                    }
-                    submissionCalendar
-                }
-            }
-        }
-        """
+        let query = GraphQLQueries.userCalendar
         
         let variables = ["username": username]
         

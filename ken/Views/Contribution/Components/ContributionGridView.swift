@@ -10,8 +10,8 @@
 import SwiftUI
 
 struct ContributionGridView: View {
-    let contributions: [LeetCode.UserCalendar.DailyContribution]
-    @Binding var hoveredContribution: LeetCode.UserCalendar.DailyContribution?
+    let contributions: [DailyContribution]
+    @Binding var hoveredContribution: DailyContribution?
 
     
     //
@@ -34,10 +34,10 @@ struct ContributionGridView: View {
     }
     
     
-    private var monthlyContributions: [(String, [[LeetCode.UserCalendar.DailyContribution?]])] {
+    private var monthlyContributions: [(String, [[DailyContribution?]])] {
         
         let today = Date()
-        var result: [(String, [[LeetCode.UserCalendar.DailyContribution?]])] = []
+        var result: [(String, [[DailyContribution?]])] = []
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM"
         
@@ -49,8 +49,8 @@ struct ContributionGridView: View {
             guard let firstDayOfNextMonth = calendar.date(byAdding: .month, value: 1, to: firstDayOfMonth) else { continue }
             
             let monthLabel = dateFormatter.string(from: monthStart)
-            var monthWeeks: [[LeetCode.UserCalendar.DailyContribution?]] = []
-            var currentWeek: [LeetCode.UserCalendar.DailyContribution?] = []
+            var monthWeeks: [[DailyContribution?]] = []
+            var currentWeek: [DailyContribution?] = []
             
             let weekday = calendar.component(.weekday, from: firstDayOfMonth)
             if weekday > 1 {
@@ -64,7 +64,7 @@ struct ContributionGridView: View {
                 if let contribution = contributions.first(where: { calendar.isDate($0.date, inSameDayAs: currentDate) }) {
                     currentWeek.append(contribution)
                 } else {
-                    currentWeek.append(LeetCode.UserCalendar.DailyContribution(date: currentDate, count: 0))
+                    currentWeek.append(DailyContribution(date: currentDate, count: 0))
                 }
                 
                 if currentWeek.count == 7 {

@@ -13,7 +13,7 @@ import WidgetKit
 struct BadgeView: View {
     let baseURL = "https://leetcode.com"
 
-    let badge: LeetCode.UserCalendar.Badge
+    let badge: Badge
     
     var body: some View {
         VStack(spacing: 4) {

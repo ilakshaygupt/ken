@@ -11,13 +11,13 @@ import SwiftUI
 struct StatsWidgetEntry: TimelineEntry {
     let date: Date
     let username: String
-    let stats: LeetCode.UserStats?
+    let stats: UserStats?
     
     static let placeholder: StatsWidgetEntry = {
         StatsWidgetEntry(
             date: Date(),
             username: "demolisherguts",
-            stats: LeetCode.UserStats(
+            stats: UserStats(
                 totalSolved: 3000,
                 easySolved: 97,
                 mediumSolved: 182,

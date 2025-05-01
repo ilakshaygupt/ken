@@ -12,8 +12,8 @@ import WidgetKit
 
 class LeetCodeViewModel: ObservableObject {
     @Published var currentUsername: String = ""
-    @Published var userStats: [String: LeetCode.UserStats] = [:]
-    @Published var userCalendars: [String: LeetCode.UserCalendar] = [:]
+    @Published var userStats: [String: UserStats] = [:]
+    @Published var userCalendars: [String: UserCalendar] = [:]
     @Published var isLoading = false
     @Published var isFetchingFreshData = false
     @Published var error: Error?
@@ -99,9 +99,9 @@ class LeetCodeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func createStatsFetchPublisher(for username: String) -> AnyPublisher<LeetCode.UserStats, Error> {
+    private func createStatsFetchPublisher(for username: String) -> AnyPublisher<UserStats, Error> {
         
-        return Future<LeetCode.UserStats, Error> { promise in
+        return Future<UserStats, Error> { promise in
             
             let query = """
             query userSessionProgress($username: String!) {
@@ -167,9 +167,9 @@ class LeetCodeViewModel: ObservableObject {
         }.eraseToAnyPublisher()
     }
     
-    private func createCalendarFetchPublisher(for username: String) -> AnyPublisher<LeetCode.UserCalendar, Error> {
+    private func createCalendarFetchPublisher(for username: String) -> AnyPublisher<UserCalendar, Error> {
         
-        return Future<LeetCode.UserCalendar, Error> { promise in
+        return Future<UserCalendar, Error> { promise in
             
             let query = """
             query userProfileCalendar($username: String!, $year: Int) {

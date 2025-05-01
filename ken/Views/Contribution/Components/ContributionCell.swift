@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ContributionCell: View {
-    let contribution: LeetCode.UserCalendar.DailyContribution
+    let contribution: DailyContribution
     let size: CGFloat
     
     @Environment(\.colorScheme) private var colorScheme

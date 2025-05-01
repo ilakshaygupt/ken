@@ -27,14 +27,14 @@ class WidgetSavedUsersViewModel: ObservableObject {
         }
     }
     
-    func getUserCalendar(for username: String) -> LeetCode.UserCalendar? {
+    func getUserCalendar(for username: String) -> UserCalendar? {
         if let calendarData = storageService.getCalendarJSONResponse(forUsername: username) {
             return storageService.parseUserCalendar(from: calendarData)
         }
         return nil
     }
     
-    func getUserStats(for username: String) -> LeetCode.UserStats? {
+    func getUserStats(for username: String) -> UserStats? {
         if let statsData = storageService.getStatsJSONResponse(forUsername: username) {
             return storageService.parseUserStats(from: statsData)
         }

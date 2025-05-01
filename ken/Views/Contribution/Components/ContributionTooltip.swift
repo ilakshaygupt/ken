@@ -8,7 +8,7 @@
 
 import SwiftUI
 struct ContributionTooltip: View {
-    let contribution: LeetCode.UserCalendar.DailyContribution
+    let contribution: DailyContribution
     
     var body: some View {
         VStack(alignment: .center, spacing: 4) {

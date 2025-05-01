@@ -13,7 +13,7 @@ import Combine
 struct ContributionWidgetEntry: TimelineEntry {
     let date: Date
     let username: String
-    let contributions: [LeetCode.UserCalendar.DailyContribution]
+    let contributions: [DailyContribution]
     
     static let placeholder: ContributionWidgetEntry = {
         ContributionWidgetEntry(date: Date(), username: "NO USER", contributions: [])
