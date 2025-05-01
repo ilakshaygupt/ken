@@ -29,45 +29,40 @@ struct StatsProvider: AppIntentTimelineProvider {
         if username == "NO USER" {
             return Timeline(entries: [StatsWidgetEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
         }
+
+        let storageService = LeetCodeJSONStorageService()
         
         if let stats = viewModel.getUserStats(for: username) {
             let entry = StatsWidgetEntry(date: Date(), username: username, stats: stats)
-            
             let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
-            
+
             Task {
                 do {
                     let freshStatsData = try await fetchStatsJSONData(for: username)
-                    
-                    let storageService = LeetCodeJSONStorageService()
                     storageService.saveStatsJSONResponse(freshStatsData, forUsername: username)
-                    
                     WidgetCenter.shared.reloadTimelines(ofKind: "kenStatsWidget")
                 } catch {
-                   
                 }
             }
-            
+
             return timeline
-        }
-        
-        do {
-            let statsData = try await fetchStatsJSONData(for: username)
-            
-            let storageService = LeetCodeJSONStorageService()
-            storageService.saveStatsJSONResponse(statsData, forUsername: username)
-            
-            if let stats = storageService.parseUserStats(from: statsData) {
-                let entry = StatsWidgetEntry(date: Date(), username: username, stats: stats)
-                
-                return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+        } else {
+            do {
+                let statsData = try await fetchStatsJSONData(for: username)
+                storageService.saveStatsJSONResponse(statsData, forUsername: username)
+
+                if let stats = storageService.parseUserStats(from: statsData) {
+                    let entry = StatsWidgetEntry(date: Date(), username: username, stats: stats)
+                    return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+                }
+            } catch {
             }
-        } catch {
         }
-        
+
         return Timeline(entries: [StatsWidgetEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
     }
-    
+
+        
     private func fetchStatsJSONData(for username: String) async throws -> Data {
         let query = GraphQLQueries.userStats
         

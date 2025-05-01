@@ -14,7 +14,7 @@ public enum LeetCode {
         return LeetCodeAPIClient.getUserStats(for: username, queue: queue)
     }
     
-    public static func getUserCalendar(for username: String, queue: DispatchQueue = .main) -> Future<UserCalendar, Error> {
+     static func getUserCalendar(for username: String, queue: DispatchQueue = .main) -> Future<UserCalendar, Error> {
         return LeetCodeAPIClient.getUserCalendar(for: username, queue: queue)
     }
 }

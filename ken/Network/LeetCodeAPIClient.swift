@@ -136,7 +136,7 @@ public class LeetCodeAPIClient {
         }
     }
     
-    public static func getUserCalendar(for username: String, queue: DispatchQueue) -> Future<UserCalendar, Error> {
+     static func getUserCalendar(for username: String, queue: DispatchQueue) -> Future<UserCalendar, Error> {
         Future { promise in
             queue.async {
                 let variables = ["username": username]

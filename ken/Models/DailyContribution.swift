@@ -7,11 +7,11 @@
 import Foundation
 
 
-public struct DailyContribution {
-    public let date: Date
-    public let count: Int
+struct DailyContribution {
+    let date: Date
+    let count: Int
     
-    public static func parse(from calendar: String) -> [DailyContribution] {
+    static func parse(from calendar: String) -> [DailyContribution] {
         guard let data = calendar.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Int] else {
             return []
@@ -26,3 +26,5 @@ public struct DailyContribution {
         }
     }
 }
+
+

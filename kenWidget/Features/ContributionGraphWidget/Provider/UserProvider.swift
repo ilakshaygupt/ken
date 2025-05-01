@@ -31,56 +31,41 @@ struct UserProvider: AppIntentTimelineProvider {
         if username == "NO USER" {
             return Timeline(entries: [ContributionWidgetEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
         }
-        
-        
+
+        let storageService = LeetCodeJSONStorageService()
+
         if let calendar = viewModel.getUserCalendar(for: username) {
             let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
             let entry = ContributionWidgetEntry(date: Date(), username: username, contributions: contributions)
-            
-            
             let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
-            
-            
+
             Task {
                 do {
-                    
                     let freshCalendarData = try await fetchCalendarJSONData(for: username)
-                    
-                    
-                    let storageService = LeetCodeJSONStorageService()
                     storageService.saveCalendarJSONResponse(freshCalendarData, forUsername: username)
-                    
-                    
                     WidgetCenter.shared.reloadTimelines(ofKind: "kenWidget")
                 } catch {
-                    
                 }
             }
-            
+
             return timeline
-        }
-        
-        
-        do {
-            let calendarData = try await fetchCalendarJSONData(for: username)
-            
-            
-            let storageService = LeetCodeJSONStorageService()
-            storageService.saveCalendarJSONResponse(calendarData, forUsername: username)
-            
-            
-            if let calendar = storageService.parseUserCalendar(from: calendarData) {
-                let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
-                let entry = ContributionWidgetEntry(date: Date(), username: username, contributions: contributions)
-                
-                return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+        } else {
+            do {
+                let calendarData = try await fetchCalendarJSONData(for: username)
+                storageService.saveCalendarJSONResponse(calendarData, forUsername: username)
+
+                if let calendar = storageService.parseUserCalendar(from: calendarData) {
+                    let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
+                    let entry = ContributionWidgetEntry(date: Date(), username: username, contributions: contributions)
+                    return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+                }
+            } catch {
             }
-        } catch {
-            
         }
-        
+
         return Timeline(entries: [ContributionWidgetEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
     }
+
     
     
     private func fetchCalendarJSONData(for username: String) async throws -> Data {
