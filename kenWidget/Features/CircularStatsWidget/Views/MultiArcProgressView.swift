@@ -20,13 +20,13 @@ struct MultiArcProgressView: View {
         ZStack {
             Arc(startAngle: .degrees(135), endAngle: .degrees(205))
                 .stroke(
-                    Color.green.opacity(0.2),
+                    Color(hex: "1cbbba",opacity: 0.2),
                     style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                 )
             
             Arc(startAngle: .degrees(135), endAngle: .degrees(135 + 90 * (easyProgress)))
                 .stroke(
-                    Color.green,
+                    Color(hex: "1cbbba"),
                     style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                 )
             
@@ -57,11 +57,11 @@ struct MultiArcProgressView: View {
             
             VStack {
                     Text("\(solvedQuestion)")
-                    .font(.system(size: family == .systemSmall ? 16 : 18))
+                    .font(.system(size: family == .systemSmall ? 16 : 18,design: .monospaced))
                     .fontWeight(.bold)
                             
-                    Text("/ \(totalQuestions)")
-                    .font(.system(size: family == .systemSmall ? 13 : 15))
+                    Text("/\(totalQuestions)")
+                    .font(.system(size: family == .systemSmall ? 13 : 15,design: .monospaced))
                     .foregroundColor(.gray)
             }
         }

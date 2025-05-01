@@ -19,7 +19,7 @@ struct StatsView: View {
             
             HStack(spacing: 12) {
                 StatCard(title: "Easy", value: stats.easySolved)
-                    .foregroundColor(.green)
+                    .foregroundColor(Color(hex: "1cbbba"))
                 StatCard(title: "Medium", value: stats.mediumSolved)
                     .foregroundColor(.orange)
                 StatCard(title: "Hard", value: stats.hardSolved)

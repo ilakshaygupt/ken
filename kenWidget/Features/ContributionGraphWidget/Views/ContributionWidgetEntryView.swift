@@ -22,7 +22,7 @@ struct ContributionWidgetEntryView: View {
                     .frame(width: 20, height: 20)
 
                 Text(entry.username)
-                    .font(.caption2)
+                    .font(.system(.caption2,design: .monospaced))
                     .bold()
             }
             .frame(maxWidth: .infinity)

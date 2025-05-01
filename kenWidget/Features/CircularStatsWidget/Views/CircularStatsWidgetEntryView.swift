@@ -45,69 +45,60 @@ struct StatsWidgetEntryView: View {
             }
             .padding()
         } else {
-            if let stats = entry.stats {
-                GeometryReader { geometry in
-                    VStack {
-                        HStack(alignment: .center, spacing: 24) {
-                            MultiArcProgressView(
-                                easyProgress: Double(entry.stats!.easySolved) / 873,
-                                mediumProgress: Double(entry.stats!.mediumSolved) / 1829,
-                                hardProgress: Double(entry.stats!.hardSolved) / 824,
-                                lineWidth: 10,
-                                totalQuestions: entry.stats!.totalProblems,
-                                solvedQuestion: entry.stats!.totalSolved
-                            )
-                            .frame(width: 110, height: 110)
-                            
-                            VStack(spacing: 8) {
-                                HStack {
-                                    Image("leetcode")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 20, height: 20)
-                                    
-                                    Text(entry.username)
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.primary)
-                                        .multilineTextAlignment(.leading)
-                                        .lineLimit(nil)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                                
-                                
-                                VStack(alignment: .leading, spacing: 8) {
-                                    DifficultyStatView(
-                                        label: "Easy",
-                                        solved: entry.stats!.easySolved,
-                                        total: entry.stats!.easyTotal,
-                                        color: .green
-                                    )
-                                    DifficultyStatView(
-                                        label: "Med.",
-                                        solved: entry.stats!.mediumSolved,
-                                        total: entry.stats!.mediumTotal,
-                                        color: .yellow
-                                    )
-                                    DifficultyStatView(
-                                        label: "Hard",
-                                        solved: entry.stats!.hardSolved,
-                                        total: entry.stats!.hardTotal,
-                                        color: .red
-                                    )
-                                }
-                            }
-                            .padding(.vertical, 4)
-                        }
-                        .frame(maxHeight: .infinity)
-                    }
-                    .frame(width: geometry.size.width, height: geometry.size.height)
+            VStack(alignment:.center,spacing: 8){
+                HStack {
+                    Image("leetcode")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                    Text(entry.username)
+                        .font(.system(.caption,design: .monospaced).bold())
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding()
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 4, trailing: 0))
                 
-            } else {
-                Text("No data available")
-                    .foregroundColor(.secondary)
+                HStack(alignment: .center,spacing: 24) {
+                    MultiArcProgressView(
+                        easyProgress: Double(entry.stats!.easySolved) / 873,
+                        mediumProgress: Double(entry.stats!.mediumSolved) / 1829,
+                        hardProgress: Double(entry.stats!.hardSolved) / 824,
+                        lineWidth: 10,
+                        totalQuestions: entry.stats!.totalProblems,
+                        solvedQuestion: entry.stats!.totalSolved
+                    )
+                    .frame(width: 100, height: 100)
+                    VStack(alignment: .leading ) {
+                        
+                        
+                        Spacer()
+                        DifficultyStatView(
+                            label: "Easy",
+                            solved: entry.stats!.easySolved,
+                            total: entry.stats!.easyTotal,
+                            color: Color(hex: "1cbbba")
+                        )
+                        Spacer()
+                        DifficultyStatView(
+                            label: "Med",
+                            solved: entry.stats!.mediumSolved,
+                            total: entry.stats!.mediumTotal,
+                            color: .yellow
+                        )
+                        Spacer()
+                        DifficultyStatView(
+                            label: "Hard",
+                            solved: entry.stats!.hardSolved,
+                            total: entry.stats!.hardTotal,
+                            color: .red
+                        )
+                        Spacer()
+                    }
+                }
             }
-        }
+                .padding(EdgeInsets(top: 4, leading: 20, bottom: 0, trailing: 20))
+                    }
     }
 }

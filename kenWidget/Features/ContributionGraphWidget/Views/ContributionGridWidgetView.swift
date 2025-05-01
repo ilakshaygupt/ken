@@ -95,6 +95,7 @@ struct ContributionGridWidgetView: View {
                         Text(month)
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .center) 
                         
                         VStack(alignment: .leading, spacing: spacing) {
                             ForEach(0..<7, id: \.self) { dayIndex in
