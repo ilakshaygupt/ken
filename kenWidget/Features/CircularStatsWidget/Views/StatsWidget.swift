@@ -17,12 +17,12 @@ struct StatsWidget: Widget {
         AppIntentConfiguration(kind: kind, intent: SelectUserIntent.self, provider: StatsProvider()) { entry in
             if #available(iOS 17.0, *) {
                 StatsWidgetEntryView(entry: entry)
-                    .containerBackground(colorScheme == .dark ? Color(UIColor(hex: "#202020") ?? .black) : Color.white, for: .widget)
+                    .containerBackgroundForWidget()
 
             } else {
                 StatsWidgetEntryView(entry: entry)
                     .padding()
-                    .background(colorScheme == .dark ? Color(UIColor(hex: "#202020") ?? .black) : Color.white)
+                    .containerBackgroundForWidget()
 
             }
         }
@@ -36,4 +36,25 @@ struct StatsWidget: Widget {
     StatsWidget()
 } timeline: {
     StatsWidgetEntry.placeholder
+}
+
+extension View {
+    func containerBackgroundForWidget() -> some View {
+        if #available(iOS 17.0, *) {
+            return self.containerBackground(for: .widget) {
+                Color(UIColor { traitCollection in
+                    return traitCollection.userInterfaceStyle == .dark ?
+                           UIColor(hex: "#202020") ?? .black : .white
+                })
+            }
+        } else {
+            return self.background(
+                Color(UIColor { traitCollection in
+                    return traitCollection.userInterfaceStyle == .dark ?
+                           UIColor(hex: "#202020") ?? .black : .white
+                })
+            )
+            .padding()
+        }
+    }
 }

@@ -16,11 +16,11 @@ struct kenWidget: Widget {
         AppIntentConfiguration(kind: kind, intent: SelectUserIntent.self, provider: UserProvider()) { entry in
             if #available(iOS 17.0, *) {
                 ContributionWidgetEntryView(entry: entry)
-                    .containerBackground(colorScheme == .dark ? Color(UIColor(hex: "#202020") ?? .black) : Color.white, for: .widget)
+                    .containerBackgroundForWidget()
             } else {
                 ContributionWidgetEntryView(entry: entry)
                     .padding()
-                    .background(colorScheme == .dark ? Color(UIColor(hex: "#202020") ?? .black) : Color.white)
+                    .containerBackgroundForWidget()
 
             }
         }
@@ -42,3 +42,4 @@ struct kenWidget: Widget {
         .init(date: Date().addingTimeInterval(-86400 * 4), count: 3)
     ])
 }
+
