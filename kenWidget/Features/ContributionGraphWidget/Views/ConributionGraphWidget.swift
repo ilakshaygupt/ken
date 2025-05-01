@@ -9,17 +9,19 @@ import SwiftUI
 import WidgetKit
 
 struct kenWidget: Widget {
+    @Environment(\.colorScheme) var colorScheme
     let kind: String = "kenWidget"
     
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: SelectUserIntent.self, provider: UserProvider()) { entry in
             if #available(iOS 17.0, *) {
                 ContributionWidgetEntryView(entry: entry)
-                    .containerBackground(Color(UIColor(hex: "#202020") ?? UIColor.white), for: .widget)
+                    .containerBackground(colorScheme == .dark ? Color(UIColor(hex: "#202020") ?? .black) : Color.white, for: .widget)
             } else {
                 ContributionWidgetEntryView(entry: entry)
                     .padding()
-                    .background(Color(.systemBackground))
+                    .background(colorScheme == .dark ? Color(UIColor(hex: "#202020") ?? .black) : Color.white)
+
             }
         }
         .configurationDisplayName("LeetCode Activity")

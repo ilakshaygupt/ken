@@ -69,7 +69,7 @@ struct StatsWidgetEntryView: View {
                         totalQuestions: entry.stats!.totalProblems,
                         solvedQuestion: entry.stats!.totalSolved
                     )
-                    .frame(width: 100, height: 100)
+                    .frame(width: 96, height: 96)
                     VStack(alignment: .leading ) {
                         
                         
