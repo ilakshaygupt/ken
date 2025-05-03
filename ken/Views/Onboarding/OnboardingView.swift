@@ -16,51 +16,99 @@ struct OnboardingView: View {
     @State private var isComplete = false
     @AppStorage("has_completed_onboarding") private var hasCompletedOnboarding = false
     
+    // Define custom colors
+    private let primaryColor = Color(red: 0.2, green: 0.5, blue: 0.9)
+    private let secondaryColor = Color(red: 0.95, green: 0.95, blue: 0.97)
+    private let accentColor = Color(red: 0.9, green: 0.3, blue: 0.3)
+    private let backgroundColor = Color(red: 0.98, green: 0.98, blue: 1.0)
+    
     var body: some View {
         NavigationView {
-            VStack(spacing: 24) {
-                Text("Welcome to Ken")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+            ZStack {
+                backgroundColor
+                    .ignoresSafeArea()
                 
-                Text("Please enter your primary LeetCode username")
-                    .font(.headline)
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 20)
-                
-                TextField("LeetCode Username", text: $username)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
-                    .disabled(isLoading)
-                
-                if let errorMessage = errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
+                VStack(spacing: 32) {
+                    Image("logo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(primaryColor)
+                        .padding(.top, 40)
+                    
+                    Text("Welcome to Ken")
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [primaryColor, accentColor],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                    
+                    Text("Track and improve your LeetCode progress")
                         .font(.subheadline)
-                }
-                
-                Button(action: verifyAndSaveUsername) {
-                    HStack {
-                        if isLoading {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle())
-                        } else {
-                            Text("Continue")
-                                .fontWeight(.semibold)
-                        }
+                        .foregroundColor(.gray)
+                        .padding(.bottom, 20)
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Enter your LeetCode username")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        TextField("Username", text: $username)
+                            .padding()
+                            .background(secondaryColor)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(primaryColor.opacity(0.3), lineWidth: 1)
+                            )
+                            .disabled(isLoading)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+                    .padding(.horizontal)
+                    
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(accentColor)
+                            .font(.subheadline)
+                            .padding(.top, -10)
+                    }
+                    
+                    Button(action: verifyAndSaveUsername) {
+                        HStack {
+                            if isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            } else {
+                                Text("Continue")
+                                    .font(.headline)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            username.isEmpty ? primaryColor.opacity(0.4) : primaryColor
+                        )
+                        .foregroundColor(.white)
+                        .cornerRadius(16)
+                        .shadow(color: primaryColor.opacity(0.3), radius: 5, x: 0, y: 3)
+                    }
+                    .disabled(username.isEmpty || isLoading)
+                    .padding(.horizontal)
+                    
+                    Spacer()
+                    
+                        Text("Join the community of coders improving every day")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 20)
                 }
-                .disabled(username.isEmpty || isLoading)
-                
-                Spacer()
+                .padding()
             }
-            .padding()
             .navigationBarHidden(true)
         }
         .fullScreenCover(isPresented: $isComplete) {
@@ -73,17 +121,13 @@ struct OnboardingView: View {
         isLoading = true
         errorMessage = nil
         
-        // Try to fetch data to verify the username is valid
+        
         leetCodeVM.fetchData(for: username) { success in
             isLoading = false
             if success {
-                // Save as primary username
+                
                 savedUsersVM.setPrimaryUsername(username)
-                
-                // Mark onboarding as complete
                 hasCompletedOnboarding = true
-                
-                // Show main app
                 isComplete = true
             } else {
                 errorMessage = "Could not find that LeetCode username. Please try again."
