@@ -99,23 +99,13 @@ struct HomeView: View {
                                 
                                 // Graph Section - simplified to always show 12 months
                                 sectionView(title: "Activity Graph", systemImage: "calendar", gradient: [.indigo, .indigo.opacity(0.7)]) {
-                                    VStack(spacing: 12) {
-                                        HStack {
-                                            Text("Last 12 months")
-                                                .font(.subheadline)
-                                                .foregroundColor(.secondary)
-                                            
-                                            Spacer()
-                                        }
-                                        .padding(.horizontal)
-                                        .padding(.top, 8)
                                         
                                         ContributionGraphView(
                                             contributions: calendar.contributions,
                                             monthsToShow: 12
                                         )
-                                        .padding(.bottom, 8)
-                                    }
+                                        .padding()
+                                    
                                 }
                             }
                             .padding(.horizontal, 20)

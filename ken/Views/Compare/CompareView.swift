@@ -268,7 +268,7 @@ struct ComparisonView: View {
         let contributions = calendar?.contributions ?? []
         
         return VStack(alignment: .leading, spacing: 8) {
-            HStack {
+            VStack {
                 Text(username)
                     .fontWeight(.medium)
                     .foregroundColor(color)

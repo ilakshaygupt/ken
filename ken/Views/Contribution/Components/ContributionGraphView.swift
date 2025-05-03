@@ -44,9 +44,11 @@ struct ContributionGraphView: View {
             ContributionsColorsHelpView()
         }
         .padding()
-        .background(cardBackgroundColor)
-        .cornerRadius(12)
-        .shadow(radius: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(cardBackgroundColor)
+                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
+        )
         .overlay(
             Group {
                 if let contribution = hoveredContribution {

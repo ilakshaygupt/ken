@@ -85,15 +85,6 @@ struct ContentView: View {
                 Label("Search", systemImage: "magnifyingglass")
             }
             
-            
-            NavigationView {
-                SavedUsersView(savedUsersVM: savedUsersVM, leetCodeVM: leetCodeVM)
-                    .navigationTitle("Saved Users")
-            }
-            .navigationViewStyle(.stack)
-            .tabItem {
-                Label("Saved", systemImage: "star.fill")
-            }
         }
         .tabViewStyle(.tabBarOnly)
         .onAppear {
