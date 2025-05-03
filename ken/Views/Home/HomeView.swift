@@ -123,7 +123,6 @@ struct HomeView: View {
                 .refreshable {
                     await refreshData(username: primaryUsername)
                 }
-                .overlay(refreshButton)
             } else {
                 noPrimaryUserView()
                     .padding(.horizontal, 20)
@@ -193,44 +192,6 @@ struct HomeView: View {
     }
     
     // MARK: - Extracted Views
-    
-    // Extracted refresh button to simplify view hierarchy
-    private var refreshButton: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                Button(action: {
-                    if let primaryUsername = savedUsersVM.primaryUsername {
-                        Task {
-                            await refreshData(username: primaryUsername)
-                        }
-                    }
-                }) {
-                    Image(systemName: isRefreshing ? "arrow.triangle.2.circlepath" : "arrow.clockwise")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 60, height: 60)
-                        .background(createRefreshButtonBackground())
-                        .clipShape(Circle())
-                        .rotationEffect(Angle(degrees: isRefreshing ? 360 : 0))
-                        .animation(isRefreshing ? Animation.linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isRefreshing)
-                }
-                .padding(24)
-
-            }
-        }
-    }
-    
-    private func createRefreshButtonBackground() -> some View {
-        let colors: [Color] = [.blue, .purple]
-        
-        return LinearGradient(
-            gradient: Gradient(colors: colors),
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
     
     private func headerView(username: String) -> some View {
         VStack(spacing: 16) {

@@ -8,18 +8,16 @@
 import SwiftUI
 
 @main
-struct kenApp: App {
+struct KenApp: App {
+    @StateObject private var leetCodeVM = LeetCodeViewModel()
     @StateObject private var savedUsersVM = SavedUsersViewModel()
     @AppStorage("has_completed_onboarding") private var hasCompletedOnboarding = false
     
     var body: some Scene {
         WindowGroup {
-            if hasCompletedOnboarding && savedUsersVM.hasPrimaryUsername() {
-                ContentView()
-                    .environmentObject(savedUsersVM)
-            } else {
-                OnboardingView(savedUsersVM: savedUsersVM)
-            }
+            SplashScreenView(hasCompletedOnboarding: $hasCompletedOnboarding, savedUsersVM: savedUsersVM)
+                .environmentObject(leetCodeVM)
+                .environmentObject(savedUsersVM)
         }
     }
 }
