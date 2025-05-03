@@ -24,6 +24,44 @@ struct CompareView: View {
             
             VStack {
                 if let primaryUsername = savedUsersVM.primaryUsername {
+                    if let userProfile = leetCodeVM.userProfiles[primaryUsername] {
+                        VStack(alignment: .center) {
+                            if let avatarUrl = userProfile.userAvatar, !avatarUrl.isEmpty {
+                                AsyncImage(url: URL(string: avatarUrl)) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                } placeholder: {
+                                    Image(systemName: "person.circle.fill")
+                                        .resizable()
+                                }
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            Text(userProfile.realName ?? primaryUsername)
+                                .font(.headline)
+                            
+                            if let jobTitle = userProfile.jobTitle, !jobTitle.isEmpty {
+                                Text(jobTitle)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            if let company = userProfile.company, !company.isEmpty {
+                                Text(company)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(.bottom, 20)
+                    }
+                    
                     if savedUsersVM.savedUsernames.count > 1 {
                         VStack {
                             Text("Compare with:")
@@ -131,6 +169,11 @@ struct CompareView: View {
             // Load data for all saved users
             for username in savedUsersVM.savedUsernames {
                 leetCodeVM.fetchData(for: username)
+            }
+            
+            // Load user profiles
+            for username in savedUsersVM.savedUsernames {
+                leetCodeVM.fetchUserProfile(for: username)
             }
         }
         .background(AppTheme.shared.backgroundColor(in: colorScheme))

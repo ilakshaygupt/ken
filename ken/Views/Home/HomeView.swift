@@ -203,21 +203,54 @@ struct HomeView: View {
                         .opacity(animate ? 1 : 0)
                         .offset(y: animate ? 0 : -20)
                     
-                    Text(username)
-                        .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(.primary)
-                        .opacity(animate ? 1 : 0)
-                        .scaleEffect(animate ? 1 : 0.8)
+                    if let userProfile = leetCodeVM.userProfiles[username] {
+                        Text(userProfile.realName ?? username)
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundColor(.primary)
+                            .opacity(animate ? 1 : 0)
+                            .scaleEffect(animate ? 1 : 0.8)
+                        
+                        Text("@\(username)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .opacity(animate ? 1 : 0)
+                            .offset(y: animate ? 0 : 10)
+                    } else {
+                        Text(username)
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundColor(.primary)
+                            .opacity(animate ? 1 : 0)
+                            .scaleEffect(animate ? 1 : 0.8)
+                    }
                 }
                 
                 Spacer()
                 
-                Image(systemName: "person.circle.fill")
-                    .font(.system(size: 50))
-                    .foregroundColor(.blue)
+                if let userProfile = leetCodeVM.userProfiles[username], 
+                   let avatarUrl = userProfile.userAvatar, 
+                   !avatarUrl.isEmpty {
+                    AsyncImage(url: URL(string: avatarUrl)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .foregroundColor(.blue)
+                    }
+                    .frame(width: 60, height: 60)
+                    .clipShape(Circle())
                     .opacity(animate ? 1 : 0)
                     .scaleEffect(animate ? 1 : 0.8)
                     .offset(x: animate ? 0 : 20)
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 50))
+                        .foregroundColor(.blue)
+                        .opacity(animate ? 1 : 0)
+                        .scaleEffect(animate ? 1 : 0.8)
+                        .offset(x: animate ? 0 : 20)
+                }
             }
             
             if let stats = leetCodeVM.userStats[username] {
@@ -243,17 +276,7 @@ struct HomeView: View {
                         icon: "star.fill",
                         color: .yellow
                     )
-                    
-//                    Divider()
-//                        .frame(height: 40)
-//                    
-//                    // Rank
-//                    statItem(
-//                        value: "\(stats.contestGlobalRanking)",
-//                        label: "Rank",
-//                        icon: "trophy.fill",
-//                        color: .orange
-//                    )
+                
                 }
                 .padding(.vertical, 8)
                 .opacity(animate ? 1 : 0)

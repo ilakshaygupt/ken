@@ -67,6 +67,7 @@
 				Models/Badge.swift,
 				Models/DailyContribution.swift,
 				Models/UserCalendar.swift,
+				Models/UserProfile.swift,
 				Models/UserStats.swift,
 				Network/GraphQLQueries.swift,
 				Network/LeetCode.swift,

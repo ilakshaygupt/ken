@@ -12,6 +12,7 @@ import WidgetKit
 
 class LeetCodeViewModel: ObservableObject {
     @Published var currentUsername: String = ""
+    @Published var userProfiles: [String: UserProfile] = [:]
     @Published var userStats: [String: UserStats] = [:]
     @Published var userCalendars: [String: UserCalendar] = [:]
     @Published var isLoading = false
@@ -233,6 +234,34 @@ class LeetCodeViewModel: ObservableObject {
             }.resume()
         }.eraseToAnyPublisher()
     }
+    
+    func fetchUserProfile(for username: String) {
+    // Check if we have cached data that doesn't need refresh
+    if let profileData = storageService.getProfileJSONResponse(forUsername: username),
+       !storageService.needsRefresh(forUsername: username),
+       let profile = storageService.parseUserProfile(from: profileData) {
+        self.userProfiles[username] = profile
+        return
+    }
+    
+    // Fetch fresh data
+    LeetCode.getUserProfile(for: username)
+        .receive(on: DispatchQueue.main)
+        .sink(
+            receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    print("Error fetching user profile: \(error)")
+                }
+            },
+            receiveValue: { [weak self] result in
+                           guard let self = self else { return }
+                           let (profile, responseData) = result  // Destructure the tuple
+                           self.userProfiles[username] = profile  // Now profile is just the UserProfile
+                           self.storageService.saveProfileJSONResponse(responseData, forUsername: username)
+                       }
+        )
+        .store(in: &cancellables)
+}
     
     func refreshAllUsers() {
         

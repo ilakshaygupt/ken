@@ -202,4 +202,86 @@ public class LeetCodeAPIClient {
             }
         }
     }
+    
+     static func getUserProfile(for username: String, queue: DispatchQueue) -> Future<(UserProfile, Data), Error> {
+        Future { promise in
+            queue.async {
+                let variables = ["username": username]
+                let request = createRequest(
+                    query: GraphQLQueries.userProfile,
+                    variables: variables,
+                    operationName: "userPublicProfile"
+                )
+                
+                URLSession.shared.dataTask(with: request) { data, response, error in
+                    if let error = error {
+                        promise(.failure(error))
+                        return
+                    }
+                    
+                    guard let data = data else {
+                        promise(.failure(URLError(.badServerResponse)))
+                        return
+                    }
+                    
+                    do {
+                        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+                        guard let jsonData = json?["data"] as? [String: Any],
+                              let matchedUser = jsonData["matchedUser"] as? [String: Any] else {
+                            throw URLError(.cannotParseResponse)
+                        }
+                        
+                        let username = matchedUser["username"] as? String ?? ""
+                        let githubUrl = matchedUser["githubUrl"] as? String
+                        let twitterUrl = matchedUser["twitterUrl"] as? String
+                        let linkedinUrl = matchedUser["linkedinUrl"] as? String
+                        
+                        let profile = matchedUser["profile"] as? [String: Any]
+                        let userAvatar = profile?["userAvatar"] as? String
+                        let realName = profile?["realName"] as? String
+                        let aboutMe = profile?["aboutMe"] as? String
+                        let school = profile?["school"] as? String
+                        let websites = profile?["websites"] as? [String] ?? []
+                        let countryName = profile?["countryName"] as? String
+                        let company = profile?["company"] as? String
+                        let jobTitle = profile?["jobTitle"] as? String
+                        let skillTags = profile?["skillTags"] as? [String] ?? []
+                        let ranking = profile?["ranking"] as? Int ?? 0
+                        
+                        let contestBadgeData = matchedUser["contestBadge"] as? [String: Any]
+                        var contestBadge: ContestBadge? = nil
+                        if let badgeData = contestBadgeData {
+                            let name = badgeData["name"] as? String ?? ""
+                            let expired = badgeData["expired"] as? Bool ?? false
+                            let hoverText = badgeData["hoverText"] as? String ?? ""
+                            let icon = badgeData["icon"] as? String ?? ""
+                            contestBadge = ContestBadge(name: name, expired: expired, hoverText: hoverText, icon: icon)
+                        }
+                        
+                        let userProfile = UserProfile(
+                            username: username,
+                            githubUrl: githubUrl,
+                            twitterUrl: twitterUrl,
+                            linkedinUrl: linkedinUrl,
+                            userAvatar: userAvatar,
+                            realName: realName,
+                            aboutMe: aboutMe,
+                            school: school,
+                            websites: websites,
+                            countryName: countryName,
+                            company: company,
+                            jobTitle: jobTitle,
+                            skillTags: skillTags,
+                            ranking: ranking,
+                            contestBadge: contestBadge
+                        )
+                        
+                        promise(.success((userProfile, data)))
+                    } catch {
+                        promise(.failure(error))
+                    }
+                }.resume()
+            }
+        }
+    }
 }

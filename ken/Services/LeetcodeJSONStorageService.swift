@@ -12,6 +12,7 @@ class LeetCodeJSONStorageService {
     private let statsResponseKey = "leetcode_stats_json_responses"
     private let calendarResponseKey = "leetcode_calendar_json_responses"
     private let lastFetchedKey = "leetcode_last_fetched_time"
+    private let profileResponseKey = "leetcode_profile_json_responses"
     
     private let userDefaults: UserDefaults
     
@@ -95,6 +96,86 @@ class LeetCodeJSONStorageService {
         // Refresh if data is older than 1 hour
         let oneHour: TimeInterval = 3600
         return Date().timeIntervalSince(lastFetched) > oneHour
+    }
+    
+    // MARK: - Profile JSON Storage
+    
+    func saveProfileJSONResponse(_ jsonData: Data, forUsername username: String) {
+        var responses = getProfileJSONResponses()
+        responses[username] = jsonData.base64EncodedString()
+        userDefaults.set(responses, forKey: profileResponseKey)
+        userDefaults.synchronize()
+        updateLastFetchedTime(forUsername: username)
+    }
+    
+    func getProfileJSONResponses() -> [String: String] {
+        return userDefaults.dictionary(forKey: profileResponseKey) as? [String: String] ?? [:]
+    }
+    
+    func getProfileJSONResponse(forUsername username: String) -> Data? {
+        let responses = getProfileJSONResponses()
+        guard let base64String = responses[username] else { return nil }
+        return Data(base64Encoded: base64String)
+    }
+    
+    func parseUserProfile(from jsonData: Data?) -> UserProfile? {
+        guard let jsonData = jsonData else { return nil }
+        
+        do {
+            let json = try JSONSerialization.jsonObject(with: jsonData) as? [String: Any]
+            guard let data = json?["data"] as? [String: Any],
+                  let matchedUser = data["matchedUser"] as? [String: Any] else {
+                return nil
+            }
+            
+            let username = matchedUser["username"] as? String ?? ""
+            let githubUrl = matchedUser["githubUrl"] as? String
+            let twitterUrl = matchedUser["twitterUrl"] as? String
+            let linkedinUrl = matchedUser["linkedinUrl"] as? String
+            
+            let profile = matchedUser["profile"] as? [String: Any]
+            let userAvatar = profile?["userAvatar"] as? String
+            let realName = profile?["realName"] as? String
+            let aboutMe = profile?["aboutMe"] as? String
+            let school = profile?["school"] as? String
+            let websites = profile?["websites"] as? [String] ?? []
+            let countryName = profile?["countryName"] as? String
+            let company = profile?["company"] as? String
+            let jobTitle = profile?["jobTitle"] as? String
+            let skillTags = profile?["skillTags"] as? [String] ?? []
+            let ranking = profile?["ranking"] as? Int ?? 0
+            
+            let contestBadgeData = matchedUser["contestBadge"] as? [String: Any]
+            var contestBadge: ContestBadge? = nil
+            if let badgeData = contestBadgeData {
+                let name = badgeData["name"] as? String ?? ""
+                let expired = badgeData["expired"] as? Bool ?? false
+                let hoverText = badgeData["hoverText"] as? String ?? ""
+                let icon = badgeData["icon"] as? String ?? ""
+                contestBadge = ContestBadge(name: name, expired: expired, hoverText: hoverText, icon: icon)
+            }
+            
+            return UserProfile(
+                username: username,
+                githubUrl: githubUrl,
+                twitterUrl: twitterUrl,
+                linkedinUrl: linkedinUrl,
+                userAvatar: userAvatar,
+                realName: realName,
+                aboutMe: aboutMe,
+                school: school,
+                websites: websites,
+                countryName: countryName,
+                company: company,
+                jobTitle: jobTitle,
+                skillTags: skillTags,
+                ranking: ranking,
+                contestBadge: contestBadge
+            )
+        } catch {
+            print("Error parsing profile JSON: \(error)")
+            return nil
+        }
     }
     
     // MARK: - Data parsing helpers
