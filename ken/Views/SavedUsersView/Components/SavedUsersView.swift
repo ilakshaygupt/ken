@@ -11,6 +11,7 @@ import SwiftUI
 struct SavedUsersView: View {
     @ObservedObject var savedUsersVM: SavedUsersViewModel
     @ObservedObject var leetCodeVM: LeetCodeViewModel
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         List {
@@ -32,5 +33,6 @@ struct SavedUsersView: View {
                 leetCodeVM.fetchData(for: username)
             }
         }
+        .background(AppTheme.shared.backgroundColor(in: colorScheme))
     }
 }

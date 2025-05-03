@@ -9,6 +9,22 @@
 
 import SwiftUI
 
+private struct ContributionColorSchemeKey: EnvironmentKey {
+    static let defaultValue: ContributionColorScheme = .blue
+}
+
+enum ContributionColorScheme {
+    case blue
+    case green
+}
+
+extension EnvironmentValues {
+    var contributionColorScheme: ContributionColorScheme {
+        get { self[ContributionColorSchemeKey.self] }
+        set { self[ContributionColorSchemeKey.self] = newValue }
+    }
+}
+
 struct ContributionGridView: View {
     let contributions: [DailyContribution]
     @Binding var hoveredContribution: DailyContribution?
@@ -159,3 +175,4 @@ struct ContributionGridView: View {
     }
 
 }
+

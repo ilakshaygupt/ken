@@ -12,6 +12,7 @@ struct FriendsView: View {
     @ObservedObject var savedUsersVM: SavedUsersViewModel
     @State private var showingAddSheet = false
     @State private var newUsername = ""
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack {
@@ -101,6 +102,7 @@ struct FriendsView: View {
                 leetCodeVM.fetchData(for: username)
             }
         }
+        .background(AppTheme.shared.backgroundColor(in: colorScheme))
     }
 }
 
@@ -138,13 +140,14 @@ struct AddFriendView: View {
     @Binding var username: String
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
                 TextField("LeetCode Username", text: $username)
                     .padding()
-                    .background(Color(.systemGray6))
+                    .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
                     .cornerRadius(8)
                     .disabled(isLoading)
                 
@@ -181,6 +184,7 @@ struct AddFriendView: View {
                     isPresented = false
                 }
             )
+            .background(AppTheme.shared.backgroundColor(in: colorScheme))
         }
     }
     

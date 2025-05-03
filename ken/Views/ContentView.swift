@@ -11,6 +11,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var leetCodeVM = LeetCodeViewModel()
     @EnvironmentObject private var savedUsersVM: SavedUsersViewModel
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         TabView {
@@ -59,10 +60,14 @@ struct ContentView: View {
                         } else {
                             if let stats = leetCodeVM.userStats[leetCodeVM.currentUsername] {
                                 StatsView(stats: stats)
+                                    .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
+                                    .cornerRadius(8)
                             }
                             
                             if let calendar = leetCodeVM.userCalendars[leetCodeVM.currentUsername] {
                                 CalendarView(calendar: calendar)
+                                    .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
+                                    .cornerRadius(8)
                             }
                         }
                         
@@ -73,6 +78,7 @@ struct ContentView: View {
                     .padding()
                 }
                 .navigationTitle("Search")
+                .background(AppTheme.shared.backgroundColor(in: colorScheme))
             }
             .navigationViewStyle(.stack)
             .tabItem {
