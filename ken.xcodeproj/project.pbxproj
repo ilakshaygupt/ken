@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5C9BBB9D2D441521008F5A1D /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5C9BBB9C2D441521008F5A1D /* SwiftSoup */; };
 		5CD1B1082D4CAE0800AC9398 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD1B1072D4CAE0700AC9398 /* WidgetKit.framework */; };
 		5CD1B10A2D4CAE0800AC9398 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD1B1092D4CAE0800AC9398 /* SwiftUI.framework */; };
 		5CD1B1152D4CAE0A00AC9398 /* kenWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5CD1B1052D4CAE0700AC9398 /* kenWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -126,7 +125,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C9BBB9D2D441521008F5A1D /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +191,6 @@
 			);
 			name = ken;
 			packageProductDependencies = (
-				5C9BBB9C2D441521008F5A1D /* SwiftSoup */,
 			);
 			productName = ken;
 			productReference = 5C9BBB8A2D44121C008F5A1D /* ken.app */;
@@ -249,7 +246,6 @@
 			mainGroup = 5C9BBB812D44121C008F5A1D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				5C9BBB9B2D441521008F5A1D /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5C9BBB8B2D44121C008F5A1D /* Products */;
@@ -573,25 +569,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		5C9BBB9B2D441521008F5A1D /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scinfu/SwiftSoup";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.7.7;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		5C9BBB9C2D441521008F5A1D /* SwiftSoup */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5C9BBB9B2D441521008F5A1D /* XCRemoteSwiftPackageReference "SwiftSoup" */;
-			productName = SwiftSoup;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5C9BBB822D44121C008F5A1D /* Project object */;
 }

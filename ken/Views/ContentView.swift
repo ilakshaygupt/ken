@@ -10,10 +10,41 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var leetCodeVM = LeetCodeViewModel()
-    @StateObject private var savedUsersVM = SavedUsersViewModel()
+    @EnvironmentObject private var savedUsersVM: SavedUsersViewModel
     
     var body: some View {
         TabView {
+            
+            NavigationView {
+                HomeView(leetCodeVM: leetCodeVM, savedUsersVM: savedUsersVM)
+                    .navigationTitle("Home")
+            }
+            .navigationViewStyle(.stack)
+            .tabItem {
+                Label("Home", systemImage: "house")
+            }
+            
+            
+            NavigationView {
+                CompareView(leetCodeVM: leetCodeVM, savedUsersVM: savedUsersVM)
+                    .navigationTitle("Compare")
+            }
+            .navigationViewStyle(.stack)
+            .tabItem {
+                Label("Compare", systemImage: "chart.bar.xaxis")
+            }
+            
+            
+            NavigationView {
+                FriendsView(leetCodeVM: leetCodeVM, savedUsersVM: savedUsersVM)
+                    .navigationTitle("Friends")
+            }
+            .navigationViewStyle(.stack)
+            .tabItem {
+                Label("Friends", systemImage: "person.2")
+            }
+            
+            
             NavigationView {
                 ScrollView {
                     VStack(spacing: 20) {
@@ -59,5 +90,10 @@ struct ContentView: View {
             }
         }
         .tabViewStyle(.tabBarOnly)
+        .onAppear {
+            if let primaryUsername = savedUsersVM.primaryUsername {
+                leetCodeVM.fetchData(for: primaryUsername)
+            }
+        }
     }
 } 

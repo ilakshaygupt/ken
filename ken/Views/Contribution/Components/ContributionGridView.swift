@@ -14,14 +14,23 @@ struct ContributionGridView: View {
     @Binding var hoveredContribution: DailyContribution?
 
     
-    //
     private let cellSize: CGFloat = 11
     private let spacing: CGFloat = 3
-    private let monthSpacing: CGFloat = 10
-    private let monthsToShow = 3
+    private let monthSpacing: CGFloat = 10  
+    private let monthsToShow: Int
+    private let monthWidth: CGFloat = 90
+
     
     
     @Environment(\.colorScheme) private var colorScheme
+    
+    
+    
+    init(contributions: [DailyContribution], hoveredContribution: Binding<DailyContribution?>, monthsToShow: Int = 3) {
+           self.contributions = contributions
+           self._hoveredContribution = hoveredContribution
+           self.monthsToShow = monthsToShow
+       }
     
     private var calendar: Calendar {
         var calendar = Calendar.current
@@ -90,42 +99,63 @@ struct ContributionGridView: View {
     }
     
     var body: some View {
-            HStack(alignment: .top, spacing: monthSpacing) {
-                ForEach(monthlyContributions, id: \.0) { month, weeks in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(month)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.secondary)
-                        
-                        VStack(alignment: .leading, spacing: spacing) {
-                            ForEach(0..<7, id: \.self) { dayIndex in
-                                HStack(spacing: spacing) {
-                                    ForEach(weeks.indices, id: \.self) { weekIndex in
-                                        if dayIndex < weeks[weekIndex].count,
-                                           let contribution = weeks[weekIndex][dayIndex] {
-                                            ContributionCell(
-                                                contribution: contribution,
-                                                size: cellSize
-                                            )
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 2)
-                                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                            )
-                                            .onTapGesture {
-                                                hoveredContribution = contribution
-                                            }
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: true) {
+                HStack(alignment: .top, spacing: monthSpacing) {
+                    ForEach(Array(monthlyContributions.enumerated()), id: \.1.0) { index, element in
+                        let month = element.0
+                        let weeks = element.1
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(month)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth:.infinity,alignment: .center)
+                                
 
-                                        } else {
-                                            Color.clear
-                                                .frame(width: cellSize, height: cellSize)
+                            VStack(alignment: .leading, spacing: spacing) {
+                                ForEach(0..<7, id: \.self) { dayIndex in
+                                    HStack(spacing: spacing) {
+                                        ForEach(weeks.indices, id: \.self) { weekIndex in
+                                            if dayIndex < weeks[weekIndex].count,
+                                               let contribution = weeks[weekIndex][dayIndex] {
+                                                ContributionCell(
+                                                    contribution: contribution,
+                                                    size: cellSize
+                                                )
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 2)
+                                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                                )
+                                                .onTapGesture {
+                                                    hoveredContribution = contribution
+                                                }
+
+                                            } else {
+                                                Color.clear
+                                                    .frame(width: cellSize, height: cellSize)
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                        .frame(width: monthWidth)
+                        .id(index)
                     }
                 }
+                .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+                .frame(minWidth: UIScreen.main.bounds.width - 40)
+            }
+            .onAppear {
+                if let lastIndex = monthlyContributions.indices.last {
+                    DispatchQueue.main.async {
+                        withAnimation(.easeInOut(duration: 0.8)) {
+                                     proxy.scrollTo(lastIndex, anchor: .trailing)
+                                 }
+                    }
+                }
+            }
         }
-            .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
     }
+
 }

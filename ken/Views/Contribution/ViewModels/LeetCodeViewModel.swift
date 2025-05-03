@@ -42,7 +42,7 @@ class LeetCodeViewModel: ObservableObject {
         }
     }
     
-    func fetchData(for username: String, forceRefresh: Bool = false) {
+    func fetchData(for username: String, forceRefresh: Bool = false, completion: ((Bool) -> Void)? = nil) {
         
         error = nil
         
@@ -51,6 +51,7 @@ class LeetCodeViewModel: ObservableObject {
         
         
         if hasCachedData && !forceRefresh && !storageService.needsRefresh(forUsername: username) {
+            completion?(true)
             return
         }
         
@@ -63,10 +64,10 @@ class LeetCodeViewModel: ObservableObject {
         }
         
         
-        fetchFreshData(for: username)
+        fetchFreshData(for: username, completion: completion)
     }
     
-    private func fetchFreshData(for username: String) {
+    private func fetchFreshData(for username: String, completion: ((Bool) -> Void)? = nil) {
         
         let statsPublisher = createStatsFetchPublisher(for: username)
         
@@ -77,12 +78,15 @@ class LeetCodeViewModel: ObservableObject {
         Publishers.Zip(statsPublisher, calendarPublisher)
             .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: { [weak self] completion in
+                receiveCompletion: { [weak self] completionStatus in
                     self?.isLoading = false
                     self?.isFetchingFreshData = false
                     
-                    if case .failure(let err) = completion {
+                    if case .failure(let err) = completionStatus {
                         self?.error = err
+                        completion?(false)
+                    } else {
+                        completion?(true)
                     }
                 },
                 receiveValue: { [weak self] stats, calendar in
