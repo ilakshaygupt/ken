@@ -116,6 +116,10 @@ public class LeetCodeAPIClient {
                             }
                         }
                         
+                        let profile = matchedUser["profile"] as? [String: Any]
+                        let ranking = profile?["ranking"] as? Int
+
+
                         let stats = UserStats(
                             totalSolved: totalSolved,
                             easySolved: easySolved,
@@ -124,7 +128,9 @@ public class LeetCodeAPIClient {
                             easyTotal: easyTotal,
                             mediumTotal: mediumTotal,
                             hardTotal: hardTotal,
-                            totalProblems: totalProblems
+                            totalProblems: totalProblems,
+                            ranking: ranking ?? 0
+                            
                         )
                         
                         promise(.success(stats))

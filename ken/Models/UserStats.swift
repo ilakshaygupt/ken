@@ -19,5 +19,5 @@ public struct UserStats {
     public let mediumTotal: Int
     public let hardTotal: Int
     public let totalProblems: Int
-    public let ranking : Int
+    public let ranking : Int?
 }

@@ -166,6 +166,8 @@ class LeetCodeJSONStorageService {
                 }
             }
             
+            let profile = matchedUser["profile"] as? [String: Any]
+            let ranking = profile?["ranking"] as? Int
             return UserStats(
                 totalSolved: totalSolved,
                 easySolved: easySolved,
@@ -174,7 +176,8 @@ class LeetCodeJSONStorageService {
                 easyTotal: easyTotal,
                 mediumTotal: mediumTotal,
                 hardTotal: hardTotal,
-                totalProblems: totalProblems
+                totalProblems: totalProblems,
+                ranking: ranking ?? 0
             )
         } catch {
             print("Error parsing stats JSON: \(error)")

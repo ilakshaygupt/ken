@@ -25,7 +25,8 @@ struct StatsWidgetEntry: TimelineEntry {
                 easyTotal: 873,
                 mediumTotal: 1829,
                 hardTotal: 824,
-                totalProblems: 300
+                totalProblems: 300,
+                ranking: 3000
             )
         )
     }()

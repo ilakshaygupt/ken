@@ -236,14 +236,14 @@ struct HomeView: View {
                     Divider()
                         .frame(height: 40)
                     
-                    // Rating
-//                    statItem(
-//                        value: "\(stats.contestRating)",
-//                        label: "Rating",
-//                        icon: "star.fill",
-//                        color: .yellow
-//                    )
-//                    
+                     
+                    statItem(
+                        value: "\(stats.ranking ?? 0)",
+                        label: "Rating",
+                        icon: "star.fill",
+                        color: .yellow
+                    )
+                    
 //                    Divider()
 //                        .frame(height: 40)
 //                    
