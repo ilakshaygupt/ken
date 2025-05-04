@@ -31,12 +31,12 @@ class LeetCodeViewModel: ObservableObject {
             
             for username in usernames {
                 if let statsData = storageService.getStatsJSONResponse(forUsername: username),
-                   let stats = storageService.parseUserStats(from: statsData) {
+                   let stats = LeetCodeJSONParser.parseUserStats(from: statsData) {
                     userStats[username] = stats
                 }
                 
                 if let calendarData = storageService.getCalendarJSONResponse(forUsername: username),
-                   let calendar = storageService.parseUserCalendar(from: calendarData) {
+                   let calendar = LeetCodeJSONParser.parseUserCalendar(from: calendarData) {
                     userCalendars[username] = calendar
                 }
             }
@@ -46,35 +46,27 @@ class LeetCodeViewModel: ObservableObject {
     func fetchData(for username: String, forceRefresh: Bool = false, completion: ((Bool) -> Void)? = nil) {
         
         error = nil
-        
-        
+
         let hasCachedData = userStats[username] != nil && userCalendars[username] != nil
-        
         
         if hasCachedData && !forceRefresh && !storageService.needsRefresh(forUsername: username) {
             completion?(true)
             return
         }
         
-        
         if hasCachedData && !forceRefresh {
             isFetchingFreshData = true
         } else {
-            
             isLoading = true
         }
-        
         
         fetchFreshData(for: username, completion: completion)
     }
     
     private func fetchFreshData(for username: String, completion: ((Bool) -> Void)? = nil) {
-        
-        let statsPublisher = createStatsFetchPublisher(for: username)
-        
-        
-        let calendarPublisher = createCalendarFetchPublisher(for: username)
-        
+
+        let statsPublisher = LeetCodeAPIClient.getUserStats(for: username, queue: .global())
+        let calendarPublisher = LeetCodeAPIClient.getUserCalendar(for: username, queue: .global())
         
         Publishers.Zip(statsPublisher, calendarPublisher)
             .receive(on: DispatchQueue.main)
@@ -93,10 +85,8 @@ class LeetCodeViewModel: ObservableObject {
                 receiveValue: { [weak self] stats, calendar in
                     guard let self = self else { return }
                     
-                    
                     self.userStats[username] = stats
                     self.userCalendars[username] = calendar
-                    
                     
                     WidgetCenter.shared.reloadAllTimelines()
                 }
@@ -104,169 +94,35 @@ class LeetCodeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func createStatsFetchPublisher(for username: String) -> AnyPublisher<UserStats, Error> {
-        
-        return Future<UserStats, Error> { promise in
-            
-            let query = """
-            query userSessionProgress($username: String!) {
-              allQuestionsCount {
-                difficulty
-                count
-              }
-              matchedUser(username: $username) {
-                submitStats {
-                  acSubmissionNum {
-                    difficulty
-                    count
-                    submissions
-                  }
-                  totalSubmissionNum {
-                    difficulty
-                    count
-                    submissions
-                  }
-                }
-                profile {
-                  ranking
-                }
-              }
-            }
-            """
-            
-            let variables = ["username": username]
-            
-            var request = URLRequest(url: URL(string: "https://leetcode.com/graphql")!)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.setValue("https://leetcode.com", forHTTPHeaderField: "Referer")
-            
-            let body = [
-                "query": query,
-                "variables": variables
-            ] as [String : Any]
-            
-            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-            
-            URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-                if let error = error {
-                    promise(.failure(error))
-                    return
-                }
-                
-                guard let data = data else {
-                    promise(.failure(URLError(.badServerResponse)))
-                    return
-                }
-                
-                
-                self?.storageService.saveStatsJSONResponse(data, forUsername: username)
-                
-                
-                if let stats = self?.storageService.parseUserStats(from: data) {
-                    promise(.success(stats))
-                } else {
-                    promise(.failure(URLError(.cannotParseResponse)))
-                }
-            }.resume()
-        }.eraseToAnyPublisher()
-    }
-    
-    private func createCalendarFetchPublisher(for username: String) -> AnyPublisher<UserCalendar, Error> {
-        
-        return Future<UserCalendar, Error> { promise in
-            
-            let query = """
-            query userProfileCalendar($username: String!, $year: Int) {
-                matchedUser(username: $username) {
-                    userCalendar(year: $year) {
-                        activeYears
-                        streak
-                        totalActiveDays
-                        dccBadges {
-                            timestamp
-                            badge {
-                                name
-                                icon
-                            }
-                        }
-                        submissionCalendar
-                    }
-                }
-            }
-            """
-            
-            let variables = ["username": username]
-            
-            var request = URLRequest(url: URL(string: "https://leetcode.com/graphql")!)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.setValue("https://leetcode.com", forHTTPHeaderField: "Referer")
-            
-            let body = [
-                "query": query,
-                "variables": variables,
-                "operationName": "userProfileCalendar"
-            ] as [String : Any]
-            
-            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-            
-            URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-                if let error = error {
-                    promise(.failure(error))
-                    return
-                }
-                
-                guard let data = data else {
-                    promise(.failure(URLError(.badServerResponse)))
-                    return
-                }
-                
-                
-                self?.storageService.saveCalendarJSONResponse(data, forUsername: username)
-                
-                
-                if let calendar = self?.storageService.parseUserCalendar(from: data) {
-                    promise(.success(calendar))
-                } else {
-                    promise(.failure(URLError(.cannotParseResponse)))
-                }
-            }.resume()
-        }.eraseToAnyPublisher()
-    }
-    
     func fetchUserProfile(for username: String) {
-    // Check if we have cached data that doesn't need refresh
-    if let profileData = storageService.getProfileJSONResponse(forUsername: username),
-       !storageService.needsRefresh(forUsername: username),
-       let profile = storageService.parseUserProfile(from: profileData) {
-        self.userProfiles[username] = profile
-        return
-    }
-    
-    // Fetch fresh data
-    LeetCode.getUserProfile(for: username)
-        .receive(on: DispatchQueue.main)
-        .sink(
-            receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    print("Error fetching user profile: \(error)")
+        if let profileData = storageService.getProfileJSONResponse(forUsername: username),
+           !storageService.needsRefresh(forUsername: username),
+           let profile = LeetCodeJSONParser.parseUserProfile(from: profileData) {
+            self.userProfiles[username] = profile
+            return
+        }
+        
+        LeetCodeAPIClient.getUserProfile(for: username, queue: .global())
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { completion in
+                    if case .failure(let error) = completion {
+                        print("Error fetching user profile: \(error)")
+                    }
+                },
+                receiveValue: { [weak self] result in
+                    guard let self = self else { return }
+                    let (profile, responseData) = result
+                    self.userProfiles[username] = profile
+                    self.storageService.saveProfileJSONResponse(responseData, forUsername: username)
                 }
-            },
-            receiveValue: { [weak self] result in
-                           guard let self = self else { return }
-                           let (profile, responseData) = result  // Destructure the tuple
-                           self.userProfiles[username] = profile  // Now profile is just the UserProfile
-                           self.storageService.saveProfileJSONResponse(responseData, forUsername: username)
-                       }
-        )
-        .store(in: &cancellables)
-}
+            )
+            .store(in: &cancellables)
+    }
     
     func refreshAllUsers() {
         
         let usernames = Set(userStats.keys).union(userCalendars.keys)
-        
         
         for username in usernames {
             fetchData(for: username, forceRefresh: true)

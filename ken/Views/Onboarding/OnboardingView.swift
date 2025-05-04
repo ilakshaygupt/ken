@@ -2,9 +2,8 @@
 //  OnboardingView.swift
 //  ken
 //
-//  Created by Claude on 25/07/25.
+//  Created by Lakshay Gupta on 04/05/25.
 //
-
 import SwiftUI
 
 struct OnboardingView: View {
@@ -18,7 +17,6 @@ struct OnboardingView: View {
     @State private var isComplete = false
     @AppStorage("has_completed_onboarding") private var hasCompletedOnboarding = false
     
-    // Define custom colors
     private let primaryColor = Color(red: 0.2, green: 0.5, blue: 0.9)
     private let secondaryColor = Color(red: 0.95, green: 0.95, blue: 0.97)
     private let accentColor = Color(red: 0.9, green: 0.3, blue: 0.3)
@@ -106,24 +104,24 @@ struct OnboardingView: View {
             }
             .navigationBarHidden(true)
             .overlay(
-                // Error popup
                 ErrorPopupView(
                     isShowing: $showErrorAlert,
                     errorMessage: errorMessage ?? "An error occurred",
                     onDismiss: {
                         showErrorAlert = false
-                        username = "" // Clear text field on error dismissal
+                        username = ""
                     }
                 )
             )
             .overlay(
-                // Success popup
                 SuccessPopupView(
                     isShowing: $showSuccessAlert,
                     username: username,
                     onDismiss: {
+                        print("Success popup dismissed - transitioning to ContentView")
                         showSuccessAlert = false
-                        // Navigate to ContentView after success popup animation completes
+                        // Only now set isComplete to true to trigger the transition
+                        hasCompletedOnboarding = true
                         isComplete = true
                     }
                 )
@@ -133,6 +131,11 @@ struct OnboardingView: View {
             ContentView()
                 .environmentObject(savedUsersVM)
         }
+        .onChange(of: isComplete) { newValue in
+            if newValue {
+                print("isComplete changed to true - transitioning to ContentView")
+            }
+        }
     }
     
     private func verifyAndSaveUsername() {
@@ -140,64 +143,63 @@ struct OnboardingView: View {
         errorMessage = nil
         
         leetCodeVM.fetchData(for: username) { success in
-            isLoading = false
-            if success {
-                // Save the username first
-                savedUsersVM.setPrimaryUsername(username)
-                hasCompletedOnboarding = true
+            // Ensure UI updates happen on main thread
+            DispatchQueue.main.async {
+                isLoading = false
                 
-                // Show success popup - BUT don't navigate yet
-                showSuccessAlert = true
-                
-                // The navigation to ContentView will happen when the popup is dismissed
-                // via the onDismiss callback in the SuccessPopupView overlay
-            } else {
-                errorMessage = "Could not find that LeetCode username. Please try again."
-                showErrorAlert = true
+                if success {
+                    print("Username verification successful, showing success popup") // Debug log
+                    
+                    // Save user data first
+                    savedUsersVM.setPrimaryUsername(username)
+                    
+                    // Show success popup with slight delay to ensure state updates are processed
+                    // Important: Don't set hasCompletedOnboarding here
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showSuccessAlert = true
+                    }
+                } else {
+                    print("Username verification failed, showing error popup") // Debug log
+                    errorMessage = "Could not find that LeetCode username. Please try again."
+                    showErrorAlert = true
+                }
             }
         }
     }
 }
 
-// Custom Error Popup View
+
 struct ErrorPopupView: View {
     @Binding var isShowing: Bool
     let errorMessage: String
     let onDismiss: () -> Void
     
-    // For animation
     @State private var offset: CGFloat = 1000
     
     var body: some View {
         ZStack {
             if isShowing {
-                // Semi-transparent background
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                     .onTapGesture {
                         dismissPopup()
                     }
                 
-                // Error popup card
                 VStack(spacing: 20) {
-                    // Error icon
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.system(size: 50))
                         .foregroundColor(.red)
                         .padding(.top, 25)
                     
-                    // Error title
                     Text("Oops!")
                         .font(.system(size: 22, weight: .bold))
                     
-                    // Error message
                     Text(errorMessage)
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
                         .foregroundColor(.secondary)
                     
-                    // Dismiss button
                     Button(action: dismissPopup) {
                         Text("Try Again")
                             .font(.headline)
@@ -230,20 +232,17 @@ struct ErrorPopupView: View {
             offset = 1000
         }
         
-        // Slight delay before fully dismissing to allow animation to complete
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             onDismiss()
         }
     }
 }
 
-// Update the SuccessPopupView to fix animation and timing issues
 struct SuccessPopupView: View {
     @Binding var isShowing: Bool
     let username: String
     let onDismiss: () -> Void
     
-    // For animation
     @State private var offset: CGFloat = 1000
     @State private var checkmarkScale: CGFloat = 0.1
     @State private var rotationDegrees: Double = 0
@@ -252,13 +251,10 @@ struct SuccessPopupView: View {
     var body: some View {
         ZStack {
             if isShowing {
-                // Semi-transparent background
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                 
-                // Success popup card
                 VStack(spacing: 20) {
-                    // Success checkmark with animation
                     ZStack {
                         Circle()
                             .fill(Color.green)
@@ -272,11 +268,9 @@ struct SuccessPopupView: View {
                     }
                     .padding(.top, 25)
                     
-                    // Success title
                     Text("Welcome!")
                         .font(.system(size: 22, weight: .bold))
                     
-                    // Success message
                     VStack(spacing: 8) {
                         Text("Username verified successfully")
                             .font(.body)
@@ -289,7 +283,6 @@ struct SuccessPopupView: View {
                     }
                     .padding(.horizontal, 20)
                     
-                    // Confetti or celebration effect
                     HStack {
                         ForEach(0..<5) { index in
                             Image(systemName: "star.fill")
@@ -305,7 +298,6 @@ struct SuccessPopupView: View {
                         }
                     }
                     
-                    // Continue button
                     Button(action: dismissPopup) {
                         Text("Let's Go!")
                             .font(.headline)
@@ -324,40 +316,34 @@ struct SuccessPopupView: View {
                 .shadow(radius: 20)
                 .offset(y: offset)
                 .onAppear {
-                    // Animate the popup sliding in
+                    print("SuccessPopupView appeared - animating in")
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                         offset = 0
                     }
                     
-                    // Animate the checkmark
                     withAnimation(.spring(response: 0.7, dampingFraction: 0.6).delay(0.3)) {
                         checkmarkScale = 1.0
                         rotationDegrees = 360
                     }
                     
-                    // Start confetti animation
                     confettiCounter = 1
-                    
-                    // Auto-dismiss after a longer delay (3.5 seconds)
-                    // This gives users time to see the success animation
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-                        dismissPopup()
-                    }
                 }
             }
         }
+        .animation(.easeInOut, value: isShowing)
     }
     
     private func dismissPopup() {
-        // First animate the popup sliding away
         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
             offset = 1000
         }
         
-        // Then wait for animation to complete before calling onDismiss
-        // which will trigger navigation to ContentView
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             onDismiss()
         }
     }
-} 
+}
+
+#Preview {
+    OnboardingView(savedUsersVM: SavedUsersViewModel())
+}

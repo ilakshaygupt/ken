@@ -72,6 +72,7 @@
 				Network/GraphQLQueries.swift,
 				Network/LeetCode.swift,
 				Network/LeetCodeAPIClient.swift,
+				Services/LeetcodeJSONParser.swift,
 				Services/LeetcodeJSONStorageService.swift,
 				Views/Contribution/Components/ContributionCell.swift,
 				Views/Contribution/Components/ContributionGridView.swift,
@@ -430,7 +431,7 @@
 				CODE_SIGN_ENTITLEMENTS = ken/ken.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"ken/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = ken/Services/LeetcodeJSONParser.swift;
 				DEVELOPMENT_TEAM = 57Y8VNA6WW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -460,7 +461,7 @@
 				CODE_SIGN_ENTITLEMENTS = ken/ken.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"ken/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = ken/Services/LeetcodeJSONParser.swift;
 				DEVELOPMENT_TEAM = 57Y8VNA6WW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -489,7 +490,7 @@
 				CODE_SIGN_ENTITLEMENTS = kenWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken/Services/LeetcodeJSONStorageService.swift ken/Network/LeetCode.swift ken/Views";
+				DEVELOPMENT_ASSET_PATHS = "ken/Network/LeetCode.swift ken/Services/LeetcodeJSONStorageService.swift ken/Services/LeetcodeJSONParser.swift ken/Views";
 				DEVELOPMENT_TEAM = 57Y8VNA6WW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = kenWidget/Info.plist;
@@ -518,7 +519,7 @@
 				CODE_SIGN_ENTITLEMENTS = kenWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken/Services/LeetcodeJSONStorageService.swift ken/Network/LeetCode.swift ken/Views";
+				DEVELOPMENT_ASSET_PATHS = "ken/Network/LeetCode.swift ken/Services/LeetcodeJSONStorageService.swift ken/Services/LeetcodeJSONParser.swift ken/Views";
 				DEVELOPMENT_TEAM = 57Y8VNA6WW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = kenWidget/Info.plist;

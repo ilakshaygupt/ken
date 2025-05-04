@@ -1,3 +1,11 @@
+//
+//  SplashScreenView.swift
+//  ken
+//
+//  Created by Lakshay Gupta on 04/05/25.
+//
+
+
 import SwiftUI
 
 struct SplashScreenView: View {
@@ -22,7 +30,7 @@ struct SplashScreenView: View {
                     .ignoresSafeArea()
                 
                 VStack {
-                    Image("icon") // Make sure your app icon is in Assets
+                    Image("icon")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 150, height: 150)
@@ -47,7 +55,6 @@ struct SplashScreenView: View {
                         self.opacity = 1.0
                     }
                     
-                    // Navigate to appropriate view after a delay
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                         withAnimation {
                             self.isActive = true

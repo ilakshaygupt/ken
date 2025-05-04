@@ -229,6 +229,7 @@ struct HomeView: View {
                 if let userProfile = leetCodeVM.userProfiles[username], 
                    let avatarUrl = userProfile.userAvatar, 
                    !avatarUrl.isEmpty {
+                    
                     AsyncImage(url: URL(string: avatarUrl)) { image in
                         image
                             .resizable()

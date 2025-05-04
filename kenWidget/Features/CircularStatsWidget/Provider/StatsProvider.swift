@@ -51,7 +51,7 @@ struct StatsProvider: AppIntentTimelineProvider {
                 let statsData = try await fetchStatsJSONData(for: username)
                 storageService.saveStatsJSONResponse(statsData, forUsername: username)
 
-                if let stats = storageService.parseUserStats(from: statsData) {
+                if let stats = LeetCodeJSONParser.parseUserStats(from: statsData) {
                     let entry = StatsWidgetEntry(date: Date(), username: username, stats: stats)
                     return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
                 }

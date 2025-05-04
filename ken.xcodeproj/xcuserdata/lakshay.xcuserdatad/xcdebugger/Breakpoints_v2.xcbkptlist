@@ -3,4 +3,150 @@
    uuid = "7CC35767-9C4A-4056-ABB5-44D09B354FFA"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kenWidget/Commons/ViewModels/WidgetSavedUsersViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "WidgetSavedUsersViewModel"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - 3409a8caabd2d1b9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "property wrapper backing initializer of kenWidgetExtension.WidgetSavedUsersViewModel.savedUsernames : Swift.Array&lt;Swift.String&gt;"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lakshay/ken/kenWidget/Commons/ViewModels/WidgetSavedUsersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0">
+               </Location>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - cda838cac012c1b8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kenWidgetExtension.WidgetSavedUsersViewModel.savedUsernames.getter : Swift.Array&lt;Swift.String&gt;"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lakshay/ken/kenWidget/Commons/ViewModels/WidgetSavedUsersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0">
+               </Location>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - 31cba19e9544bbc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kenWidgetExtension.WidgetSavedUsersViewModel.savedUsernames.setter : Swift.Array&lt;Swift.String&gt;"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lakshay/ken/kenWidget/Commons/ViewModels/WidgetSavedUsersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "16"
+                  endingLineNumber = "16">
+               </Location>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - 3547cf56763d2aaf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kenWidgetExtension.WidgetSavedUsersViewModel.savedUsernames.modify : Swift.Array&lt;Swift.String&gt;"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lakshay/ken/kenWidget/Commons/ViewModels/WidgetSavedUsersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "16"
+                  endingLineNumber = "16">
+               </Location>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - 117dc56a4ad1e9c8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kenWidgetExtension.WidgetSavedUsersViewModel.savedUsernames.modify : Swift.Array&lt;Swift.String&gt; with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0">
+               </Location>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - 9b2e5223bbe00b26"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kenWidgetExtension.WidgetSavedUsersViewModel.$savedUsernames.getter : Combine.Published&lt;Swift.Array&lt;Swift.String&gt;&gt;.Publisher"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lakshay/ken/kenWidget/Commons/ViewModels/WidgetSavedUsersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0">
+               </Location>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - eb4f1db70f02cd3a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kenWidgetExtension.WidgetSavedUsersViewModel.$savedUsernames.setter : Combine.Published&lt;Swift.Array&lt;Swift.String&gt;&gt;.Publisher"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lakshay/ken/kenWidget/Commons/ViewModels/WidgetSavedUsersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "16"
+                  endingLineNumber = "16">
+               </Location>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - 4125bd30fb128d35"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kenWidgetExtension.WidgetSavedUsersViewModel.$savedUsernames.modify : Combine.Published&lt;Swift.Array&lt;Swift.String&gt;&gt;.Publisher"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lakshay/ken/kenWidget/Commons/ViewModels/WidgetSavedUsersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "16"
+                  endingLineNumber = "16">
+               </Location>
+               <Location
+                  uuid = "0B35DA12-7E2A-4866-A797-4D03CF868710 - b9b545c5a3161311"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "kenWidgetExtension.WidgetSavedUsersViewModel.$savedUsernames.modify : Combine.Published&lt;Swift.Array&lt;Swift.String&gt;&gt;.Publisher with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "kenWidgetExtension.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

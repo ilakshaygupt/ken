@@ -54,7 +54,7 @@ struct UserProvider: AppIntentTimelineProvider {
                 let calendarData = try await fetchCalendarJSONData(for: username)
                 storageService.saveCalendarJSONResponse(calendarData, forUsername: username)
 
-                if let calendar = storageService.parseUserCalendar(from: calendarData) {
+                if let calendar = LeetCodeJSONParser.parseUserCalendar(from: calendarData) {
                     let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
                     let entry = ContributionWidgetEntry(date: Date(), username: username, contributions: contributions)
                     return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
