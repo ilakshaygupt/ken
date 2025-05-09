@@ -64,6 +64,7 @@
 			membershipExceptions = (
 				Const/AppGroup.swift,
 				Const/UICOlors.swift,
+				Const/UIConstants.swift,
 				Models/Badge.swift,
 				Models/DailyContribution.swift,
 				Models/UserCalendar.swift,

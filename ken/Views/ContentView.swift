@@ -48,34 +48,7 @@ struct ContentView: View {
             
             NavigationView {
                 ScrollView {
-                    VStack(spacing: 20) {
-                        SearchBar(username: $leetCodeVM.currentUsername) {
-                            leetCodeVM.fetchData(for: leetCodeVM.currentUsername)
-                            savedUsersVM.addUsername(leetCodeVM.currentUsername)
-                        }
-                        .disabled(leetCodeVM.isLoading)
-                        
-                        if leetCodeVM.isLoading {
-                            ProgressView()
-                        } else {
-                            if let stats = leetCodeVM.userStats[leetCodeVM.currentUsername] {
-                                StatsView(stats: stats)
-                                    .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-                                    .cornerRadius(8)
-                            }
-                            
-                            if let calendar = leetCodeVM.userCalendars[leetCodeVM.currentUsername] {
-                                CalendarView(calendar: calendar)
-                                    .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-                                    .cornerRadius(8)
-                            }
-                        }
-                        
-                        if let error = leetCodeVM.error {
-                            ErrorView(message: error.localizedDescription)
-                        }
-                    }
-                    .padding()
+                    SearchView()
                 }
                 .navigationTitle("Search")
                 .background(AppTheme.shared.backgroundColor(in: colorScheme))
