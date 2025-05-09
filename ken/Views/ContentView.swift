@@ -28,7 +28,7 @@ struct ContentView: View {
             
             NavigationView {
                 CompareView(leetCodeVM: leetCodeVM, savedUsersVM: savedUsersVM)
-                    .navigationTitle("Compare")
+//                    .navigationTitle("Compare")
             }
             .navigationViewStyle(.stack)
             .tabItem {
