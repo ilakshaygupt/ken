@@ -89,12 +89,47 @@ struct HomeView: View {
                         } else if let stats = leetCodeVM.userStats[primaryUsername],
                                   let calendar = leetCodeVM.userCalendars[primaryUsername] {
                             
-                            // Display only two sections: Stats and Graph
                             VStack(spacing: 24) {
-                                // Stats Section
                                 sectionView(title: "Statistics", systemImage: "chart.bar", gradient: [.blue, .blue.opacity(0.7)]) {
-                                    StatsCardView(stats: stats)
-                                        .padding()
+                                    VStack(alignment: .center, spacing: 8) {
+                                        HStack(alignment: .center, spacing: 24) {
+                                            MultiArcProgressView(
+                                                easyProgress: Double(stats.easySolved) / 873,
+                                                mediumProgress: Double(stats.mediumSolved) / 1829,
+                                                hardProgress: Double(stats.hardSolved) / 824,
+                                                lineWidth: 13,
+                                                totalQuestions: stats.totalProblems,
+                                                solvedQuestion: stats.totalSolved
+                                            )
+                                            .frame(width: UIScreen.main.bounds.width * 0.3, height: 124)
+                                            Divider()
+                                            VStack(alignment: .leading) {
+                                                Spacer()
+                                                DifficultyStatView(
+                                                    label: "Easy",
+                                                    solved: stats.easySolved,
+                                                    total: stats.easyTotal,
+                                                    color: Color(hex: "1cbbba")
+                                                )
+                                                Spacer()
+                                                DifficultyStatView(
+                                                    label: "Med",
+                                                    solved: stats.mediumSolved,
+                                                    total: stats.mediumTotal,
+                                                    color: .yellow
+                                                )
+                                                Spacer()
+                                                DifficultyStatView(
+                                                    label: "Hard",
+                                                    solved: stats.hardSolved,
+                                                    total: stats.hardTotal,
+                                                    color: .red
+                                                )
+                                                Spacer()
+                                            }
+                                        }
+                                    }
+                                    .padding()
                                 }
                                 
                                 // Graph Section - simplified to always show 12 months

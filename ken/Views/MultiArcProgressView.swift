@@ -56,11 +56,11 @@ struct MultiArcProgressView: View {
             
             VStack {
                     Text("\(solvedQuestion)")
-                    .font(.system(size: 18,design: .monospaced))
+                    .font(.system(size: 18))
                     .fontWeight(.bold)
                             
                     Text("/\(totalQuestions)")
-                    .font(.system(size:  15,design: .monospaced))
+                    .font(.system(size:  15))
                     .foregroundColor(.gray)
             }
         }
