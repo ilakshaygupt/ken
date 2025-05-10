@@ -97,7 +97,7 @@ struct HomeView: View {
                                                 easyProgress: Double(stats.easySolved) / 873,
                                                 mediumProgress: Double(stats.mediumSolved) / 1829,
                                                 hardProgress: Double(stats.hardSolved) / 824,
-                                                lineWidth: 13,
+                                                lineWidth: 12,
                                                 totalQuestions: stats.totalProblems,
                                                 solvedQuestion: stats.totalSolved
                                             )

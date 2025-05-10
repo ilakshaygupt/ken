@@ -78,19 +78,28 @@ struct CompareView: View {
                                     VStack(alignment: .center, spacing: 12) {
                                         ZStack {
                                             Circle()
-                                                
+                                                .fill(Color.blue.opacity(0.1))
                                                 .frame(width: 86, height: 86)
                                             
                                             userAvatarView(for: userProfile)
                                                 .frame(width: 80, height: 80)
                                                 .clipShape(Circle())
-                                                
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(Color.blue.opacity(0.3), lineWidth: 2)
+                                                )
                                         }
                                         
                                         VStack(spacing: 4) {
                                             Text(userProfile.realName ?? primaryUsername)
                                                 .font(.title3)
                                                 .fontWeight(.bold)
+                                            
+                                            if let jobTitle = userProfile.jobTitle, !jobTitle.isEmpty {
+                                                Text(jobTitle)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.secondary)
+                                            }
                                         }
                                     }
                                     .padding(.vertical, 12)
@@ -103,10 +112,15 @@ struct CompareView: View {
                                     HStack(spacing: 12) {
                                         ZStack {
                                             Circle()
+                                                .fill(Color.blue.opacity(0.1))
                                                 .frame(width: 42, height: 42)
                                             userAvatarView(for: userProfile)
                                                 .frame(width: 38, height: 38)
                                                 .clipShape(Circle())
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                                )
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 2) {
@@ -192,9 +206,13 @@ struct CompareView: View {
                                                         }
                                                         .frame(width: 24, height: 24)
                                                         .clipShape(Circle())
+                                                        .overlay(
+                                                            Circle()
+                                                                .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                                                        )
                                                     } else {
                                                         Image(systemName: "person.2.fill")
-                                                            
+                                                            .foregroundColor(.green)
                                                     }
                                                     
                                                     Text(selectedUsername ?? "Select user")
@@ -204,11 +222,12 @@ struct CompareView: View {
                                                     
                                                     Image(systemName: "chevron.down")
                                                         .font(.caption)
+                                                        .foregroundColor(.secondary)
                                                 }
-                                                .foregroundColor(.primary)
                                                 .padding(.vertical, 10)
                                                 .padding(.horizontal, 16)
-
+                                                .background(Color.secondary.opacity(0.1))
+                                                .cornerRadius(10)
                                             }
                                             .buttonStyle(PlainButtonStyle())
                                         }

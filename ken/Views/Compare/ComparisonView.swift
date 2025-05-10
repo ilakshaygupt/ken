@@ -38,13 +38,18 @@ struct ComparisonView: View {
                     .font(.headline)
                     .foregroundColor(primaryColor)
                     .lineLimit(1)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(primaryColor.opacity(0.1))
+                    .cornerRadius(8)
             }
             .frame(maxWidth: .infinity)
             
             Text("VS")
                 .font(.headline)
                 .foregroundColor(neutralColor)
-                .padding(.horizontal, 5)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
             
             VStack(alignment: .center) {
                 Text(compareUsername)
@@ -191,148 +196,163 @@ struct ComparisonView: View {
     }
     
     private var progressComparison: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             Text("Progress Comparison")
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            HStack(spacing: 20) {
-                progressCircle(
-                    username: primaryUsername,
-                    total: primaryStats.totalSolved,
-                    color: primaryColor
-                )
+            HStack(spacing: 30) {
+                // Primary user progress
+                VStack(spacing: 8) {
+                    MultiArcProgressView(
+                        easyProgress: Double(primaryStats.easySolved) / Double(primaryStats.easyTotal),
+                        mediumProgress: Double(primaryStats.mediumSolved) / Double(primaryStats.mediumTotal),
+                        hardProgress: Double(primaryStats.hardSolved) / Double(primaryStats.hardTotal),
+                        lineWidth: 12,
+                        totalQuestions: primaryStats.totalProblems,
+                        solvedQuestion: primaryStats.totalSolved
+                    )
+                    .frame(width: 120, height: 120)
+                    
+                    Text(primaryUsername)
+                        .font(.caption)
+                        .foregroundColor(primaryColor)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: 120)
+                }
+                Divider()
                 
-                progressCircle(
-                    username: compareUsername,
-                    total: compareStats.totalSolved,
-                    color: compareColor
-                )
+                // Compare user progress
+                VStack(spacing: 8) {
+                    MultiArcProgressView(
+                        easyProgress: Double(compareStats.easySolved) / Double(compareStats.easyTotal),
+                        mediumProgress: Double(compareStats.mediumSolved) / Double(compareStats.mediumTotal),
+                        hardProgress: Double(compareStats.hardSolved) / Double(compareStats.hardTotal),
+                        lineWidth: 12,
+                        totalQuestions: compareStats.totalProblems,
+                        solvedQuestion: compareStats.totalSolved
+                    )
+                    .frame(width: 120, height: 120)
+                    
+                    Text(compareUsername)
+                        .font(.caption)
+                        .foregroundColor(compareColor)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: 120)
+                }
             }
         }
         .padding()
         .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
-    }
-    
-    private func progressCircle(username: String, total: Int, color: Color) -> some View {
-        VStack {
-            ZStack {
-                Circle()
-                    .stroke(color.opacity(0.2), lineWidth: 10)
-                    .frame(width: 120, height: 120)
-                
-                Circle()
-                    .trim(from: 0, to: min(CGFloat(total) / 2200.0, 1.0))
-                    .stroke(color, style: StrokeStyle(lineWidth: 10, lineCap: .round))
-                    .frame(width: 120, height: 120)
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeInOut(duration: 1.0), value: total)
-                
-                VStack {
-                    Text("\(total)")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(color)
-                    
-                    Text("solved")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            Text(username)
-                .font(.caption)
-                .foregroundColor(color)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .frame(maxWidth: 120)
-        }
-        .frame(maxWidth: .infinity)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
     }
     
     private var difficultyBarChart: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             Text("Problem Difficulty Breakdown")
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            HStack(alignment: .bottom, spacing: 8) {
-                difficultyBar(label: "Easy", value1: primaryStats.easySolved, value2: compareStats.easySolved, maxValue: 600)
-                difficultyBar(label: "Medium", value1: primaryStats.mediumSolved, value2: compareStats.mediumSolved, maxValue: 1200)
-                difficultyBar(label: "Hard", value1: primaryStats.hardSolved, value2: compareStats.hardSolved, maxValue: 500)
+            VStack(spacing: 20) {
+                // Easy problems
+                difficultySection(
+                    label: "Easy",
+                    value1: primaryStats.easySolved,
+                    value2: compareStats.easySolved,
+                    total1: primaryStats.easyTotal,
+                    total2: compareStats.easyTotal,
+                    color: Color(hex: "1cbbba")
+                )
+                
+                // Medium problems
+                difficultySection(
+                    label: "Medium",
+                    value1: primaryStats.mediumSolved,
+                    value2: compareStats.mediumSolved,
+                    total1: primaryStats.mediumTotal,
+                    total2: compareStats.mediumTotal,
+                    color: Color.yellow
+                )
+                
+                // Hard problems
+                difficultySection(
+                    label: "Hard",
+                    value1: primaryStats.hardSolved,
+                    value2: compareStats.hardSolved,
+                    total1: primaryStats.hardTotal,
+                    total2: compareStats.hardTotal,
+                    color: Color.red
+                )
             }
-            .padding(.top, 8)
             
-            HStack {
-                Circle()
-                    .fill(primaryColor)
-                    .frame(width: 10, height: 10)
-                Text(primaryUsername)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            // Legend
+            HStack(spacing: 20) {
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(primaryColor)
+                        .frame(width: 8, height: 8)
+                    Text(primaryUsername)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
                 
-                Spacer()
-                
-                Circle()
-                    .fill(compareColor)
-                    .frame(width: 10, height: 10)
-                Text(compareUsername)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(compareColor)
+                        .frame(width: 8, height: 8)
+                    Text(compareUsername)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
             .padding(.top, 8)
         }
         .padding()
         .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
     }
     
-    private func difficultyBar(label: String, value1: Int, value2: Int, maxValue: Int) -> some View {
-        HStack(spacing: 2) {
-            VStack(spacing: 8) {
+    private func difficultySection(
+        label: String,
+        value1: Int,
+        value2: Int,
+        total1: Int,
+        total2: Int,
+        color: Color
+    ) -> some View {
+        VStack(spacing: 8) {
+            HStack {
                 Text(label)
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
-                
-                HStack(spacing: 1) {
-                    // Primary user bar
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(primaryColor.opacity(0.3))
-                            .frame(width: 30, height: 150)
-                        
-                        Rectangle()
-                            .fill(primaryColor)
-                            .frame(width: 30, height: min(150 * CGFloat(value1) / CGFloat(maxValue), 150))
-                            .animation(.easeInOut(duration: 0.8), value: value1)
-                    }
-                    .cornerRadius(6)
+                Spacer()
+            }
+            
+            HStack(spacing: 12) {
+                // Primary user progress
+                VStack(alignment: .leading, spacing: 4) {
+                    ProgressView(value: Double(value1), total: Double(total1))
+                        .progressViewStyle(LinearProgressViewStyle(tint: color))
+                        .frame(height: 8)
                     
-                    // Compare user bar
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(compareColor.opacity(0.3))
-                            .frame(width: 30, height: 150)
-                        
-                        Rectangle()
-                            .fill(compareColor)
-                            .frame(width: 30, height: min(150 * CGFloat(value2) / CGFloat(maxValue), 150))
-                            .animation(.easeInOut(duration: 0.8), value: value2)
-                    }
-                    .cornerRadius(6)
+                    Text("\(value1)/\(total1)")
+                        .font(.caption)
+                        .foregroundColor(color)
                 }
                 
-                HStack(spacing: 10) {
-                    Text("\(value1)")
-                        .font(.caption)
-                        .foregroundColor(primaryColor)
+                // Compare user progress
+                VStack(alignment: .leading, spacing: 4) {
+                    ProgressView(value: Double(value2), total: Double(total2))
+                        .progressViewStyle(LinearProgressViewStyle(tint: color))
+                        .frame(height: 8)
                     
-                    Text("\(value2)")
+                    Text("\(value2)/\(total2)")
                         .font(.caption)
-                        .foregroundColor(compareColor)
+                        .foregroundColor(color)
                 }
             }
         }
