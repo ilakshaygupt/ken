@@ -13,40 +13,84 @@ struct FriendsView: View {
     @State private var showingAddSheet = false
     @State private var newUsername = ""
     @Environment(\.colorScheme) private var colorScheme
+    @State private var searchText = ""
+    @State private var sortOption: SortOption = .name
+    @State private var isRefreshing = false
+    
+    enum SortOption: String, CaseIterable {
+        case name = "Name"
+        case rank = "Rank"
+        case solved = "Solved"
+    }
     
     var body: some View {
         NavigationView {
             ZStack {
-                VStack {
+                // Main content
+                VStack(spacing: 0) {
                     if savedUsersVM.savedUsernames.isEmpty {
                         emptyStateView
                     } else {
                         friendsList
                     }
                 }
-                .onAppear {
-                    for username in savedUsersVM.savedUsernames {
-                        leetCodeVM.fetchData(for: username)
-                    }
-                }
+                .searchable(text: $searchText, prompt: "Search friends")
+
                 .background(AppTheme.shared.backgroundColor(in: colorScheme))
                 
-                // Floating action button
+                // Add friend button
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
-                        Button(action: { showingAddSheet = true }) {
+                        Button(action: { 
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                showingAddSheet = true
+                            }
+                        }) {
                             Image(systemName: "person.badge.plus")
-                                .font(.system(size: 22))
+                                .font(.system(size: 22, weight: .semibold))
                                 .foregroundColor(.white)
-                                .frame(width: 60, height: 60)
-                                .background(Color.blue)
+                                .frame(width: 56, height: 56)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
                                 .clipShape(Circle())
-                                .shadow(radius: 4)
+                                .shadow(color: Color.blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white.opacity(0.2), lineWidth: 2)
+                                )
                         }
                         .padding(.trailing, 20)
                         .padding(.bottom, 20)
+                        .scaleEffect(showingAddSheet ? 0.95 : 1.0)
+                    }
+                }
+            }
+            .navigationTitle("Friends")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        ForEach(SortOption.allCases, id: \.self) { option in
+                            Button(action: { 
+                                withAnimation {
+                                    sortOption = option
+                                }
+                            }) {
+                                Label("Sort by \(option.rawValue)", systemImage: sortIcon(for: option))
+                            }
+                            .if(sortOption == option) { view in
+                                view.labelStyle(IconOnlyLabelStyle())
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "arrow.up.arrow.down.circle")
+                            .font(.system(size: 16))
                     }
                 }
             }
@@ -57,19 +101,24 @@ struct FriendsView: View {
                     isPresented: $showingAddSheet,
                     username: $newUsername
                 )
+                .interactiveDismissDisabled(false)
             }
         }
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 24) {
+            Spacer()
+                .frame(height: 20)
+                
             Image(systemName: "person.3.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.gray.opacity(0.7))
+                .font(.system(size: 70))
+                .foregroundColor(.blue.opacity(0.7))
                 .padding(.bottom, 10)
                 
-            Text("You haven't added any friends yet")
-                .font(.headline)
+            Text("No Friends Added")
+                .font(.title2)
+                .fontWeight(.bold)
                 .foregroundColor(.primary)
                 
             Text("Add friends to compare progress and track their LeetCode journey")
@@ -80,13 +129,27 @@ struct FriendsView: View {
                 .padding(.bottom, 10)
             
             Button(action: { showingAddSheet = true }) {
-                Label("Add Friend", systemImage: "person.badge.plus")
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 20)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                HStack {
+                    Image(systemName: "person.badge.plus")
+                        .font(.system(size: 16))
+                    Text("Add Friend")
+                        .fontWeight(.semibold)
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 24)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .foregroundColor(.white)
+                .cornerRadius(12)
+                .shadow(color: Color.blue.opacity(0.2), radius: 4, x: 0, y: 2)
             }
+            
+            Spacer()
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -94,43 +157,17 @@ struct FriendsView: View {
     
     private var friendsList: some View {
         List {
-            ForEach(savedUsersVM.savedUsernames, id: \.self) { username in
+            ForEach(sortedUsernames, id: \.self) { username in
                 NavigationLink(destination: UserDetailView(username: username, leetCodeVM: leetCodeVM)) {
-                    HStack {
-                        FriendRowView(username: username, leetCodeVM: leetCodeVM)
-                        
-                        Spacer()
-                        
-                        if username == savedUsersVM.primaryUsername {
-                            Text("Primary")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.blue)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.blue.opacity(0.15))
-                                .cornerRadius(6)
-                        } else {
-                            Button(action: {
-                                savedUsersVM.changePrimaryUsername(username)
-                            }) {
-                                Text("Make Primary")
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.green)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(Color.green.opacity(0.15))
-                                    .cornerRadius(6)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                    }
+                    FriendRowView(username: username, leetCodeVM: leetCodeVM)
                 }
+                .listRowBackground(AppTheme.shared.cardBackgroundColor(in: colorScheme))
                 .swipeActions(edge: .trailing) {
                     if username != savedUsersVM.primaryUsername {
                         Button(role: .destructive) {
-                            savedUsersVM.removeUsername(username)
+                            withAnimation {
+                                savedUsersVM.removeUsername(username)
+                            }
                         } label: {
                             Label("Remove", systemImage: "trash")
                         }
@@ -146,25 +183,67 @@ struct FriendsView: View {
             }
         }
         .listStyle(InsetGroupedListStyle())
+        .refreshable {
+            await refreshUserData(forceRefresh: true)
+        }
+    }
+    
+    private func sortIcon(for option: SortOption) -> String {
+        switch option {
+        case .name:
+            return "textformat"
+        case .rank:
+            return "trophy"
+        case .solved:
+            return "checkmark.circle"
+        }
+    }
+    
+    private var filteredUsernames: [String] {
+        if searchText.isEmpty {
+            return savedUsersVM.savedUsernames
+        }
+        return savedUsersVM.savedUsernames.filter { $0.localizedCaseInsensitiveContains(searchText) }
+    }
+    
+    private var sortedUsernames: [String] {
+        switch sortOption {
+        case .name:
+            return filteredUsernames.sorted()
+            
+        case .rank:
+            return filteredUsernames.sorted { username1, username2 in
+                let rank1 = leetCodeVM.userStats[username1]?.ranking ?? Int.max
+                let rank2 = leetCodeVM.userStats[username2]?.ranking ?? Int.max
+                return rank1 < rank2
+            }
+            
+        case .solved:
+            return filteredUsernames.sorted { username1, username2 in
+                let solved1 = leetCodeVM.userStats[username1]?.totalSolved ?? 0
+                let solved2 = leetCodeVM.userStats[username2]?.totalSolved ?? 0
+                return solved1 > solved2
+            }
+        }
+    }
+    
+    private func refreshUserData(forceRefresh: Bool = false) async {
+        isRefreshing = true
+        for username in savedUsersVM.savedUsernames {
+            leetCodeVM.fetchData(for: username, forceRefresh: forceRefresh)
+        }
+        try? await Task.sleep(nanoseconds: 500_000_000) // Slight delay for better UX
+        isRefreshing = false
     }
 }
 
-
-struct StatLabel: View {
-    let count: Int
-    let label: String
-    let icon: String
-    let color: Color
-    
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: icon)
-                .foregroundColor(color)
-                .font(.system(size: 12))
-            
-            Text("\(count) \(label)")
-                .font(.caption)
-                .foregroundColor(.secondary)
+// Helper extension for conditional modifiers
+extension View {
+    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
         }
     }
 }

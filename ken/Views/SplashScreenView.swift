@@ -5,63 +5,101 @@
 //  Created by Lakshay Gupta on 04/05/25.
 //
 
-
 import SwiftUI
 
 struct SplashScreenView: View {
     @Binding var hasCompletedOnboarding: Bool
     @ObservedObject var savedUsersVM: SavedUsersViewModel
-    
+
+    @State private var showLogo = false
+    @State private var showTitle = false
+    @State private var showImages = false
     @State private var isActive = false
-    @State private var size = 0.8
-    @State private var opacity = 0.5
-    
+
     var body: some View {
         if isActive {
             if hasCompletedOnboarding {
-                ContentView()
-                    .environmentObject(savedUsersVM)
+                ContentView().environmentObject(savedUsersVM)
             } else {
                 OnboardingView(savedUsersVM: savedUsersVM)
             }
         } else {
             ZStack {
-                Color(UIColor.systemBackground)
-                    .ignoresSafeArea()
-                
-                VStack {
-                    Image("icon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 150, height: 150)
-                        .clipShape(RoundedRectangle(cornerRadius: 25))
-                        .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
-                    
-                    Text("KEN")
-                        .font(.system(size: 42, weight: .bold))
-                        .foregroundColor(.blue)
-                        .padding(.top, 20)
-                    
-                    Text("Track your LeetCode progress")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .padding(.top, 5)
-                }
-                .scaleEffect(size)
-                .opacity(opacity)
-                .onAppear {
-                    withAnimation(.easeIn(duration: 1.2)) {
-                        self.size = 1.0
-                        self.opacity = 1.0
-                    }
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                        withAnimation {
-                            self.isActive = true
+                Color.black.ignoresSafeArea()
+
+                GeometryReader { geometry in
+                    ZStack {
+                        // Corner images
+                        Image("icon")
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                            .opacity(showImages ? 1 : 0)
+                            .position(x: showImages ? 60 : -40,
+                                      y: showImages ? 60 : -40)
+                            .animation(.easeOut(duration: 0.8).delay(1.0), value: showImages)
+
+                        Image("RatingGraph")
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                            .opacity(showImages ? 1 : 0)
+                            .position(x: showImages ? geometry.size.width - 60 : geometry.size.width + 40,
+                                      y: showImages ? 60 : -40)
+                            .animation(.easeOut(duration: 0.8).delay(1.1), value: showImages)
+
+                        Image("icon")
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                            .opacity(showImages ? 1 : 0)
+                            .position(x: showImages ? 60 : -40,
+                                      y: showImages ? geometry.size.height - 60 : geometry.size.height + 40)
+                            .animation(.easeOut(duration: 0.8).delay(1.2), value: showImages)
+
+                        Image("icon")
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                            .opacity(showImages ? 1 : 0)
+                            .position(x: showImages ? geometry.size.width - 60 : geometry.size.width + 40,
+                                      y: showImages ? geometry.size.height - 60 : geometry.size.height + 40)
+                            .animation(.easeOut(duration: 0.8).delay(1.3), value: showImages)
+
+                        VStack(spacing: 16) {
+                            Image("icon")
+                                .resizable()
+                                .frame(width: 120, height: 120)
+                                .opacity(showLogo ? 1 : 0)
+                                .offset(y: showLogo ? 0 : -100)
+                                .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.3), value: showLogo)
+
+                            Text("KEN")
+                                .font(.system(size: 42, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                                .opacity(showTitle ? 1 : 0)
+                                .offset(y: showTitle ? 0 : 60)
+                                .animation(.easeOut(duration: 0.6).delay(0.8), value: showTitle)
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+            }
+            .onAppear {
+                showLogo = true
+                showTitle = true
+                showImages = true
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    withAnimation {
+                        isActive = true
                     }
                 }
             }
         }
     }
-} 
+}
+
+
+#Preview {
+    SplashScreenView(
+        hasCompletedOnboarding: .constant(false),
+        savedUsersVM: SavedUsersViewModel()
+    )
+}
