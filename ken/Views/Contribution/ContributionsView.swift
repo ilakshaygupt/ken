@@ -1,5 +1,5 @@
 //
-//  ContributionGraphView.swift
+//  ContributionsView.swift
 //  ken
 //
 //  Created by Lakshay Gupta on 31/01/25.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ContributionGraphView: View {
+struct ContributionsView: View {
     let contributions: [DailyContribution]
     let monthsToShow: Int
     

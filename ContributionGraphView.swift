@@ -1,4 +1,4 @@
-struct ContributionGraphView: View {
+struct ContributionsView: View {
     let contributions: [CalendarDay]
     let monthsToShow: Int
     let scrollToEnd: Bool

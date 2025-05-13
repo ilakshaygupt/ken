@@ -87,10 +87,6 @@
 				Network/LeetCodeAPIClient.swift,
 				Services/LeetcodeJSONParser.swift,
 				Services/LeetcodeJSONStorageService.swift,
-				Views/Contribution/Components/ContributionCell.swift,
-				Views/Contribution/Components/ContributionGridView.swift,
-				Views/Contribution/Components/ContributionTooltip.swift,
-				Views/Contribution/Helpers/ContributionColors.swift,
 			);
 			target = 5CD1B1042D4CAE0700AC9398 /* kenWidgetExtension */;
 		};

@@ -133,7 +133,7 @@ struct HomeView: View {
                                 // Graph Section - simplified to always show 12 months
                                 sectionView(title: "Activity Graph", systemImage: "calendar", gradient: [.indigo, .indigo.opacity(0.7)]) {
                                         
-                                        ContributionGraphView(
+                                        ContributionsView(
                                             contributions: calendar.contributions,
                                             monthsToShow: 12
                                         )
@@ -445,7 +445,7 @@ struct DetailCardView: View {
                             .padding(.horizontal)
                     case .graph:
                         VStack(spacing: 12) {
-                            ContributionGraphView(
+                            ContributionsView(
                                 contributions: calendar.contributions,
                                 monthsToShow: 24
                             )

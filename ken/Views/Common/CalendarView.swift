@@ -62,7 +62,7 @@ struct CalendarView: View {
             }
             
             let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
-            ContributionGraphView(contributions: contributions)
+            ContributionsView(contributions: contributions)
         }
         .padding()
         .background(Color.gray.opacity(0.1))
