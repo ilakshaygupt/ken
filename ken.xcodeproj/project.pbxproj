@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5C8924B62DD3F0F200A70373 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5C8924B52DD3F0F200A70373 /* Alamofire */; };
-		5C8924B82DD3F16700A70373 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5C8924B72DD3F16700A70373 /* Alamofire */; };
+		5C8924EB2DD3FB3300A70373 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5C8924EA2DD3FB3300A70373 /* Alamofire */; };
+		5C8924ED2DD3FB4900A70373 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5C8924EC2DD3FB4900A70373 /* Alamofire */; };
 		5CD1B1082D4CAE0800AC9398 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD1B1072D4CAE0700AC9398 /* WidgetKit.framework */; };
 		5CD1B10A2D4CAE0800AC9398 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD1B1092D4CAE0800AC9398 /* SwiftUI.framework */; };
 		5CD1B1152D4CAE0A00AC9398 /* kenWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5CD1B1052D4CAE0700AC9398 /* kenWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -75,6 +75,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Const/AppGroup.swift,
+				Const/ContributionColors.swift,
 				Const/UICOlors.swift,
 				Const/UIConstants.swift,
 				Models/Badge.swift,
@@ -87,6 +88,7 @@
 				Network/LeetCodeAPIClient.swift,
 				Services/LeetcodeJSONParser.swift,
 				Services/LeetcodeJSONStorageService.swift,
+				Views/Common/ContributionCell.swift,
 			);
 			target = 5CD1B1042D4CAE0700AC9398 /* kenWidgetExtension */;
 		};
@@ -136,7 +138,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C8924B62DD3F0F200A70373 /* Alamofire in Frameworks */,
+				5C8924EB2DD3FB3300A70373 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,7 +146,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C8924B82DD3F16700A70373 /* Alamofire in Frameworks */,
+				5C8924ED2DD3FB4900A70373 /* Alamofire in Frameworks */,
 				5CD1B10A2D4CAE0800AC9398 /* SwiftUI.framework in Frameworks */,
 				5CD1B1082D4CAE0800AC9398 /* WidgetKit.framework in Frameworks */,
 			);
@@ -204,7 +206,7 @@
 			);
 			name = ken;
 			packageProductDependencies = (
-				5C8924B52DD3F0F200A70373 /* Alamofire */,
+				5C8924EA2DD3FB3300A70373 /* Alamofire */,
 			);
 			productName = ken;
 			productReference = 5C9BBB8A2D44121C008F5A1D /* ken.app */;
@@ -228,7 +230,7 @@
 			);
 			name = kenWidgetExtension;
 			packageProductDependencies = (
-				5C8924B72DD3F16700A70373 /* Alamofire */,
+				5C8924EC2DD3FB4900A70373 /* Alamofire */,
 			);
 			productName = kenWidgetExtension;
 			productReference = 5CD1B1052D4CAE0700AC9398 /* kenWidgetExtension.appex */;
@@ -262,7 +264,7 @@
 			mainGroup = 5C9BBB812D44121C008F5A1D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				5C8924B42DD3F0F200A70373 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				5C8924E92DD3FB3300A70373 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5C9BBB8B2D44121C008F5A1D /* Products */;
@@ -446,7 +448,7 @@
 				CODE_SIGN_ENTITLEMENTS = ken/ken.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
+				DEVELOPMENT_ASSET_PATHS = "ken ken/Views/Common/ContributionCell.swift ken/Const/ContributionColors.swift ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
 				DEVELOPMENT_TEAM = 57Y8VNA6WW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -505,7 +507,7 @@
 				CODE_SIGN_ENTITLEMENTS = kenWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken/Network/LeetCode.swift ken/Services/LeetcodeJSONStorageService.swift ken/Services/LeetcodeJSONParser.swift ken/Views";
+				DEVELOPMENT_ASSET_PATHS = "ken ken/Views ken/Services/LeetcodeJSONStorageService.swift ken/Const/ContributionColors.swift ken/Network/LeetCode.swift ken/Const ken/Services/LeetcodeJSONParser.swift ken/Views/Common/ContributionCell.swift";
 				DEVELOPMENT_TEAM = 57Y8VNA6WW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = kenWidget/Info.plist;
@@ -588,7 +590,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5C8924B42DD3F0F200A70373 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		5C8924E92DD3FB3300A70373 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
 			requirement = {
@@ -599,14 +601,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		5C8924B52DD3F0F200A70373 /* Alamofire */ = {
+		5C8924EA2DD3FB3300A70373 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5C8924B42DD3F0F200A70373 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 5C8924E92DD3FB3300A70373 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
-		5C8924B72DD3F16700A70373 /* Alamofire */ = {
+		5C8924EC2DD3FB4900A70373 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5C8924B42DD3F0F200A70373 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 5C8924E92DD3FB3300A70373 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */

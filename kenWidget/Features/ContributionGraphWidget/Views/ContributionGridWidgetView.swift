@@ -107,6 +107,7 @@ struct ContributionGridWidgetView: View {
                                                 contribution: contribution,
                                                 size: cellSize
                                             )
+                                            
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 2)
                                                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
