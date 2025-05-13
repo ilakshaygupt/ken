@@ -17,7 +17,6 @@ struct HomeView: View {
     
     @Environment(\.colorScheme) private var colorScheme
     
-    // Get background colors from AppTheme
     private var backgroundColor: Color {
         AppTheme.shared.backgroundColor(in: colorScheme)
     }
@@ -26,7 +25,6 @@ struct HomeView: View {
         AppTheme.shared.cardBackgroundColor(in: colorScheme)
     }
     
-    // Updated color scheme for consistency
     struct CardTheme {
         let primaryGradient: [Color]
         let iconBackground: Color

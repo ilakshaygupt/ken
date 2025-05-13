@@ -432,7 +432,7 @@
 				CODE_SIGN_ENTITLEMENTS = ken/ken.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = ken/Services/LeetcodeJSONParser.swift;
+				DEVELOPMENT_ASSET_PATHS = "ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
 				DEVELOPMENT_TEAM = 57Y8VNA6WW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -462,7 +462,7 @@
 				CODE_SIGN_ENTITLEMENTS = ken/ken.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = ken/Services/LeetcodeJSONParser.swift;
+				DEVELOPMENT_ASSET_PATHS = "ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
 				DEVELOPMENT_TEAM = 57Y8VNA6WW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

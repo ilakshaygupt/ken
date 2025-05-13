@@ -10,12 +10,17 @@ import SwiftUI
 struct SplashScreenView: View {
     @Binding var hasCompletedOnboarding: Bool
     @ObservedObject var savedUsersVM: SavedUsersViewModel
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var showLogo = false
     @State private var showTitle = false
     @State private var showImages = false
     @State private var isActive = false
 
+    private var backgroundColor: Color {
+        AppTheme.shared.backgroundColor(in: colorScheme)
+    }
+    
     var body: some View {
         if isActive {
             if hasCompletedOnboarding {
@@ -25,54 +30,20 @@ struct SplashScreenView: View {
             }
         } else {
             ZStack {
-                Color.black.ignoresSafeArea()
+                backgroundColor.ignoresSafeArea()
 
                 GeometryReader { geometry in
                     ZStack {
-                        // Corner images
-                        Image("icon")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                            .opacity(showImages ? 1 : 0)
-                            .position(x: showImages ? 60 : -40,
-                                      y: showImages ? 60 : -40)
-                            .animation(.easeOut(duration: 0.8).delay(1.0), value: showImages)
-
-                        Image("RatingGraph")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                            .opacity(showImages ? 1 : 0)
-                            .position(x: showImages ? geometry.size.width - 60 : geometry.size.width + 40,
-                                      y: showImages ? 60 : -40)
-                            .animation(.easeOut(duration: 0.8).delay(1.1), value: showImages)
-
-                        Image("icon")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                            .opacity(showImages ? 1 : 0)
-                            .position(x: showImages ? 60 : -40,
-                                      y: showImages ? geometry.size.height - 60 : geometry.size.height + 40)
-                            .animation(.easeOut(duration: 0.8).delay(1.2), value: showImages)
-
-                        Image("icon")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                            .opacity(showImages ? 1 : 0)
-                            .position(x: showImages ? geometry.size.width - 60 : geometry.size.width + 40,
-                                      y: showImages ? geometry.size.height - 60 : geometry.size.height + 40)
-                            .animation(.easeOut(duration: 0.8).delay(1.3), value: showImages)
-
                         VStack(spacing: 16) {
                             Image("icon")
                                 .resizable()
-                                .frame(width: 120, height: 120)
+                                .frame(width: 200, height: 200)
                                 .opacity(showLogo ? 1 : 0)
                                 .offset(y: showLogo ? 0 : -100)
                                 .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.3), value: showLogo)
 
                             Text("KEN")
                                 .font(.system(size: 42, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
                                 .opacity(showTitle ? 1 : 0)
                                 .offset(y: showTitle ? 0 : 60)
                                 .animation(.easeOut(duration: 0.6).delay(0.8), value: showTitle)

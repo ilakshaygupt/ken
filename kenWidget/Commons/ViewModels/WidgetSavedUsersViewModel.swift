@@ -8,8 +8,6 @@
 
 
 import WidgetKit
-import AppIntents
-import Intents
 import Combine
 
 class WidgetSavedUsersViewModel: ObservableObject {

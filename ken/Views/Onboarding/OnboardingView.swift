@@ -16,12 +16,16 @@ struct OnboardingView: View {
     @State private var showSuccessAlert = false
     @State private var isComplete = false
     @AppStorage("has_completed_onboarding") private var hasCompletedOnboarding = false
+    @Environment(\.colorScheme) private var colorScheme
     
     private let primaryColor = Color(red: 0.2, green: 0.5, blue: 0.9)
     private let secondaryColor = Color(red: 0.95, green: 0.95, blue: 0.97)
     private let accentColor = Color(red: 0.9, green: 0.3, blue: 0.3)
-    private let backgroundColor = Color(red: 0.98, green: 0.98, blue: 1.0)
     
+    
+    private var backgroundColor: Color {
+        AppTheme.shared.backgroundColor(in: colorScheme)
+    }
     var body: some View {
         NavigationView {
             ZStack {
@@ -54,15 +58,14 @@ struct OnboardingView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Enter your LeetCode username")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            
                         
                         TextField("Username", text: $username)
                             .padding()
-                            .background(secondaryColor)
                             .cornerRadius(12)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(primaryColor.opacity(0.3), lineWidth: 1)
+                                    .stroke(primaryColor.opacity(0.3), lineWidth: 3)
                             )
                             .disabled(isLoading)
                             .autocapitalization(.none)
@@ -148,13 +151,9 @@ struct OnboardingView: View {
                 isLoading = false
                 
                 if success {
-                    print("Username verification successful, showing success popup") // Debug log
-                    
-                    // Save user data first
+                    print("Username verification successful, showing success popup")
                     savedUsersVM.setPrimaryUsername(username)
                     
-                    // Show success popup with slight delay to ensure state updates are processed
-                    // Important: Don't set hasCompletedOnboarding here
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         showSuccessAlert = true
                     }
