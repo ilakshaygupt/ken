@@ -5,6 +5,7 @@
 //  Created by Lakshay Gupta on 25/04/25.
 //
 import WidgetKit
+import Alamofire
 
 struct StatsProvider: AppIntentTimelineProvider {
     let viewModel = WidgetSavedUsersViewModel()
@@ -65,28 +66,25 @@ struct StatsProvider: AppIntentTimelineProvider {
         
     private func fetchStatsJSONData(for username: String) async throws -> Data {
         let query = GraphQLQueries.userStats
-        
         let variables = ["username": username]
-        
-        var request = URLRequest(url: URL(string: "https://leetcode.com/graphql")!)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("https://leetcode.com", forHTTPHeaderField: "Referer")
-        
-        let body = [
+        let url = "https://leetcode.com/graphql"
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json",
+            "Referer": "https://leetcode.com"
+        ]
+        let body: [String: Any] = [
             "query": query,
             "variables": variables
-        ] as [String : Any]
-        
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
-        
+        ]
+
+        let data = try await AF.request(
+            url,
+            method: .post,
+            parameters: body,
+            encoding: JSONEncoding.default,
+            headers: headers
+        ).serializingData().value
+
         return data
     }
 }

@@ -6,6 +6,7 @@
 //
 import WidgetKit
 import Intents
+import Alamofire
 
 struct UserProvider: AppIntentTimelineProvider {
     let viewModel = WidgetSavedUsersViewModel()
@@ -70,29 +71,27 @@ struct UserProvider: AppIntentTimelineProvider {
     
     private func fetchCalendarJSONData(for username: String) async throws -> Data {
         let query = GraphQLQueries.userCalendar
-        
         let variables = ["username": username]
-        
-        var request = URLRequest(url: URL(string: "https://leetcode.com/graphql")!)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("https://leetcode.com", forHTTPHeaderField: "Referer")
-        
-        let body = [
+        let url = "https://leetcode.com/graphql"
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json",
+            "Referer": "https://leetcode.com"
+        ]
+        let body: [String: Any] = [
             "query": query,
             "variables": variables,
             "operationName": "userProfileCalendar"
-        ] as [String : Any]
-        
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
-        
+        ]
+
+        // Use Alamofire's async/await API
+        let data = try await AF.request(
+            url,
+            method: .post,
+            parameters: body,
+            encoding: JSONEncoding.default,
+            headers: headers
+        ).serializingData().value
+
         return data
     }
 }
