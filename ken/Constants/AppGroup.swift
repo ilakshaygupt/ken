@@ -7,5 +7,5 @@
 
 
 var AppGroup: String {
-    "group.ken.widget"
+    "group.appminds.ken"
 }

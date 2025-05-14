@@ -57,13 +57,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5C94E2592D68630700000CEA /* Exceptions for "ken" folder in "ken" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Const/UICOlors.swift,
-			);
-			target = 5C9BBB892D44121C008F5A1D /* ken */;
-		};
 		5CD1B1162D4CAE0A00AC9398 /* Exceptions for "kenWidget" folder in "kenWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -74,10 +67,11 @@
 		5CD1B1212D4CB52500AC9398 /* Exceptions for "ken" folder in "kenWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Const/AppGroup.swift,
-				Const/ContributionColors.swift,
-				Const/UICOlors.swift,
-				Const/UIConstants.swift,
+				Constants/AppGroup.swift,
+				Constants/ContributionColors.swift,
+				Constants/UIConstants.swift,
+				Extensions/ColorExtension.swift,
+				Extensions/UICOlors.swift,
 				Models/Badge.swift,
 				Models/DailyContribution.swift,
 				Models/UserCalendar.swift,
@@ -86,39 +80,19 @@
 				Network/GraphQLQueries.swift,
 				Network/LeetCode.swift,
 				Network/LeetCodeAPIClient.swift,
+				Presentation/UI/Common/ContributionCell.swift,
 				Services/LeetcodeJSONParser.swift,
 				Services/LeetcodeJSONStorageService.swift,
-				Views/Common/ContributionCell.swift,
 			);
 			target = 5CD1B1042D4CAE0700AC9398 /* kenWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		5C94E25A2D68630700000CEA /* Exceptions for "ken" folder in "Copy Bundle Resources" phase from "ken" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 5C9BBB882D44121C008F5A1D /* Resources */;
-			membershipExceptions = (
-				Const/UICOlors.swift,
-			);
-		};
-		5C94E25B2D68630700000CEA /* Exceptions for "ken" folder in "Copy Bundle Resources" phase from "kenWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 5CD1B1032D4CAE0700AC9398 /* Resources */;
-			membershipExceptions = (
-				Const/UICOlors.swift,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5C9BBB8C2D44121C008F5A1D /* ken */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				5C94E2592D68630700000CEA /* Exceptions for "ken" folder in "ken" target */,
-				5C94E25A2D68630700000CEA /* Exceptions for "ken" folder in "Copy Bundle Resources" phase from "ken" target */,
 				5CD1B1212D4CB52500AC9398 /* Exceptions for "ken" folder in "kenWidgetExtension" target */,
-				5C94E25B2D68630700000CEA /* Exceptions for "ken" folder in "Copy Bundle Resources" phase from "kenWidgetExtension" target */,
 			);
 			path = ken;
 			sourceTree = "<group>";
@@ -448,8 +422,8 @@
 				CODE_SIGN_ENTITLEMENTS = ken/ken.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken ken/Views/Common/ContributionCell.swift ken/Const/ContributionColors.swift ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
-				DEVELOPMENT_TEAM = 57Y8VNA6WW;
+				DEVELOPMENT_ASSET_PATHS = "ken ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
+				DEVELOPMENT_TEAM = 3BJDK999HQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -461,7 +435,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.demoliserguts.ken;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appminds.ken;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -479,7 +453,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
-				DEVELOPMENT_TEAM = 57Y8VNA6WW;
+				DEVELOPMENT_TEAM = 3BJDK999HQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -491,7 +465,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.demoliserguts.ken;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appminds.ken;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -507,8 +481,8 @@
 				CODE_SIGN_ENTITLEMENTS = kenWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken ken/Views ken/Services/LeetcodeJSONStorageService.swift ken/Const/ContributionColors.swift ken/Network/LeetCode.swift ken/Const ken/Services/LeetcodeJSONParser.swift ken/Views/Common/ContributionCell.swift";
-				DEVELOPMENT_TEAM = 57Y8VNA6WW;
+				DEVELOPMENT_ASSET_PATHS = ken;
+				DEVELOPMENT_TEAM = 3BJDK999HQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = kenWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kenWidget;
@@ -519,7 +493,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.demoliserguts.ken.kenWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appminds.ken.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -536,8 +510,8 @@
 				CODE_SIGN_ENTITLEMENTS = kenWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken/Network/LeetCode.swift ken/Services/LeetcodeJSONStorageService.swift ken/Services/LeetcodeJSONParser.swift ken/Views";
-				DEVELOPMENT_TEAM = 57Y8VNA6WW;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 3BJDK999HQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = kenWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kenWidget;
@@ -548,7 +522,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.demoliserguts.ken.kenWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appminds.ken.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
