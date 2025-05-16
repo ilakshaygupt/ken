@@ -59,7 +59,7 @@ struct ContentView: View {
             }
             
         }
-        .tabViewStyle(.tabBarOnly)
+
         .onAppear {
             if let primaryUsername = savedUsersVM.primaryUsername {
                 leetCodeVM.fetchData(for: primaryUsername)

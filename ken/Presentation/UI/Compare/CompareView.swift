@@ -310,6 +310,16 @@ struct CompareView: View {
                            let compareStats = leetCodeVM.userStats[selectedUsername] {
                             
                             ScrollView {
+                                // We need a GeometryReader at the top to track scroll position
+                                GeometryReader { geometry in
+                                    Color.clear.preference(
+                                        key: ScrollOffsetPreferenceKey.self,
+                                        value: geometry.frame(in: .named("scrollView")).minY
+                                    )
+                                }
+                                .frame(height: 0) // Zero height so it doesn't take up space
+                                
+                                // Actual content below
                                 Color.clear.frame(height: 1)
                                 
                                 VStack(spacing: 15) {
@@ -322,14 +332,12 @@ struct CompareView: View {
                                     )
                                 }
                                 .padding(.vertical)
-                                
                             }
-                            .onScrollGeometryChange(for: Double.self) { geo in
-                                            geo.contentOffset.y
-                                        } action: { oldValue, newValue in
-                                            print("new scroll offset \(newValue)  old value \(oldValue) ")
-                                            scrollOffset = newValue
-                                        }
+                            .coordinateSpace(name: "scrollView") // Named coordinate space for tracking
+                            .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+                                print("new scroll offset \(-value)")
+                                scrollOffset = -value
+                            }
                         } else {
                             VStack {
                                 Image(systemName: "person.2")
@@ -396,23 +404,6 @@ struct CompareView: View {
             }
         }
         
-    }
-}
-
-
-extension View {
-    func trackScrollOffset(onChange: @escaping (CGFloat) -> Void) -> some View {
-        background(
-            GeometryReader { geo in
-                Color.clear.preference(
-                    key: ScrollOffsetPreferenceKey.self,
-                    value: geo.frame(in: .named("scrollView")).minY
-                )
-            }
-        )
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-            onChange(-value)
-        }
     }
 }
 
