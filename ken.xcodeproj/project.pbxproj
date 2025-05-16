@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5C8924EB2DD3FB3300A70373 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5C8924EA2DD3FB3300A70373 /* Alamofire */; };
-		5C8924ED2DD3FB4900A70373 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5C8924EC2DD3FB4900A70373 /* Alamofire */; };
+		5C4AB6392DD50518007519E1 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5C4AB6382DD50518007519E1 /* Alamofire */; };
+		5C4AB63B2DD5051D007519E1 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5C4AB63A2DD5051D007519E1 /* Alamofire */; };
 		5CD1B1082D4CAE0800AC9398 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD1B1072D4CAE0700AC9398 /* WidgetKit.framework */; };
 		5CD1B10A2D4CAE0800AC9398 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD1B1092D4CAE0800AC9398 /* SwiftUI.framework */; };
 		5CD1B1152D4CAE0A00AC9398 /* kenWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5CD1B1052D4CAE0700AC9398 /* kenWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -67,6 +67,7 @@
 		5CD1B1212D4CB52500AC9398 /* Exceptions for "ken" folder in "kenWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				Constants/AppGroup.swift,
 				Constants/ContributionColors.swift,
 				Constants/UIConstants.swift,
@@ -81,8 +82,8 @@
 				Network/LeetCode.swift,
 				Network/LeetCodeAPIClient.swift,
 				Presentation/UI/Common/ContributionCell.swift,
-				Services/LeetcodeJSONParser.swift,
-				Services/LeetcodeJSONStorageService.swift,
+				Presentation/ViewModels/LeetcodeJSONParser.swift,
+				Presentation/ViewModels/LeetcodeJSONStorageService.swift,
 			);
 			target = 5CD1B1042D4CAE0700AC9398 /* kenWidgetExtension */;
 		};
@@ -112,7 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C8924EB2DD3FB3300A70373 /* Alamofire in Frameworks */,
+				5C4AB6392DD50518007519E1 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,7 +121,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C8924ED2DD3FB4900A70373 /* Alamofire in Frameworks */,
+				5C4AB63B2DD5051D007519E1 /* Alamofire in Frameworks */,
 				5CD1B10A2D4CAE0800AC9398 /* SwiftUI.framework in Frameworks */,
 				5CD1B1082D4CAE0800AC9398 /* WidgetKit.framework in Frameworks */,
 			);
@@ -180,7 +181,7 @@
 			);
 			name = ken;
 			packageProductDependencies = (
-				5C8924EA2DD3FB3300A70373 /* Alamofire */,
+				5C4AB6382DD50518007519E1 /* Alamofire */,
 			);
 			productName = ken;
 			productReference = 5C9BBB8A2D44121C008F5A1D /* ken.app */;
@@ -204,7 +205,7 @@
 			);
 			name = kenWidgetExtension;
 			packageProductDependencies = (
-				5C8924EC2DD3FB4900A70373 /* Alamofire */,
+				5C4AB63A2DD5051D007519E1 /* Alamofire */,
 			);
 			productName = kenWidgetExtension;
 			productReference = 5CD1B1052D4CAE0700AC9398 /* kenWidgetExtension.appex */;
@@ -238,7 +239,7 @@
 			mainGroup = 5C9BBB812D44121C008F5A1D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				5C8924E92DD3FB3300A70373 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				5C4AB6372DD50518007519E1 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5C9BBB8B2D44121C008F5A1D /* Products */;
@@ -298,6 +299,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -361,6 +363,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -422,14 +425,18 @@
 				CODE_SIGN_ENTITLEMENTS = ken/ken.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
+				DEVELOPMENT_ASSET_PATHS = ken;
 				DEVELOPMENT_TEAM = 3BJDK999HQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Ken;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -437,6 +444,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.appminds.ken;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -452,14 +463,18 @@
 				CODE_SIGN_ENTITLEMENTS = ken/ken.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ken/Services/LeetcodeJSONParser.swift ken/Services/LeetcodeJSONStorageService.swift";
+				DEVELOPMENT_ASSET_PATHS = ken;
 				DEVELOPMENT_TEAM = 3BJDK999HQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Ken;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -467,6 +482,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.appminds.ken;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -487,6 +506,7 @@
 				INFOPLIST_FILE = kenWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kenWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -496,6 +516,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.appminds.ken.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -516,6 +540,7 @@
 				INFOPLIST_FILE = kenWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kenWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -525,6 +550,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.appminds.ken.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -564,7 +593,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5C8924E92DD3FB3300A70373 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		5C4AB6372DD50518007519E1 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
 			requirement = {
@@ -575,14 +604,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		5C8924EA2DD3FB3300A70373 /* Alamofire */ = {
+		5C4AB6382DD50518007519E1 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5C8924E92DD3FB3300A70373 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 5C4AB6372DD50518007519E1 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
-		5C8924EC2DD3FB4900A70373 /* Alamofire */ = {
+		5C4AB63A2DD5051D007519E1 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5C8924E92DD3FB3300A70373 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 5C4AB6372DD50518007519E1 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */

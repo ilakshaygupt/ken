@@ -20,6 +20,7 @@ class LeetCodeViewModel: ObservableObject {
     @Published var error: Error?
     
     private var cancellables = Set<AnyCancellable>()
+    
     private let storageService = LeetCodeJSONStorageService()
     
     init() {
