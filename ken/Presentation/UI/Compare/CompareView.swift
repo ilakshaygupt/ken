@@ -85,7 +85,7 @@ struct CompareView: View {
                 if let primaryUsername = savedUsersVM.primaryUsername {
                     if let userProfile = leetCodeVM.userProfiles[primaryUsername] {
                         if headerState == .expanded {
-                            VStack(alignment: .center, spacing: 12) {
+                            HStack(alignment: .center, spacing: 12) {
                                 ZStack {
                                     Circle()
                                         .fill(Color.blue.opacity(0.1))
@@ -118,7 +118,7 @@ struct CompareView: View {
                                 removal: .opacity.combined(with: .scale(scale: 0.95))
                             ))
                         } else {
-                            VStack(spacing: 12) {
+                            HStack(spacing: 12) {
                                 ZStack {
                                     Circle()
                                         .fill(Color.blue.opacity(0.1))
@@ -132,20 +132,72 @@ struct CompareView: View {
                                         )
                                 }
                                 
-                                HStack( spacing: 2) {
-                                    Text(userProfile.realName ?? primaryUsername)
-                                        .font(.headline)
-                                        .lineLimit(1)
-                                    
-                                    if let jobTitle = userProfile.jobTitle, !jobTitle.isEmpty {
-                                        Text(jobTitle)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                            .lineLimit(1)
+                                Text(userProfile.realName ?? primaryUsername)
+                                    .font(.headline)
+                                    .lineLimit(1)
+                                
+                                Spacer()
+                                
+                                if savedUsersVM.savedUsernames.count > 1 {
+                                    Menu {
+                                        ForEach(savedUsersVM.savedUsernames.filter { $0 != primaryUsername }, id: \.self) { username in
+                                            Button(action: {
+                                                withAnimation(.spring()) {
+                                                    selectedUsername = username
+                                                }
+                                            }) {
+                                                HStack {
+                                                    Text(username)
+                                                    Spacer()
+                                                    if selectedUsername == username {
+                                                        Image(systemName: "checkmark")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
+                                        Divider()
+                                        
+                                        Button(role: .destructive, action: {
+                                            selectedUsername = nil
+                                        }) {
+                                            Label("Clear", systemImage: "xmark.circle")
+                                        }
+                                    } label: {
+                                        HStack(spacing: 4) {
+                                            if let selectedUsername = selectedUsername,
+                                               let userAvatar = leetCodeVM.userProfiles[selectedUsername]?.userAvatar {
+                                                AsyncImage(url: URL(string: userAvatar)) { image in
+                                                    image
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                } placeholder: {
+                                                    Image(systemName: "person.circle.fill")
+                                                }
+                                                .frame(width: 24, height: 24)
+                                                .clipShape(Circle())
+                                            } else {
+                                                Image(systemName: "person.2.fill")
+                                                    .foregroundColor(.green)
+                                            }
+                                            
+                                            Text(selectedUsername ?? "Compare")
+                                                .lineLimit(1)
+                                            
+                                            Image(systemName: "chevron.down")
+                                                .font(.caption)
+                                        }
+                                        .padding(.vertical, 6)
+                                        .padding(.horizontal, 12)
+                                        .background(Color.secondary.opacity(0.1))
+                                        .cornerRadius(8)
                                     }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
                             }
                             .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(Color.clear)
                             .transition(.asymmetric(
                                 insertion: .opacity.combined(with: .move(edge: .top)),
                                 removal: .opacity.combined(with: .move(edge: .top))
@@ -237,54 +289,10 @@ struct CompareView: View {
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }
-                            } else {
-                                HStack(spacing: 10) {
-                                    Text("Compare:")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                    
-                                    Menu {
-                                        ForEach(savedUsersVM.savedUsernames.filter { $0 != primaryUsername }, id: \.self) { username in
-                                            Button(action: {
-                                                withAnimation(.spring()) {
-                                                    selectedUsername = username
-                                                }
-                                            }) {
-                                                HStack {
-                                                    Text(username)
-                                                    Spacer()
-                                                    if selectedUsername == username {
-                                                        Image(systemName: "checkmark")
-                                                        
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        
-                                        Divider()
-                                        
-                                        Button(role: .destructive, action: {
-                                            selectedUsername = nil
-                                        }) {
-                                            Label("Clear", systemImage: "xmark.circle")
-                                        }
-                                    } label: {
-                                        HStack(spacing: 4) {
-                                            Text(selectedUsername ?? "Select")
-                                                .lineLimit(1)
-                                            
-                                            Image(systemName: "chevron.down")
-                                                .font(.caption)
-                                        }
-                                        .padding(.vertical, 6)
-                                        .padding(.horizontal, 12)
-                                        
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
+                            } 
                         }
                         .padding(.top, 4)
+                        .background(headerState == .expanded ? backgroundColor : Color.clear)
                     }
                     ScrollView {
                         GeometryReader { geometry in
@@ -370,17 +378,17 @@ struct CompareView: View {
     
     private func updateHeaderState(offset: CGFloat) {
         let absOffset = abs(offset)
-        let extraSpace = maxHeight - minHeight
-                
+        let extraSpace = (maxHeight - minHeight) * 0.5 
+        
         if absOffset < extraSpace {
             if headerState != .expanded {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                withAnimation(.smooth) {
                     headerState = .expanded
                 }
             }
         } else {
             if headerState != .collapsed {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                withAnimation(.smooth) {
                     headerState = .collapsed
                 }
             }
