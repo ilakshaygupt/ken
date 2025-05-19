@@ -16,10 +16,10 @@ struct StatsWidgetEntryView: View {
 
             VStack {
                 HStack(spacing: 5) {
-                    Image("leetcode")
+                    Image("icon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 20, height: 20)
+                        .frame(width: 40, height: 40)
 
                     Text(entry.username)
                         .font(.system(size: 12))
@@ -47,10 +47,10 @@ struct StatsWidgetEntryView: View {
         } else {
             VStack(alignment:.center,spacing: 8){
                 HStack {
-                    Image("leetcode")
+                    Image("icon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 20, height: 20)
+                        .frame(width: 40, height: 40)
                     Text(entry.username)
                         .font(.system(.caption,design: .monospaced).bold())
                         .foregroundColor(.primary)

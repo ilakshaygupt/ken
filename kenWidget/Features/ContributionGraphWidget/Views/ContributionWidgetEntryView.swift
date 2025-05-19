@@ -16,10 +16,10 @@ struct ContributionWidgetEntryView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 5) {
-                Image("leetcode")
+                Image("icon")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 20, height: 20)
+                    .frame(width: 40, height: 40)
 
                 Text(entry.username)
                     .font(.system(.caption2,design: .monospaced))
