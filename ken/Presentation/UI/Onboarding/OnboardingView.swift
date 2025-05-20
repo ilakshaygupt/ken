@@ -40,7 +40,7 @@ struct OnboardingView: View {
                         .foregroundColor(primaryColor)
                         .padding(.top, 40)
                     
-                    Text("Welcome to Ken")
+                    Text("Welcome to KenCode")
                         .font(.system(size: 34, weight: .bold))
                         .foregroundStyle(
                             LinearGradient(

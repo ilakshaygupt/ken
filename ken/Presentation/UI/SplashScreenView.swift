@@ -42,7 +42,7 @@ struct SplashScreenView: View {
                                 .offset(y: showLogo ? 0 : -100)
                                 .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.3), value: showLogo)
 
-                            Text("KEN")
+                            Text("KenCode")
                                 .font(.system(size: 42, weight: .bold, design: .rounded))
                                 .opacity(showTitle ? 1 : 0)
                                 .offset(y: showTitle ? 0 : 60)

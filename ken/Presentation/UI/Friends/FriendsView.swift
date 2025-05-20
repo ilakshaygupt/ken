@@ -2,7 +2,7 @@
 //  FriendsView.swift
 //  ken
 //
-//  Created by Claude on 25/07/25.
+//  Created by Lakshay on 25/07/25.
 //
 
 import SwiftUI
