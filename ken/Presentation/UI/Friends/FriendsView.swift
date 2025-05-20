@@ -26,7 +26,6 @@ struct FriendsView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Main content
                 VStack(spacing: 0) {
                     if savedUsersVM.savedUsernames.isEmpty {
                         emptyStateView
@@ -38,7 +37,6 @@ struct FriendsView: View {
 
                 .background(AppTheme.shared.backgroundColor(in: colorScheme))
                 
-                // Add friend button
                 VStack {
                     Spacer()
                     HStack {
@@ -232,12 +230,11 @@ struct FriendsView: View {
         for username in savedUsersVM.savedUsernames {
             leetCodeVM.fetchData(for: username, forceRefresh: forceRefresh)
         }
-        try? await Task.sleep(nanoseconds: 500_000_000) // Slight delay for better UX
+        try? await Task.sleep(nanoseconds: 500_000_000)
         isRefreshing = false
     }
 }
 
-// Helper extension for conditional modifiers
 extension View {
     @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
         if condition {

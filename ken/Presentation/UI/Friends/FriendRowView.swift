@@ -19,7 +19,6 @@ struct FriendRowView: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            // Profile icon
             Circle()
                 .fill(LinearGradient(gradient: Gradient(colors: [profileColor, profileColor.opacity(0.7)]),
                                      startPoint: .topLeading,

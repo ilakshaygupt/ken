@@ -15,7 +15,6 @@ struct ComparisonView: View {
     @ObservedObject var leetCodeVM: LeetCodeViewModel
     @Environment(\.colorScheme) private var colorScheme
     
-    // Define consistent colors for primary and comparison users
     private let primaryColor = Color.blue
     private let compareColor = Color.green
     private let neutralColor = Color.gray

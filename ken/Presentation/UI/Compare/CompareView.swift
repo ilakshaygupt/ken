@@ -344,7 +344,6 @@ struct CompareView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .navigationTitle(headerState == .expanded ? "Compare" : "Compare")
             .navigationBarHidden(true)
             .onAppear {
                 if selectedUsername == nil,
@@ -353,15 +352,18 @@ struct CompareView: View {
                     selectedUsername = firstOtherUser
                 }
                 
-                for username in savedUsersVM.savedUsernames {
-                    leetCodeVM.fetchData(for: username)
-                }
-                
-                for username in savedUsersVM.savedUsernames {
-                    leetCodeVM.fetchUserProfile(for: username)
+                if let primaryUsername = savedUsersVM.primaryUsername {
+                    leetCodeVM.fetchData(for: primaryUsername)
+                    leetCodeVM.fetchUserProfile(for: primaryUsername)
                 }
             }
             
+            .onChange(of: selectedUsername) { newUsername in
+                if let username = newUsername {
+                    leetCodeVM.fetchData(for: username)
+                    leetCodeVM.fetchUserProfile(for: username)
+                }
+            }
         }
     }
     

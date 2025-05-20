@@ -51,6 +51,7 @@ class LeetCodeViewModel: ObservableObject {
         let hasCachedData = userStats[username] != nil && userCalendars[username] != nil
         
         if hasCachedData && !forceRefresh && !storageService.needsRefresh(forUsername: username) {
+            print("hasCachedData: \(hasCachedData)")
             completion?(true)
             return
         }
