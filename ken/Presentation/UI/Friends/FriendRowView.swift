@@ -8,7 +8,7 @@ import SwiftUI
 
 struct FriendRowView: View {
     let username: String
-    @ObservedObject var leetCodeVM: LeetCodeViewModel
+    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
     @Environment(\.colorScheme) var colorScheme
     
     private var profileColor: Color {
@@ -56,10 +56,6 @@ struct FriendRowView: View {
             }
 
             Spacer()
-
-            Image(systemName: "chevron.right")
-                .font(.system(size: 13))
-                .foregroundColor(.gray.opacity(0.4))
         }
         .padding(.vertical, 8)
     }

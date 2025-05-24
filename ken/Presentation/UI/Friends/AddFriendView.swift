@@ -33,8 +33,7 @@ struct AddFriendView: View {
                 
                 ScrollView {
                     VStack(spacing: 32) {
-                        HeaderView()
-                        
+                
                         UsernameInputSection(
                             username: $username,
                             errorMessage: errorMessage,
@@ -94,70 +93,34 @@ struct AddFriendView: View {
         // Close keyboard
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         
-        leetCodeVM.fetchData(for: username) { success in
-            if success {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                    isSuccessful = true
+        Task {
+            let success = await leetCodeVM.fetchData(for: username)
+            
+            await MainActor.run {
+                if success {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                        isSuccessful = true
+                    }
+                    savedUsersVM.addUsername(username)
+                    username = ""
+                    
+                    // Delay dismissal to show success animation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        isPresented = false
+                        isSuccessful = false
+                    }
+                } else {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        errorMessage = "Could not find that LeetCode username"
+                    }
                 }
-                savedUsersVM.addUsername(username)
-                username = ""
-                
-                // Delay dismissal to show success animation
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    isPresented = false
-                    isSuccessful = false
-                }
-            } else {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    errorMessage = "Could not find that LeetCode username"
-                }
+                isLoading = false
             }
-            isLoading = false
         }
     }
+
 }
 
-// MARK: - Header View
-private struct HeaderView: View {
-    var body: some View {
-        VStack(spacing: 18) {
-            ZStack {
-                // Background gradient circle
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.blue.opacity(0.9), Color.blue.opacity(0.5)]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .frame(width: 100, height: 100)
-                    .shadow(color: Color.blue.opacity(0.3), radius: 10, x: 0, y: 5)
-                
-                // Icon
-                Image(systemName: "person.badge.plus")
-                    .font(.system(size: 40, weight: .medium))
-                    .foregroundColor(.white)
-            }
-            .padding(.top, 20)
-            
-            // Title and subtitle
-            VStack(spacing: 8) {
-                Text("Add a Friend")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                
-                Text("Connect with friends to compare LeetCode progress")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.bottom, 10)
-    }
-}
 
 // MARK: - Username Input Section
 private struct UsernameInputSection: View {

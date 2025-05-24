@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserDetailView: View {
     let username: String
-    @ObservedObject var leetCodeVM: LeetCodeViewModel
+    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
     
     var body: some View {
         ScrollView {

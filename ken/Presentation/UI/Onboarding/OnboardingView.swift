@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @StateObject private var leetCodeVM = LeetCodeViewModel()
+    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
     @ObservedObject var savedUsersVM: SavedUsersViewModel
     @State private var username = ""
     @State private var isLoading = false
@@ -123,7 +123,6 @@ struct OnboardingView: View {
                     onDismiss: {
                         print("Success popup dismissed - transitioning to ContentView")
                         showSuccessAlert = false
-                        // Only now set isComplete to true to trigger the transition
                         hasCompletedOnboarding = true
                         isComplete = true
                     }
@@ -145,9 +144,10 @@ struct OnboardingView: View {
         isLoading = true
         errorMessage = nil
         
-        leetCodeVM.fetchData(for: username) { success in
-            // Ensure UI updates happen on main thread
-            DispatchQueue.main.async {
+        Task {
+            let success = await leetCodeVM.fetchData(for: username)
+            
+            await MainActor.run {
                 isLoading = false
                 
                 if success {
@@ -158,7 +158,7 @@ struct OnboardingView: View {
                         showSuccessAlert = true
                     }
                 } else {
-                    print("Username verification failed, showing error popup") // Debug log
+                    print("Username verification failed, showing error popup")
                     errorMessage = "Could not find that LeetCode username. Please try again."
                     showErrorAlert = true
                 }

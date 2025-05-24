@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @ObservedObject var leetCodeVM: LeetCodeViewModel
+    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
     @ObservedObject var savedUsersVM: SavedUsersViewModel
     @State private var isRefreshing = false
     @State private var animate = false
@@ -93,9 +93,9 @@ struct HomeView: View {
         }
         .onAppear {
             startAnimations()
-            if let primaryUsername = savedUsersVM.primaryUsername {
-                leetCodeVM.fetchData(for: primaryUsername)
-            }
+//            if let primaryUsername = savedUsersVM.primaryUsername {
+//                leetCodeVM.fetchData(for: primaryUsername)
+//            }
         }
         .sheet(isPresented: $showingDetailView) {
             if let expandedType = expandedCard,
@@ -117,17 +117,19 @@ struct HomeView: View {
             }
         }
     }
-    
     private func refreshData(username: String) async {
         isRefreshing = true
         
-        leetCodeVM.fetchData(for: username, forceRefresh: true)
+        let success = await leetCodeVM.fetchData(for: username, forceRefresh: true)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        await MainActor.run {
             isRefreshing = false
         }
-    }
-}
+        
+        if !success {
+            print("Failed to refresh data for \(username)")
+        }
+    }}
 
 
 

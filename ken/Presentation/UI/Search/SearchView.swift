@@ -155,8 +155,11 @@ struct SearchView: View {
                 .font(.headline)
                 .padding(.bottom, 4)
             
-            HStack(spacing: UIConstants.spacing) {
-                statItem(value: "\(stats.totalSolved)", label: "Solved", color: .green)
+            LazyVGrid(columns: [
+                GridItem(.flexible(), spacing: UIConstants.spacing),
+                GridItem(.flexible(), spacing: UIConstants.spacing)
+            ], spacing: UIConstants.spacing) {
+                statItem(value: "\(stats.totalSolved)", label: "Total Solved", color: .green)
                 statItem(value: "\(stats.easySolved)/\(stats.easyTotal)", label: "Easy", color: .green)
                 statItem(value: "\(stats.mediumSolved)/\(stats.mediumTotal)", label: "Medium", color: .orange)
                 statItem(value: "\(stats.hardSolved)/\(stats.hardTotal)", label: "Hard", color: .red)
@@ -166,6 +169,7 @@ struct SearchView: View {
                 Text("Global Rank: #\(rank)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                    .padding(.top, 8)
             }
         }
         .padding(UIConstants.cardPadding)
@@ -177,17 +181,22 @@ struct SearchView: View {
     }
     
     private func statItem(value: String, label: String, color: Color) -> some View {
-        VStack {
+        VStack(spacing: 8) {
             Text(value)
-                .font(.title3)
-                .fontWeight(.bold)
+                .font(.system(size: 24, weight: .bold))
                 .foregroundColor(color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             
             Text(label)
                 .font(.caption)
                 .foregroundColor(.secondary)
+                .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background(color.opacity(0.1))
+        .cornerRadius(UIConstants.cornerRadius)
     }
     
     private func enhancedCalendarView(calendar: UserCalendar) -> some View {

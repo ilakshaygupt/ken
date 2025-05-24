@@ -5,13 +5,18 @@
 //  Created by Lakshay Gupta on 31/01/25.
 //
 
+//
+//  LeetCodeViewModel.swift
+//  ken
+//
+//  Created by Lakshay Gupta on 31/01/25.
+//
 
 import SwiftUI
 import Combine
 import WidgetKit
 
 class LeetCodeViewModel: ObservableObject {
-    @Published var currentUsername: String = ""
     @Published var userProfiles: [String: UserProfile] = [:]
     @Published var userStats: [String: UserStats] = [:]
     @Published var userCalendars: [String: UserCalendar] = [:]
@@ -44,59 +49,114 @@ class LeetCodeViewModel: ObservableObject {
         }
     }
     
-    func fetchData(for username: String, forceRefresh: Bool = false, completion: ((Bool) -> Void)? = nil) {
+    
+    func fetchData(for username: String, forceRefresh: Bool = false) async -> Bool {
+        await MainActor.run {
+            error = nil
+        }
         
-        error = nil
-
         let hasCachedData = userStats[username] != nil && userCalendars[username] != nil
+        print("has cached data \(hasCachedData) \(username)")
         
         if hasCachedData && !forceRefresh && !storageService.needsRefresh(forUsername: username) {
-            print("hasCachedData: \(hasCachedData)")
-            completion?(true)
-            return
+            print("hasCachedData: \(hasCachedData) \(username)")
+            return true
         }
         
         if hasCachedData && !forceRefresh {
-            isFetchingFreshData = true
+            print("FETCHING FRESH DATA \(username)")
+            await MainActor.run { isFetchingFreshData = true }
         } else {
-            isLoading = true
+            await MainActor.run { isLoading = true }
         }
         
-        fetchFreshData(for: username, completion: completion)
+        print("FETCHING LATEST DATA FOR ALL \(username)")
+        return await fetchFreshData(for: username)
     }
-    
-    private func fetchFreshData(for username: String, completion: ((Bool) -> Void)? = nil) {
 
-        let statsPublisher = LeetCodeAPIClient.getUserStats(for: username, queue: .global())
-        let calendarPublisher = LeetCodeAPIClient.getUserCalendar(for: username, queue: .global())
-        
-        Publishers.Zip(statsPublisher, calendarPublisher)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completionStatus in
-                    self?.isLoading = false
-                    self?.isFetchingFreshData = false
-                    
-                    if case .failure(let err) = completionStatus {
-                        self?.error = err
-                        completion?(false)
-                    } else {
-                        completion?(true)
+    private func fetchFreshData(for username: String) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            let statsPublisher = LeetCodeAPIClient.getUserStats(for: username, queue: .global())
+            let calendarPublisher = LeetCodeAPIClient.getUserCalendar(for: username, queue: .global())
+            
+            Publishers.Zip(statsPublisher, calendarPublisher)
+                .receive(on: DispatchQueue.main)
+                .sink(
+                    receiveCompletion: { [weak self] completionStatus in
+                        guard let self = self else {
+                            continuation.resume(returning: false)
+                            return
+                        }
+                        
+                        self.isLoading = false
+                        self.isFetchingFreshData = false
+                        
+                        if case .failure(let err) = completionStatus {
+                            self.error = err
+                            continuation.resume(returning: false)
+                        }
+                    },
+                    receiveValue: { [weak self] stats, calendar in
+                        guard let self = self else {
+                            continuation.resume(returning: false)
+                            return
+                        }
+                        
+                        self.userStats[username] = stats
+                        self.userCalendars[username] = calendar
+                        
+                        WidgetCenter.shared.reloadAllTimelines()
+                        continuation.resume(returning: true)
                     }
-                },
-                receiveValue: { [weak self] stats, calendar in
-                    guard let self = self else { return }
-                    
-                    self.userStats[username] = stats
-                    self.userCalendars[username] = calendar
-                    
-                    WidgetCenter.shared.reloadAllTimelines()
-                }
-            )
-            .store(in: &cancellables)
+                )
+                .store(in: &cancellables)
+        }
+    }
+
+    func fetchUserProfile(for username: String) async {
+        if let profileData = storageService.getProfileJSONResponse(forUsername: username),
+           !storageService.needsRefresh(forUsername: username),
+           let profile = LeetCodeJSONParser.parseUserProfile(from: profileData) {
+            
+            await MainActor.run {
+                self.userProfiles[username] = profile
+            }
+            return
+        }
+        
+        
+        await withCheckedContinuation { continuation in
+            LeetCodeAPIClient.getUserProfile(for: username, queue: .global())
+                .receive(on: DispatchQueue.main)
+                .sink(
+                    receiveCompletion: { [weak self] completion in
+                        guard let self = self else {
+                            continuation.resume()
+                            return
+                        }
+                        if case .failure(let error) = completion {
+                            self.error = error
+                            print("Error fetching user profile: \(error)")
+                        }
+                        continuation.resume()
+                    },
+                    receiveValue: { [weak self] result in
+                        guard let self = self else {
+                            continuation.resume()
+                            return
+                        }
+                        let (profile, responseData) = result
+                        self.userProfiles[username] = profile
+                        self.storageService.saveProfileJSONResponse(responseData, forUsername: username)
+                        continuation.resume()
+                    }
+                )
+                .store(in: &self.cancellables)
+        }
     }
     
-    func fetchUserProfile(for username: String) {
+    
+    func fetchUserProfileSync(for username: String) {
         if let profileData = storageService.getProfileJSONResponse(forUsername: username),
            !storageService.needsRefresh(forUsername: username),
            let profile = LeetCodeJSONParser.parseUserProfile(from: profileData) {
@@ -107,8 +167,10 @@ class LeetCodeViewModel: ObservableObject {
         LeetCodeAPIClient.getUserProfile(for: username, queue: .global())
             .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: { completion in
+                receiveCompletion: { [weak self] completion in
+                    guard let self = self else { return }
                     if case .failure(let error) = completion {
+                        self.error = error
                         print("Error fetching user profile: \(error)")
                     }
                 },
@@ -120,14 +182,5 @@ class LeetCodeViewModel: ObservableObject {
                 }
             )
             .store(in: &cancellables)
-    }
-    
-    func refreshAllUsers() {
-        
-        let usernames = Set(userStats.keys).union(userCalendars.keys)
-        
-        for username in usernames {
-            fetchData(for: username, forceRefresh: true)
-        }
     }
 }

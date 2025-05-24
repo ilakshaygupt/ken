@@ -89,11 +89,12 @@ class LeetCodeJSONStorageService {
     }
     
     func needsRefresh(forUsername username: String) -> Bool {
+        
         guard let lastFetched = getLastFetchedTime(forUsername: username) else {
+            
             return true
         }
-        
-        // Refresh if data is older than 1 hour
+        print("last fetched time\(lastFetched) ")
         let oneHour: TimeInterval = 3600
         return Date().timeIntervalSince(lastFetched) > oneHour
     }
