@@ -29,6 +29,7 @@ struct StatsWidget: Widget {
         .configurationDisplayName("LeetCode Stats")
         .description("Shows your LeetCode problem-solving statistics")
         .supportedFamilies([.systemSmall, .systemMedium])
+        
     }
 }
 
