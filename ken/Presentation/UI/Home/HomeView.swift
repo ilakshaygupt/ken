@@ -93,9 +93,7 @@ struct HomeView: View {
         }
         .onAppear {
             startAnimations()
-//            if let primaryUsername = savedUsersVM.primaryUsername {
-//                leetCodeVM.fetchData(for: primaryUsername)
-//            }
+
         }
         .sheet(isPresented: $showingDetailView) {
             if let expandedType = expandedCard,
@@ -129,7 +127,8 @@ struct HomeView: View {
         if !success {
             print("Failed to refresh data for \(username)")
         }
-    }}
+    }
+}
 
 
 
