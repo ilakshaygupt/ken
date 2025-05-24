@@ -12,10 +12,9 @@ struct ComparisonView: View {
     let compareUsername: String
     let primaryStats: UserStats
     let compareStats: UserStats
-    @ObservedObject var leetCodeVM: LeetCodeViewModel
+    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
     @Environment(\.colorScheme) private var colorScheme
     
-    // Define consistent colors for primary and comparison users
     private let primaryColor = Color.blue
     private let compareColor = Color.green
     private let neutralColor = Color.gray

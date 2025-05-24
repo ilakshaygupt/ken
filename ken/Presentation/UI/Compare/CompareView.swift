@@ -8,9 +8,9 @@ import SwiftUI
 import Foundation
 import Combine
 
-
+// MARK: - CompareView
 struct CompareView: View {
-    @ObservedObject var leetCodeVM: LeetCodeViewModel
+    @EnvironmentObject private var leetCodeVM: LeetCodeViewModel
     @ObservedObject var savedUsersVM: SavedUsersViewModel
     @State private var selectedUsername: String?
     @Environment(\.colorScheme) private var colorScheme
@@ -48,320 +48,81 @@ struct CompareView: View {
         AppTheme.shared.backgroundColor(in: colorScheme)
     }
     
-    public init(leetCodeVM: LeetCodeViewModel, savedUsersVM: SavedUsersViewModel) {
-        self.leetCodeVM = leetCodeVM
+    public init(savedUsersVM: SavedUsersViewModel) {
         self.savedUsersVM = savedUsersVM
     }
-    
-    @ViewBuilder
-    private func userAvatarView(for profile: UserProfile) -> some View {
-        if let avatarUrl = profile.userAvatar, !avatarUrl.isEmpty {
-            AsyncImage(url: URL(string: avatarUrl)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .foregroundColor(.gray)
-            }
-            .frame(width: 60, height: 60)
-            .clipShape(Circle())
-        } else {
-            Image(systemName: "person.circle.fill")
-                .resizable()
-                .frame(width: 60, height: 60)
-                .foregroundColor(.gray)
-        }
-    }
-
     
     var body: some View {
         ZStack(alignment: .top) {
             backgroundColor.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                
                 if let primaryUsername = savedUsersVM.primaryUsername {
-                    if let userProfile = leetCodeVM.userProfiles[primaryUsername] {
-                        if headerState == .expanded {
-                            HStack(alignment: .center, spacing: 12) {
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.blue.opacity(0.1))
-                                        .frame(width: 86, height: 86)
-                                    
-                                    userAvatarView(for: userProfile)
-                                        .frame(width: 80, height: 80)
-                                        .clipShape(Circle())
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color.blue.opacity(0.3), lineWidth: 2)
-                                        )
-                                }
-                                
-                                VStack(spacing: 4) {
-                                    Text(userProfile.realName ?? primaryUsername)
-                                        .font(.title3)
-                                        .fontWeight(.bold)
-                                    
-                                    if let jobTitle = userProfile.jobTitle, !jobTitle.isEmpty {
-                                        Text(jobTitle)
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                            }
-                            .padding(.vertical, 12)
-                            .transition(.asymmetric(
-                                insertion: .opacity.combined(with: .scale(scale: 0.95)),
-                                removal: .opacity.combined(with: .scale(scale: 0.95))
-                            ))
-                        } else {
-                            HStack(spacing: 12) {
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.blue.opacity(0.1))
-                                        .frame(width: 42, height: 42)
-                                    userAvatarView(for: userProfile)
-                                        .frame(width: 38, height: 38)
-                                        .clipShape(Circle())
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
-                                        )
-                                }
-                                
-                                Text(userProfile.realName ?? primaryUsername)
-                                    .font(.headline)
-                                    .lineLimit(1)
-                                
-                                Spacer()
-                                
-                                if savedUsersVM.savedUsernames.count > 1 {
-                                    Menu {
-                                        ForEach(savedUsersVM.savedUsernames.filter { $0 != primaryUsername }, id: \.self) { username in
-                                            Button(action: {
-                                                withAnimation(.spring()) {
-                                                    selectedUsername = username
-                                                }
-                                            }) {
-                                                HStack {
-                                                    Text(username)
-                                                    Spacer()
-                                                    if selectedUsername == username {
-                                                        Image(systemName: "checkmark")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        
-                                        Divider()
-                                        
-                                        Button(role: .destructive, action: {
-                                            selectedUsername = nil
-                                        }) {
-                                            Label("Clear", systemImage: "xmark.circle")
-                                        }
-                                    } label: {
-                                        HStack(spacing: 4) {
-                                            if let selectedUsername = selectedUsername,
-                                               let userAvatar = leetCodeVM.userProfiles[selectedUsername]?.userAvatar {
-                                                AsyncImage(url: URL(string: userAvatar)) { image in
-                                                    image
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                } placeholder: {
-                                                    Image(systemName: "person.circle.fill")
-                                                }
-                                                .frame(width: 24, height: 24)
-                                                .clipShape(Circle())
-                                            } else {
-                                                Image(systemName: "person.2.fill")
-                                                    .foregroundColor(.green)
-                                            }
-                                            
-                                            Text(selectedUsername ?? "Compare")
-                                                .lineLimit(1)
-                                            
-                                            Image(systemName: "chevron.down")
-                                                .font(.caption)
-                                        }
-                                        .padding(.vertical, 6)
-                                        .padding(.horizontal, 12)
-                                        .background(Color.secondary.opacity(0.1))
-                                        .cornerRadius(8)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .background(Color.clear)
-                            .transition(.asymmetric(
-                                insertion: .opacity.combined(with: .move(edge: .top)),
-                                removal: .opacity.combined(with: .move(edge: .top))
-                            ))
-                        }
-                    }
-                    if savedUsersVM.savedUsernames.count > 1 {
-                        VStack(spacing: 8) {
-                            if headerState == .expanded {
-                                VStack(spacing: 8) {
-                                    Text("Compare with:")
-                                        .font(.headline)
-                                    
-                                    Menu {
-                                        ForEach(savedUsersVM.savedUsernames.filter { $0 != primaryUsername }, id: \.self) { username in
-                                            Button(action: {
-                                                withAnimation(.spring()) {
-                                                    selectedUsername = username
-                                                }
-                                            }) {
-                                                HStack {
-                                                    if let userAvatar = leetCodeVM.userProfiles[username]?.userAvatar {
-                                                        AsyncImage(url: URL(string: userAvatar)) { image in
-                                                            image
-                                                                .resizable()
-                                                                .scaledToFill()
-                                                        } placeholder: {
-                                                            Image(systemName: "person.circle.fill")
-                                                        }
-                                                        .frame(width: 20, height: 20)
-                                                        .clipShape(Circle())
-                                                    }
-                                                    
-                                                    Text(username)
-                                                        .font(.subheadline)
-                                                    
-                                                    Spacer()
-                                                    
-                                                    if selectedUsername == username {
-                                                        Image(systemName: "checkmark")
-                                                        
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        
-                                        Divider()
-                                        
-                                        Button(role: .destructive, action: {
-                                            selectedUsername = nil
-                                        }) {
-                                            Label("Clear Comparison", systemImage: "xmark.circle")
-                                        }
-                                    } label: {
-                                        HStack {
-                                            if let selectedUsername = selectedUsername,
-                                               let userAvatar = leetCodeVM.userProfiles[selectedUsername]?.userAvatar {
-                                                AsyncImage(url: URL(string: userAvatar)) { image in
-                                                    image
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                } placeholder: {
-                                                    Image(systemName: "person.circle.fill")
-                                                }
-                                                .frame(width: 24, height: 24)
-                                                .clipShape(Circle())
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(Color.green.opacity(0.3), lineWidth: 1)
-                                                )
-                                            } else {
-                                                Image(systemName: "person.2.fill")
-                                                    .foregroundColor(.green)
-                                            }
-                                            
-                                            Text(selectedUsername ?? "Select user")
-                                                .lineLimit(1)
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "chevron.down")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal, 16)
-                                        .background(Color.secondary.opacity(0.1))
-                                        .cornerRadius(10)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            } 
-                        }
-                        .padding(.top, 4)
-                        .background(headerState == .expanded ? backgroundColor : Color.clear)
-                    }
+                    // Header Section
+                    HeaderView(
+                        primaryUsername: primaryUsername,
+                        selectedUsername: $selectedUsername,
+                        headerState: headerState,
+                        savedUsersVM: savedUsersVM,
+                        leetCodeVM: leetCodeVM,
+                        backgroundColor: backgroundColor
+                    )
+                    
+                    // Main Content
                     ScrollView {
-                        GeometryReader { geometry in
-                            Color.clear
-                                .preference(
-                                    key: ScrollOffsetPreferenceKey.self,
-                                    value: geometry.frame(in: .named("scrollView")).minY
-                                )
-                                .onChange(of: geometry.frame(in: .named("scrollView")).minY) { newValue in
-                                    scrollOffset = newValue
-                                    updateHeaderState(offset: newValue)
-                                }
-                        }
-                        .frame(height: 0)
+                        // Scroll Position Detector
+                        ScrollPositionDetectorView(
+                            scrollOffset: $scrollOffset,
+                            updateHeaderState: updateHeaderState
+                        )
                         
-                        VStack(spacing: 15) {
-                            if let selectedUsername = selectedUsername,
-                               let primaryStats = leetCodeVM.userStats[primaryUsername],
-                               let compareStats = leetCodeVM.userStats[selectedUsername] {
-                                ComparisonView(
-                                    primaryUsername: primaryUsername,
-                                    compareUsername: selectedUsername,
-                                    primaryStats: primaryStats,
-                                    compareStats: compareStats,
-                                    leetCodeVM: leetCodeVM
-                                )
-                            }
-
-                        }
+                        // Comparison Content
+                        ComparisonContentView(
+                            primaryUsername: primaryUsername,
+                            selectedUsername: selectedUsername,
+                            leetCodeVM: leetCodeVM
+                        )
                     }
                     .coordinateSpace(name: "scrollView")
-                }
-                else {
-                    VStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 60))
-                            .foregroundColor(.orange)
-                            .padding()
-                        
-                        Text("Primary username not set")
-                            .font(.headline)
-                            .foregroundColor(.red)
-                        
-                        Text("Please set a primary user in settings")
-                            .foregroundColor(.gray)
-                            .padding(.top, 5)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    NoPrimaryUserView()
                 }
             }
-            .navigationTitle(headerState == .expanded ? "Compare" : "Compare")
             .navigationBarHidden(true)
             .onAppear {
-                if selectedUsername == nil,
-                   let primaryUsername = savedUsersVM.primaryUsername,
-                   let firstOtherUser = savedUsersVM.savedUsernames.first(where: { $0 != primaryUsername }) {
-                    selectedUsername = firstOtherUser
-                }
-                
-                for username in savedUsersVM.savedUsernames {
-                    leetCodeVM.fetchData(for: username)
-                }
-                
-                for username in savedUsersVM.savedUsernames {
-                    leetCodeVM.fetchUserProfile(for: username)
-                }
+                setupInitialUser()
             }
+            .onChange(of: selectedUsername) { newUsername in
+                fetchDataForSelectedUser(newUsername)
+            }
+        }
+    }
+    
+    private func setupInitialUser() {
+        if selectedUsername == nil,
+           let primaryUsername = savedUsersVM.primaryUsername,
+           let firstOtherUser = savedUsersVM.savedUsernames.first(where: { $0 != primaryUsername }) {
+            selectedUsername = firstOtherUser
+        }
+        
+        if let primaryUsername = savedUsersVM.primaryUsername {
+            Task {
+                async let dataFetch = leetCodeVM.fetchData(for: primaryUsername)
+                async let profileFetch = leetCodeVM.fetchUserProfile(for: primaryUsername)
+                
+                let _ = await (dataFetch, profileFetch)
+            }
+        }
+    }
+
+    private func fetchDataForSelectedUser(_ username: String?) {
+        guard let username = username else { return }
+        
+        Task {
+            async let dataFetch = leetCodeVM.fetchData(for: username)
+            async let profileFetch = leetCodeVM.fetchUserProfile(for: username)
             
+            let _ = await (dataFetch, profileFetch)
         }
     }
     
@@ -378,7 +139,7 @@ struct CompareView: View {
     
     private func updateHeaderState(offset: CGFloat) {
         let absOffset = abs(offset)
-        let extraSpace = (maxHeight - minHeight) * 0.5 
+        let extraSpace = (maxHeight - minHeight) * 0.5
         
         if absOffset < extraSpace {
             if headerState != .expanded {
@@ -396,6 +157,304 @@ struct CompareView: View {
     }
 }
 
+// MARK: - ScrollPositionDetectorView
+struct ScrollPositionDetectorView: View {
+    @Binding var scrollOffset: CGFloat
+    let updateHeaderState: (CGFloat) -> Void
+    
+    var body: some View {
+        GeometryReader { geometry in
+            Color.clear
+                .preference(
+                    key: ScrollOffsetPreferenceKey.self,
+                    value: geometry.frame(in: .named("scrollView")).minY
+                )
+                .onChange(of: geometry.frame(in: .named("scrollView")).minY) { newValue in
+                    scrollOffset = newValue
+                    updateHeaderState(newValue)
+                }
+        }
+        .frame(height: 0)
+    }
+}
+
+// MARK: - HeaderView
+struct HeaderView: View {
+    let primaryUsername: String
+    @Binding var selectedUsername: String?
+    let headerState: CompareView.HeaderState
+    let savedUsersVM: SavedUsersViewModel
+    let leetCodeVM: LeetCodeViewModel
+    let backgroundColor: Color
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            if let userProfile = leetCodeVM.userProfiles[primaryUsername] {
+                if headerState == .expanded {
+                    ExpandedHeaderView(userProfile: userProfile, primaryUsername: primaryUsername)
+                } else {
+                    CollapsedHeaderView(
+                        userProfile: userProfile,
+                        primaryUsername: primaryUsername,
+                        savedUsersVM: savedUsersVM,
+                        selectedUsername: $selectedUsername,
+                        leetCodeVM: leetCodeVM
+                    )
+                }
+            }
+            
+            if savedUsersVM.savedUsernames.count > 1 {
+                CompareSelectionView(
+                    primaryUsername: primaryUsername,
+                    selectedUsername: $selectedUsername,
+                    headerState: headerState,
+                    savedUsersVM: savedUsersVM,
+                    leetCodeVM: leetCodeVM,
+                    backgroundColor: backgroundColor
+                )
+            }
+        }
+    }
+}
+
+// MARK: - ExpandedHeaderView
+struct ExpandedHeaderView: View {
+    let userProfile: UserProfile
+    let primaryUsername: String
+    
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(Color.blue.opacity(0.1))
+                    .frame(width: 86, height: 86)
+                
+                UserAvatarView(userProfile: userProfile,animate: true)
+                    .frame(width: 80, height: 80)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.blue.opacity(0.3), lineWidth: 2)
+                    )
+            }
+            
+            VStack(spacing: 4) {
+                Text(userProfile.realName ?? primaryUsername)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                
+                if let jobTitle = userProfile.jobTitle, !jobTitle.isEmpty {
+                    Text(jobTitle)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(.vertical, 12)
+        .transition(.asymmetric(
+            insertion: .opacity.combined(with: .scale(scale: 0.95)),
+            removal: .opacity.combined(with: .scale(scale: 0.95))
+        ))
+    }
+}
+
+// MARK: - CollapsedHeaderView
+struct CollapsedHeaderView: View {
+    let userProfile: UserProfile
+    let primaryUsername: String
+    let savedUsersVM: SavedUsersViewModel
+    @Binding var selectedUsername: String?
+    let leetCodeVM: LeetCodeViewModel
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(Color.blue.opacity(0.1))
+                    .frame(width: 42, height: 42)
+                UserAvatarView(userProfile: userProfile,animate: true)
+                    .frame(width: 38, height: 38)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                    )
+            }
+            
+            Text(userProfile.realName ?? primaryUsername)
+                .font(.headline)
+                .lineLimit(1)
+            
+            Spacer()
+            
+            if savedUsersVM.savedUsernames.count > 1 {
+                UserSelectionMenu(
+                    primaryUsername: primaryUsername,
+                    selectedUsername: $selectedUsername,
+                    savedUsersVM: savedUsersVM,
+                    leetCodeVM: leetCodeVM,
+                    isCollapsed: true
+                )
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 16)
+        .background(Color.clear)
+        .transition(.asymmetric(
+            insertion: .opacity.combined(with: .move(edge: .top)),
+            removal: .opacity.combined(with: .move(edge: .top))
+        ))
+    }
+}
+
+// MARK: - CompareSelectionView
+struct CompareSelectionView: View {
+    let primaryUsername: String
+    @Binding var selectedUsername: String?
+    let headerState: CompareView.HeaderState
+    let savedUsersVM: SavedUsersViewModel
+    let leetCodeVM: LeetCodeViewModel
+    let backgroundColor: Color
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            if headerState == .expanded {
+                VStack(spacing: 8) {
+                    Text("Compare with:")
+                        .font(.headline)
+                    
+                    UserSelectionMenu(
+                        primaryUsername: primaryUsername,
+                        selectedUsername: $selectedUsername,
+                        savedUsersVM: savedUsersVM,
+                        leetCodeVM: leetCodeVM,
+                        isCollapsed: false
+                    )
+                }
+            }
+        }
+        .padding(.top, 4)
+        .background(headerState == .expanded ? backgroundColor : Color.clear)
+    }
+}
+
+// MARK: - UserSelectionMenu
+struct UserSelectionMenu: View {
+    let primaryUsername: String
+    @Binding var selectedUsername: String?
+    let savedUsersVM: SavedUsersViewModel
+    let leetCodeVM: LeetCodeViewModel
+    let isCollapsed: Bool
+    
+    var body: some View {
+        Menu {
+            ForEach(savedUsersVM.savedUsernames.filter { $0 != primaryUsername }, id: \.self) { username in
+                Button(action: {
+                    withAnimation(.spring()) {
+                        selectedUsername = username
+                    }
+                }) {
+                    HStack {
+                        if let userAvatar = leetCodeVM.userProfiles[username]?.userAvatar {
+                            AsyncImage(url: URL(string: userAvatar)) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } placeholder: {
+                                Image(systemName: "person.circle.fill")
+                            }
+                            .frame(width: isCollapsed ? 20 : 20, height: isCollapsed ? 20 : 20)
+                            .clipShape(Circle())
+                        }
+                        
+                        Text(username)
+                            .font(isCollapsed ? .body : .subheadline)
+                        
+                        Spacer()
+                        
+                        if selectedUsername == username {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+            
+            Divider()
+            
+            Button(role: .destructive, action: {
+                selectedUsername = nil
+            }) {
+                Label(isCollapsed ? "Clear" : "Clear Comparison", systemImage: "xmark.circle")
+            }
+        } label: {
+            HStack(spacing: 4) {
+                if let selectedUsername = selectedUsername,
+                   let userAvatar = leetCodeVM.userProfiles[selectedUsername]?.userAvatar {
+                    AsyncImage(url: URL(string: userAvatar)) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } placeholder: {
+                        Image(systemName: "person.circle.fill")
+                    }
+                    .frame(width: 24, height: 24)
+                    .clipShape(Circle())
+                    .if(!isCollapsed) { view in
+                        view.overlay(
+                            Circle()
+                                .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                        )
+                    }
+                } else {
+                    Image(systemName: "person.2.fill")
+                        .foregroundColor(.green)
+                }
+                
+                Text(selectedUsername ?? (isCollapsed ? "Compare" : "Select user"))
+                    .lineLimit(1)
+                
+                if !isCollapsed {
+                    Spacer()
+                }
+                
+                Image(systemName: "chevron.down")
+                    .font(.caption)
+                    .if(!isCollapsed) { view in
+                        view.foregroundColor(.secondary)
+                    }
+            }
+            .padding(.vertical, isCollapsed ? 6 : 10)
+            .padding(.horizontal, isCollapsed ? 12 : 16)
+            .background(Color.secondary.opacity(0.1))
+            .cornerRadius(isCollapsed ? 8 : 10)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - ComparisonContentView
+struct ComparisonContentView: View {
+    let primaryUsername: String
+    let selectedUsername: String?
+    let leetCodeVM: LeetCodeViewModel
+    
+    var body: some View {
+        VStack(spacing: 15) {
+            if let selectedUsername = selectedUsername,
+               let primaryStats = leetCodeVM.userStats[primaryUsername],
+               let compareStats = leetCodeVM.userStats[selectedUsername] {
+                ComparisonView(
+                    primaryUsername: primaryUsername,
+                    compareUsername: selectedUsername,
+                    primaryStats: primaryStats,
+                    compareStats: compareStats
+                )
+            }
+        }
+    }
+}
+
+// MARK: - ScrollOffsetPreferenceKey
 struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
@@ -403,6 +462,7 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
+// MARK: - Preview Helper
 #Preview {
     ComparePreviewHelper.makeCompareView()
 }
@@ -475,7 +535,8 @@ struct ComparePreviewHelper {
             ranking: 2345
         )
 
-        return CompareView(leetCodeVM: leetCodeVM, savedUsersVM: savedUsersVM)
+        return CompareView(savedUsersVM: savedUsersVM)
+            .environmentObject(leetCodeVM)
             .preferredColorScheme(.light)
     }
 }

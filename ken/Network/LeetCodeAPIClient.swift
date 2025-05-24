@@ -5,19 +5,13 @@
 //  Created by Lakshay Gupta on 30/04/25.
 //
 
-
-//
-//  LeetCodeAPIClient.swift
-//  LeetCode
-//
-//  Created by Lakshay Gupta on 25/01/25.
-//
 import Alamofire
 import Foundation
 import Combine
 
 public class LeetCodeAPIClient {
     private static let baseURL = URL(string: "https://leetcode.com/graphql")!
+    private static let storageService = LeetCodeJSONStorageService()
     
     private static func createRequest(query: String, variables: [String: Any], operationName: String? = nil) -> URLRequest {
         var request = URLRequest(url: baseURL)
@@ -50,13 +44,16 @@ public class LeetCodeAPIClient {
                         switch response.result {
                         case .success(let data):
                             do {
+                                // Save raw JSON response first
+                                storageService.saveStatsJSONResponse(data, forUsername: username)
+                                
                                 let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                                guard let data = json?["data"] as? [String: Any],
-                                      let matchedUser = data["matchedUser"] as? [String: Any],
+                                guard let dataObj = json?["data"] as? [String: Any],
+                                      let matchedUser = dataObj["matchedUser"] as? [String: Any],
                                       let submitStats = matchedUser["submitStats"] as? [String: Any],
                                       let acSubmissionNum = submitStats["acSubmissionNum"] as? [[String: Any]],
                                       let totalSubmissionNum = submitStats["totalSubmissionNum"] as? [[String: Any]],
-                                      let allQuestionsCount = data["allQuestionsCount"] as? [[String: Any]] else {
+                                      let allQuestionsCount = dataObj["allQuestionsCount"] as? [[String: Any]] else {
                                     throw URLError(.cannotParseResponse)
                                 }
                                 
@@ -137,7 +134,7 @@ public class LeetCodeAPIClient {
         }
     }
     
-     static func getUserCalendar(for username: String, queue: DispatchQueue) -> Future<UserCalendar, Error> {
+    static func getUserCalendar(for username: String, queue: DispatchQueue) -> Future<UserCalendar, Error> {
         Future { promise in
             queue.async {
                 let variables = ["username": username]
@@ -149,41 +146,46 @@ public class LeetCodeAPIClient {
                 
                 AF.request(request)
                     .validate()
-                    .responseJSON { response in
+                    .responseData { response in
                         switch response.result {
-                        case .success(let json):
-                            guard let json = json as? [String: Any],
-                                  let data = json["data"] as? [String: Any],
-                                  let matchedUser = data["matchedUser"] as? [String: Any],
-                                  let calendar = matchedUser["userCalendar"] as? [String: Any] else {
-                                promise(.failure(URLError(.cannotParseResponse)))
-                                return
-                            }
-                            
-                            let activeYears = calendar["activeYears"] as? [Int] ?? []
-                            let streak = calendar["streak"] as? Int ?? 0
-                            let totalActiveDays = calendar["totalActiveDays"] as? Int ?? 0
-                            let submissionCalendar = calendar["submissionCalendar"] as? String ?? "{}"
-                            let dccBadgesData = calendar["dccBadges"] as? [[String: Any]] ?? []
-                            let dccBadges = dccBadgesData.compactMap { badgeData -> Badge? in
-                                guard let timestamp = badgeData["timestamp"] as? Int,
-                                      let badge = badgeData["badge"] as? [String: Any],
-                                      let name = badge["name"] as? String,
-                                      let icon = badge["icon"] as? String else {
-                                    return nil
+                        case .success(let data):
+                            do {
+                                storageService.saveCalendarJSONResponse(data, forUsername: username)
+                                
+                                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+                                guard let jsonData = json?["data"] as? [String: Any],
+                                      let matchedUser = jsonData["matchedUser"] as? [String: Any],
+                                      let calendar = matchedUser["userCalendar"] as? [String: Any] else {
+                                    throw URLError(.cannotParseResponse)
                                 }
-                                return Badge(name: name, icon: icon, timestamp: timestamp)
+                                
+                                let activeYears = calendar["activeYears"] as? [Int] ?? []
+                                let streak = calendar["streak"] as? Int ?? 0
+                                let totalActiveDays = calendar["totalActiveDays"] as? Int ?? 0
+                                let submissionCalendar = calendar["submissionCalendar"] as? String ?? "{}"
+                                let dccBadgesData = calendar["dccBadges"] as? [[String: Any]] ?? []
+                                let dccBadges = dccBadgesData.compactMap { badgeData -> Badge? in
+                                    guard let timestamp = badgeData["timestamp"] as? Int,
+                                          let badge = badgeData["badge"] as? [String: Any],
+                                          let name = badge["name"] as? String,
+                                          let icon = badge["icon"] as? String else {
+                                        return nil
+                                    }
+                                    return Badge(name: name, icon: icon, timestamp: timestamp)
+                                }
+                                
+                                let calendars = UserCalendar(
+                                    activeYears: activeYears,
+                                    streak: streak,
+                                    totalActiveDays: totalActiveDays,
+                                    submissionCalendar: submissionCalendar,
+                                    dccBadges: dccBadges
+                                )
+                                
+                                promise(.success(calendars))
+                            } catch {
+                                promise(.failure(error))
                             }
-                            
-                            let calendars = UserCalendar(
-                                activeYears: activeYears,
-                                streak: streak,
-                                totalActiveDays: totalActiveDays,
-                                submissionCalendar: submissionCalendar,
-                                dccBadges: dccBadges
-                            )
-                            
-                            promise(.success(calendars))
                         case .failure(let error):
                             promise(.failure(error))
                         }
@@ -192,7 +194,7 @@ public class LeetCodeAPIClient {
         }
     }
     
-     static func getUserProfile(for username: String, queue: DispatchQueue) -> Future<(UserProfile, Data), Error> {
+    static func getUserProfile(for username: String, queue: DispatchQueue) -> Future<(UserProfile, Data), Error> {
         Future { promise in
             queue.async {
                 let variables = ["username": username]
