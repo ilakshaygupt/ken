@@ -11,11 +11,13 @@ struct SplashScreenView: View {
     @Binding var hasCompletedOnboarding: Bool
     @ObservedObject var savedUsersVM: SavedUsersViewModel
     @Environment(\.colorScheme) private var colorScheme
+    @StateObject private var leetCodeVM = LeetCodeViewModel()
 
     @State private var showLogo = false
     @State private var showTitle = false
-    @State private var showImages = false
+    @State private var showLoadingText = false
     @State private var isActive = false
+    @State private var isLoading = true
 
     private var backgroundColor: Color {
         AppTheme.shared.backgroundColor(in: colorScheme)
@@ -24,7 +26,9 @@ struct SplashScreenView: View {
     var body: some View {
         if isActive {
             if hasCompletedOnboarding {
-                ContentView().environmentObject(savedUsersVM)
+                ContentView()
+                    .environmentObject(savedUsersVM)
+                    .environmentObject(leetCodeVM)
             } else {
                 OnboardingView(savedUsersVM: savedUsersVM)
             }
@@ -47,6 +51,20 @@ struct SplashScreenView: View {
                                 .opacity(showTitle ? 1 : 0)
                                 .offset(y: showTitle ? 0 : 60)
                                 .animation(.easeOut(duration: 0.6).delay(0.8), value: showTitle)
+                            
+                            if showLoadingText {
+                                VStack(spacing: 15) {
+                                    ProgressView()
+                                        .scaleEffect(1.2)
+                                        .tint(.blue)
+                                    
+                                    Text("Loading your data...")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .opacity(0.8)
+                                }
+                                .transition(.opacity)
+                            }
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
@@ -55,9 +73,19 @@ struct SplashScreenView: View {
             .onAppear {
                 showLogo = true
                 showTitle = true
-                showImages = true
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                
+                Task {
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    withAnimation {
+                        showLoadingText = true
+                    }
+                    
+                    for username in savedUsersVM.savedUsernames {
+                        let success = await leetCodeVM.fetchData(for: username)
+                        print("Fetched data for \(username): \(success)")
+                    }
+                            
+                    try? await Task.sleep(nanoseconds: 500_000_000) 
                     withAnimation {
                         isActive = true
                     }
