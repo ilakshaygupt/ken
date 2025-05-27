@@ -11,7 +11,7 @@ struct SplashScreenView: View {
     @Binding var hasCompletedOnboarding: Bool
     @ObservedObject var savedUsersVM: SavedUsersViewModel
     @Environment(\.colorScheme) private var colorScheme
-    @StateObject private var leetCodeVM = LeetCodeViewModel()
+    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
 
     @State private var showLogo = false
     @State private var showTitle = false
