@@ -22,32 +22,38 @@ struct ContentView: View {
     var body: some View {
 
         TabView {
-            NavigationStack {
+            NavigationView {
                 HomeView(savedUsersVM: savedUsersVM)
                     .navigationTitle("Home")
             }
             .tabItem {
                 Label("Home", systemImage: "house")
             }
+            .navigationViewStyle(StackNavigationViewStyle())
+
             
             
-            NavigationStack {
+            
+            NavigationView {
                 CompareView(savedUsersVM: savedUsersVM)
                     .navigationTitle("Compare")
             }
             .tabItem {
                 Label("Compare", systemImage: "chart.bar.xaxis")
             }
+            .navigationViewStyle(StackNavigationViewStyle())
+
             
-            NavigationStack {
+            NavigationView {
                 FriendsView(savedUsersVM: savedUsersVM)
                     .navigationTitle("Friends")
             }
             .tabItem {
                 Label("Friends", systemImage: "person.2")
             }
-            
-            NavigationStack {
+            .navigationViewStyle(StackNavigationViewStyle())
+
+            NavigationView {
                 ScrollView {
                     SearchView()
                 }
@@ -57,6 +63,8 @@ struct ContentView: View {
             .tabItem {
                 Label("Search", systemImage: "magnifyingglass")
             }
+            .navigationViewStyle(StackNavigationViewStyle())
+
         }
 
     }
