@@ -139,7 +139,7 @@ struct MainTabView: View {
     
     var body: some View {
         TabView {
-            NavigationView {
+            NavigationStack {
                 HomeView(savedUsersVM: savedUsersVM)
                     .navigationTitle("Home")
             }
@@ -147,7 +147,8 @@ struct MainTabView: View {
                 Label("Home", systemImage: "house")
             }
             
-            NavigationView {
+            
+            NavigationStack {
                 CompareView(savedUsersVM: savedUsersVM)
                     .navigationTitle("Compare")
             }
@@ -155,7 +156,7 @@ struct MainTabView: View {
                 Label("Compare", systemImage: "chart.bar.xaxis")
             }
             
-            NavigationView {
+            NavigationStack {
                 FriendsView(savedUsersVM: savedUsersVM)
                     .navigationTitle("Friends")
             }
@@ -163,7 +164,7 @@ struct MainTabView: View {
                 Label("Friends", systemImage: "person.2")
             }
             
-            NavigationView {
+            NavigationStack {
                 ScrollView {
                     SearchView()
                 }

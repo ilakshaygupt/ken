@@ -27,7 +27,7 @@ struct OnboardingView: View {
         AppTheme.shared.backgroundColor(in: colorScheme)
     }
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 backgroundColor
                     .ignoresSafeArea()
