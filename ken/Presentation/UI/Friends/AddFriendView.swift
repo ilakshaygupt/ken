@@ -198,12 +198,13 @@ private struct AddFriendButton: View {
             HStack {
                 if isLoading {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .progressViewStyle(CircularProgressViewStyle())
                         .scaleEffect(0.9)
                 } else {
                     Text("Add Friend")
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
+                        
                 }
             }
             .frame(maxWidth: .infinity)
@@ -270,7 +271,7 @@ private struct SuccessOverlay: View {
                     
                     Image(systemName: "checkmark")
                         .font(.system(size: 48, weight: .bold))
-                        .foregroundColor(.white)
+                        
                         .scaleEffect(checkmarkScale)
                         .opacity(checkmarkOpacity)
                 }
@@ -280,13 +281,13 @@ private struct SuccessOverlay: View {
                     Text("Friend Added!")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        
                         .offset(y: textOffset)
                         .opacity(textOpacity)
                     
                     Text("Successfully added to your friends list")
                         .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.9))
+                        
                         .multilineTextAlignment(.center)
                         .offset(y: textOffset)
                         .opacity(textOpacity * 0.8)
