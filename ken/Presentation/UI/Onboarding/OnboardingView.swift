@@ -27,7 +27,7 @@ struct OnboardingView: View {
         AppTheme.shared.backgroundColor(in: colorScheme)
     }
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 backgroundColor
                     .ignoresSafeArea()
@@ -132,6 +132,7 @@ struct OnboardingView: View {
         .fullScreenCover(isPresented: $isComplete) {
             ContentView()
                 .environmentObject(savedUsersVM)
+                .environmentObject(leetCodeVM)
         }
         .onChange(of: isComplete) { newValue in
             if newValue {
@@ -146,14 +147,12 @@ struct OnboardingView: View {
         
         Task {
             let success = await leetCodeVM.fetchData(for: username)
-            
             await MainActor.run {
                 isLoading = false
                 
                 if success {
                     print("Username verification successful, showing success popup")
                     savedUsersVM.setPrimaryUsername(username)
-                    
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         showSuccessAlert = true
                     }

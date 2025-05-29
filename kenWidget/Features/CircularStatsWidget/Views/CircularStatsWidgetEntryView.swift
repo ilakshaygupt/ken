@@ -44,6 +44,7 @@ struct StatsWidgetEntryView: View {
                 Spacer(minLength: 0)
             }
             .padding()
+            .widgetURL(URL(string: "leetcode://user/\(entry.username)"))
         } else {
             VStack(alignment:.center,spacing: 8){
                 HStack {
@@ -99,6 +100,9 @@ struct StatsWidgetEntryView: View {
                 }
             }
                 .padding(EdgeInsets(top: 4, leading: 20, bottom: 0, trailing: 20))
+                .widgetURL(URL(string: "leetcode://user/\(entry.username)"))
                     }
+            
     }
+        
 }

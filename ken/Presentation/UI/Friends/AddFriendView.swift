@@ -27,7 +27,7 @@ struct AddFriendView: View {
     
     // MARK: - Body
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 backgroundView
                 
@@ -169,7 +169,6 @@ private struct UsernameInputSection: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .shadow(color: Color.black.opacity(0.03), radius: 2, x: 0, y: 1)
             
-            // Error message
             if let errorMessage = errorMessage {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.circle")
@@ -199,12 +198,13 @@ private struct AddFriendButton: View {
             HStack {
                 if isLoading {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .progressViewStyle(CircularProgressViewStyle())
                         .scaleEffect(0.9)
                 } else {
                     Text("Add Friend")
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
+                        
                 }
             }
             .frame(maxWidth: .infinity)
@@ -225,44 +225,110 @@ private struct AddFriendButton: View {
     }
 }
 
-// MARK: - Success Overlay
+
+// MARK: - Enhanced Success Overlay
 private struct SuccessOverlay: View {
-    @State private var scale: CGFloat = 0.5
+    @State private var scale: CGFloat = 0.3
     @State private var opacity: Double = 0.0
+    @State private var checkmarkScale: CGFloat = 0.0
+    @State private var checkmarkOpacity: Double = 0.0
+    @State private var textOffset: CGFloat = 30
+    @State private var textOpacity: Double = 0.0
+    @State private var backgroundOpacity: Double = 0.0
+    @State private var pulseScale: CGFloat = 1.0
+    @State private var ringScale: CGFloat = 0.0
+    @State private var ringOpacity: Double = 0.8
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.5)
-                .edgesIgnoringSafeArea(.all)
-                .opacity(opacity)
-            
-            VStack(spacing: 22) {
+            VStack(spacing: 26) {
                 ZStack {
                     Circle()
-                        .fill(Color.green)
-                        .frame(width: 90, height: 90)
-                        .shadow(color: Color.green.opacity(0.4), radius: 10, x: 0, y: 5)
+                        .stroke(Color.green.opacity(0.3), lineWidth: 3)
+                        .frame(width: 140, height: 140)
+                        .scaleEffect(ringScale)
+                        .opacity(ringOpacity)
+                    
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                gradient: Gradient(colors: [
+                                    Color.green.opacity(0.9),
+                                    Color.green.opacity(0.7),
+                                    Color.green.opacity(0.5)
+                                ]),
+                                center: .center,
+                                startRadius: 20,
+                                endRadius: 60
+                            )
+                        )
+                        .frame(width: 100, height: 100)
+                        .scaleEffect(scale)
+                        .scaleEffect(pulseScale)
+                        .shadow(color: Color.green.opacity(0.5), radius: 20, x: 0, y: 8)
+                        .shadow(color: Color.green.opacity(0.3), radius: 40, x: 0, y: 15)
+                    
                     
                     Image(systemName: "checkmark")
-                        .font(.system(size: 44, weight: .bold))
-                        .foregroundColor(.white)
+                        .font(.system(size: 48, weight: .bold))
+                        
+                        .scaleEffect(checkmarkScale)
+                        .opacity(checkmarkOpacity)
                 }
-                .scaleEffect(scale)
                 
-                Text("Friend Added!")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .opacity(opacity)
+                
+                VStack(spacing: 8) {
+                    Text("Friend Added!")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        
+                        .offset(y: textOffset)
+                        .opacity(textOpacity)
+                    
+                    Text("Successfully added to your friends list")
+                        .font(.subheadline)
+                        
+                        .multilineTextAlignment(.center)
+                        .offset(y: textOffset)
+                        .opacity(textOpacity * 0.8)
+                }
             }
         }
         .onAppear {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                scale = 1.0
-            }
-            withAnimation(.easeIn(duration: 0.2)) {
-                opacity = 1.0
-            }
+            performAnimations()
+            
+        }
+    }
+    
+    private func performAnimations() {
+        withAnimation(.easeOut(duration: 0.3)) {
+            backgroundOpacity = 1.0
+        }
+        
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.6, blendDuration: 0)) {
+            scale = 1.0
+        }
+        
+        withAnimation(.easeOut(duration: 0.8).delay(0.2)) {
+            ringScale = 1.2
+        }
+        
+        withAnimation(.easeOut(duration: 0.6).delay(0.8)) {
+            ringOpacity = 0.0
+        }
+        
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.6, blendDuration: 0).delay(0.3)) {
+            checkmarkScale = 1.0
+            checkmarkOpacity = 1.0
+        }
+        
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.7, blendDuration: 0).delay(0.5)) {
+            textOffset = 0
+            textOpacity = 1.0
+        }
+        
+        withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true).delay(0.6)) {
+            pulseScale = 1.05
         }
     }
 }
