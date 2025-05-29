@@ -31,60 +31,27 @@ struct StatsProvider: AppIntentTimelineProvider {
             return Timeline(entries: [StatsWidgetEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
         }
 
-        let storageService = LeetCodeJSONStorageService()
+        let viewModel = LeetCodeViewModel()
         
-        if let stats = viewModel.getUserStats(for: username) {
+        if let stats = viewModel.userStats[username] {
             let entry = StatsWidgetEntry(date: Date(), username: username, stats: stats)
             let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
 
             Task {
-                do {
-                    let freshStatsData = try await fetchStatsJSONData(for: username)
-                    storageService.saveStatsJSONResponse(freshStatsData, forUsername: username)
-                    WidgetCenter.shared.reloadTimelines(ofKind: "kenStatsWidget")
-                } catch {
-                }
+                _ = await viewModel.fetchData(for: username, forceRefresh: true)
+                WidgetCenter.shared.reloadTimelines(ofKind: "kenStatsWidget")
             }
 
             return timeline
         } else {
-            do {
-                let statsData = try await fetchStatsJSONData(for: username)
-                storageService.saveStatsJSONResponse(statsData, forUsername: username)
-
-                if let stats = LeetCodeJSONParser.parseUserStats(from: statsData) {
+            if await viewModel.fetchData(for: username) {
+                if let stats = viewModel.userStats[username] {
                     let entry = StatsWidgetEntry(date: Date(), username: username, stats: stats)
                     return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
                 }
-            } catch {
             }
         }
 
         return Timeline(entries: [StatsWidgetEntry.placeholder], policy: .after(Date().addingTimeInterval(3600)))
-    }
-
-        
-    private func fetchStatsJSONData(for username: String) async throws -> Data {
-        let query = GraphQLQueries.userStats
-        let variables = ["username": username]
-        let url = "https://leetcode.com/graphql"
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json",
-            "Referer": "https://leetcode.com"
-        ]
-        let body: [String: Any] = [
-            "query": query,
-            "variables": variables
-        ]
-
-        let data = try await AF.request(
-            url,
-            method: .post,
-            parameters: body,
-            encoding: JSONEncoding.default,
-            headers: headers
-        ).serializingData().value
-
-        return data
     }
 }

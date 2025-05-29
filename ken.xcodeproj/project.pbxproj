@@ -93,6 +93,7 @@
 				Presentation/UI/Common/ContributionCell.swift,
 				Presentation/ViewModels/LeetcodeJSONParser.swift,
 				Presentation/ViewModels/LeetcodeJSONStorageService.swift,
+				Presentation/ViewModels/LeetCodeViewModel.swift,
 				Resources/Assets.xcassets,
 			);
 			target = 5CD1B1042D4CAE0700AC9398 /* kenWidgetExtension */;
