@@ -19,7 +19,7 @@ struct StatsWidgetEntryView: View {
                     Image("icon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 28, height: 28)
 
                     Text(entry.username)
                         .font(.system(size: 12))
@@ -51,7 +51,7 @@ struct StatsWidgetEntryView: View {
                     Image("icon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 28, height: 28)
                     Text(entry.username)
                         .font(.system(.caption,design: .monospaced).bold())
                         .foregroundColor(.primary)

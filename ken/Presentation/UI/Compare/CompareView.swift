@@ -76,12 +76,32 @@ struct CompareView: View {
                             updateHeaderState: updateHeaderState
                         )
                         
-                        // Comparison Content
-                        ComparisonContentView(
-                            primaryUsername: primaryUsername,
-                            selectedUsername: selectedUsername,
-                            leetCodeVM: leetCodeVM
-                        )
+                        if savedUsersVM.savedUsernames.count <= 1 {
+                            VStack(spacing: 16) {
+                                Image(systemName: "person.2.fill")
+                                    .font(.system(size: 50))
+                                    .foregroundColor(.secondary)
+                                
+                                Text("Add Friends to Compare")
+                                    .font(.title2)
+                                    .fontWeight(.medium)
+                                
+                                Text("Add more LeetCode users to compare your progress with them")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 40)
+                        } else {
+                            // Comparison Content
+                            ComparisonContentView(
+                                primaryUsername: primaryUsername,
+                                selectedUsername: selectedUsername,
+                                leetCodeVM: leetCodeVM
+                            )
+                        }
                     }
                     .coordinateSpace(name: "scrollView")
                 } else {
