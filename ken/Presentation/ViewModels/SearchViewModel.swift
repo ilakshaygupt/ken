@@ -62,7 +62,7 @@ class SearchViewModel: ObservableObject {
             .store(in: &cancellables)
         
         group.enter()
-        LeetCode.getUserProfile(for: username)
+        LeetCode.getUserProfile(for: username, queue: queue)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {

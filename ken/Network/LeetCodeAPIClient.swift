@@ -40,7 +40,7 @@ public class LeetCodeAPIClient {
                 
                 AF.request(request)
                     .validate()
-                    .responseData { response in
+                    .responseData(queue: queue) { response in
                         switch response.result {
                         case .success(let data):
                             do {
@@ -146,7 +146,7 @@ public class LeetCodeAPIClient {
                 
                 AF.request(request)
                     .validate()
-                    .responseData { response in
+                    .responseData(queue: queue) { response in
                         switch response.result {
                         case .success(let data):
                             do {
@@ -179,7 +179,8 @@ public class LeetCodeAPIClient {
                                     streak: streak,
                                     totalActiveDays: totalActiveDays,
                                     submissionCalendar: submissionCalendar,
-                                    dccBadges: dccBadges
+                                    dccBadges: dccBadges,
+                                    contributions: DailyContribution.parse(from: submissionCalendar)
                                 )
                                 
                                 promise(.success(calendars))
@@ -206,7 +207,7 @@ public class LeetCodeAPIClient {
                 
                 AF.request(request)
                     .validate()
-                    .responseData { response in
+                    .responseData(queue: queue) { response in
                         switch response.result {
                         case .success(let data):
                             do {

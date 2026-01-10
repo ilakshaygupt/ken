@@ -10,6 +10,8 @@ struct FriendRowView: View {
     let username: String
     @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
     @Environment(\.colorScheme) var colorScheme
+    @State private var cachedImage: UIImage?
+    @State private var observedUsername: String = ""
     
     private var profileColor: Color {
         let hash = username.unicodeScalars.reduce(0) { $0 + Int($1.value) }
@@ -19,16 +21,26 @@ struct FriendRowView: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Circle()
-                .fill(LinearGradient(gradient: Gradient(colors: [profileColor, profileColor.opacity(0.7)]),
-                                     startPoint: .topLeading,
-                                     endPoint: .bottomTrailing))
-                .frame(width: 44, height: 44)
-                .overlay(
-                    Text(String(username.prefix(1)).uppercased())
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.white)
-                )
+            Group {
+                if let image = cachedImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 44, height: 44)
+                        .clipShape(Circle())
+                } else {
+                    Circle()
+                        .fill(LinearGradient(gradient: Gradient(colors: [profileColor, profileColor.opacity(0.7)]),
+                                             startPoint: .topLeading,
+                                             endPoint: .bottomTrailing))
+                        .frame(width: 44, height: 44)
+                        .overlay(
+                            Text(String(username.prefix(1)).uppercased())
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.white)
+                        )
+                }
+            }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(username)
@@ -58,6 +70,28 @@ struct FriendRowView: View {
             Spacer()
         }
         .padding(.vertical, 8)
+        .onAppear {
+            observedUsername = username
+            cachedImage = AvatarImageCacheService.shared.cachedAvatar(for: username)
+            if cachedImage == nil, let url = leetCodeVM.userProfiles[username]?.userAvatar, !url.isEmpty {
+                AvatarImageCacheService.shared.downloadAndCacheAvatar(for: username, remoteURLString: url) { success in
+                    if success {
+                        DispatchQueue.main.async {
+                            self.cachedImage = AvatarImageCacheService.shared.cachedAvatar(for: username)
+                        }
+                    }
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AvatarImageCacheService.avatarUpdatedNotification)) { notif in
+            if let updatedUsername = notif.object as? String, updatedUsername == observedUsername {
+                cachedImage = AvatarImageCacheService.shared.cachedAvatar(for: updatedUsername)
+            }
+        }
+        .onChange(of: username) { newUsername in
+            observedUsername = newUsername
+            cachedImage = AvatarImageCacheService.shared.cachedAvatar(for: newUsername)
+        }
     }
 }
 

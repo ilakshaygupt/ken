@@ -95,6 +95,7 @@
 				Presentation/ViewModels/LeetcodeJSONStorageService.swift,
 				Presentation/ViewModels/LeetCodeViewModel.swift,
 				Resources/Assets.xcassets,
+				Services/AvatarImageCacheService.swift,
 			);
 			target = 5CD1B1042D4CAE0700AC9398 /* kenWidgetExtension */;
 		};

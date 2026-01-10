@@ -13,8 +13,5 @@ struct UserCalendar {
     let totalActiveDays: Int
     let submissionCalendar: String
     let dccBadges: [Badge]
-    
-    var contributions: [DailyContribution] {
-        DailyContribution.parse(from: submissionCalendar)
-    }
+    let contributions: [DailyContribution]
 }

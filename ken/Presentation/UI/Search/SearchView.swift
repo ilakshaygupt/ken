@@ -205,10 +205,8 @@ struct SearchView: View {
                 .font(.headline)
                 .padding(.bottom, 4)
             
-            let contributions = DailyContribution.parse(from: calendar.submissionCalendar)
-            
             ContributionGridView(
-                contributions: contributions,
+                contributions: calendar.contributions,
                 hoveredContribution: $hoveredContribution,
                 monthsToShow: 6
             )

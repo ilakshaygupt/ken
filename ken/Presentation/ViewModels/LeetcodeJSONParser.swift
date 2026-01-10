@@ -190,7 +190,8 @@ class LeetCodeJSONParser {
                 streak: streak,
                 totalActiveDays: totalActiveDays,
                 submissionCalendar: submissionCalendar,
-                dccBadges: dccBadges
+                dccBadges: dccBadges,
+                contributions: DailyContribution.parse(from: submissionCalendar)
             )
         } catch {
             print("Error parsing calendar JSON: \(error)")

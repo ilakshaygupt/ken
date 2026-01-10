@@ -36,25 +36,27 @@ class LeetCodeViewModel: ObservableObject {
     }
     
     private func loadCachedDataForUser(_ username: String) {
-        // Load stats from cache
-        if let statsData = storageService.getStatsJSONResponse(forUsername: username),
-           let stats = LeetCodeJSONParser.parseUserStats(from: statsData) {
-            Task { @MainActor in
-                userStats[username] = stats
+        DispatchQueue.global(qos: .userInitiated).async {
+            // Load stats from cache
+            if let statsData = self.storageService.getStatsJSONResponse(forUsername: username),
+               let stats = LeetCodeJSONParser.parseUserStats(from: statsData) {
+                Task { @MainActor in
+                    self.userStats[username] = stats
+                }
             }
-        }
-        
-        if let calendarData = storageService.getCalendarJSONResponse(forUsername: username),
-           let calendar = LeetCodeJSONParser.parseUserCalendar(from: calendarData) {
-            Task { @MainActor in
-                userCalendars[username] = calendar
+            
+            if let calendarData = self.storageService.getCalendarJSONResponse(forUsername: username),
+               let calendar = LeetCodeJSONParser.parseUserCalendar(from: calendarData) {
+                Task { @MainActor in
+                    self.userCalendars[username] = calendar
+                }
             }
-        }
-        
-        if let profileData = storageService.getProfileJSONResponse(forUsername: username),
-           let profile = LeetCodeJSONParser.parseUserProfile(from: profileData) {
-            Task { @MainActor in
-                userProfiles[username] = profile
+            
+            if let profileData = self.storageService.getProfileJSONResponse(forUsername: username),
+               let profile = LeetCodeJSONParser.parseUserProfile(from: profileData) {
+                Task { @MainActor in
+                    self.userProfiles[username] = profile
+                }
             }
         }
     }
@@ -166,6 +168,14 @@ class LeetCodeViewModel: ObservableObject {
                         let (profile, responseData) = result
                         Task { @MainActor in
                             self.userProfiles[username] = profile
+                        }
+                        // Avatar caching: download only on force refresh or URL change
+                        if let avatarURL = profile.userAvatar, !avatarURL.isEmpty {
+                            let cache = AvatarImageCacheService.shared
+                            let shouldDownload = cache.needsDownload(for: username, remoteURLString: avatarURL, force: forceRefresh)
+                            if shouldDownload {
+                                cache.downloadAndCacheAvatar(for: username, remoteURLString: avatarURL)
+                            }
                         }
                         self.storageService.saveProfileJSONResponse(responseData, forUsername: username)
                         continuation.resume()
