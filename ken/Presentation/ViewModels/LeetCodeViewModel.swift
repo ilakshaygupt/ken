@@ -26,7 +26,7 @@ class LeetCodeViewModel: ObservableObject {
     }
     
     private func loadCachedData() {
-        guard let usernames = UserDefaults(suiteName: AppGroup)?.stringArray(forKey: "leetcode_usernames") else {
+        guard let usernames = UserDefaults(suiteName: AppGroup)?.stringArray(forKey: UserDefaultsKeys.leetcodeUsernames) else {
             return
         }
         
@@ -36,25 +36,45 @@ class LeetCodeViewModel: ObservableObject {
     }
     
     private func loadCachedDataForUser(_ username: String) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            // Load stats from cache
-            if let statsData = self.storageService.getStatsJSONResponse(forUsername: username),
-               let stats = LeetCodeJSONParser.parseUserStats(from: statsData) {
-                Task { @MainActor in
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self = self else { return }
+            
+            // Load all cached data in parallel
+            async let statsTask = Task {
+                if let statsData = self.storageService.getStatsJSONResponse(forUsername: username),
+                   let stats = LeetCodeJSONParser.parseUserStats(from: statsData) {
+                    return (username, stats)
+                }
+                return nil as (String, UserStats)?
+            }
+            
+            async let calendarTask = Task {
+                if let calendarData = self.storageService.getCalendarJSONResponse(forUsername: username),
+                   let calendar = LeetCodeJSONParser.parseUserCalendar(from: calendarData) {
+                    return (username, calendar)
+                }
+                return nil as (String, UserCalendar)?
+            }
+            
+            async let profileTask = Task {
+                if let profileData = self.storageService.getProfileJSONResponse(forUsername: username),
+                   let profile = LeetCodeJSONParser.parseUserProfile(from: profileData) {
+                    return (username, profile)
+                }
+                return nil as (String, UserProfile)?
+            }
+            
+            // Update UI on main thread after all data is loaded
+            let (statsResult, calendarResult, profileResult) = await (statsTask.value, calendarTask.value, profileTask.value)
+            
+            await MainActor.run {
+                if let (username, stats) = statsResult {
                     self.userStats[username] = stats
                 }
-            }
-            
-            if let calendarData = self.storageService.getCalendarJSONResponse(forUsername: username),
-               let calendar = LeetCodeJSONParser.parseUserCalendar(from: calendarData) {
-                Task { @MainActor in
+                if let (username, calendar) = calendarResult {
                     self.userCalendars[username] = calendar
                 }
-            }
-            
-            if let profileData = self.storageService.getProfileJSONResponse(forUsername: username),
-               let profile = LeetCodeJSONParser.parseUserProfile(from: profileData) {
-                Task { @MainActor in
+                if let (username, profile) = profileResult {
                     self.userProfiles[username] = profile
                 }
             }
@@ -66,31 +86,29 @@ class LeetCodeViewModel: ObservableObject {
             error = nil
         }
         
-        
-        
         let hasCachedStats = userStats[username] != nil
         let hasCachedCalendar = userCalendars[username] != nil
         let hasCachedData = hasCachedStats && hasCachedCalendar
         
-        let needsRefresh = forceRefresh || storageService.needsRefresh(forUsername: username)
+        // Check refresh status off main thread
+        let needsRefresh = await Task.detached(priority: .userInitiated) {
+            forceRefresh || self.storageService.needsRefresh(forUsername: username)
+        }.value
         
         if hasCachedData && !needsRefresh {
             return true
         }
         
-        if hasCachedData && needsRefresh {
-            await MainActor.run {
+        await MainActor.run {
+            if hasCachedData && needsRefresh {
                 isFetchingFreshData = true
-            }
-        } else {
-            await MainActor.run {
+            } else {
                 isLoading = true
             }
         }
         
         return await fetchFreshData(for: username)
     }
-
     
     private func fetchFreshData(for username: String) async -> Bool {
         return await withCheckedContinuation { continuation in
@@ -131,7 +149,10 @@ class LeetCodeViewModel: ObservableObject {
                             self.userCalendars[username] = calendar
                         }
                         
-                        WidgetCenter.shared.reloadAllTimelines()
+                        // Reload widgets off main thread
+                        Task.detached(priority: .utility) {
+                            WidgetCenter.shared.reloadAllTimelines()
+                        }
                     }
                 )
                 .store(in: &operationCancellables)
@@ -139,8 +160,6 @@ class LeetCodeViewModel: ObservableObject {
             self.cancellables.formUnion(operationCancellables)
         }
     }
-
-
     
     func fetchUserProfile(for username: String, forceRefresh: Bool = false) async {
         if !forceRefresh,
@@ -157,9 +176,11 @@ class LeetCodeViewModel: ObservableObject {
             LeetCodeAPIClient.getUserProfile(for: username, queue: .global())
                 .receive(on: DispatchQueue.main)
                 .sink(
-                    receiveCompletion: { completion in
+                    receiveCompletion: { [weak self] completion in
                         if case .failure(let error) = completion {
-                            print("Error fetching user profile: \(error)")
+                            Task { @MainActor in
+                                self?.error = error
+                            }
                             continuation.resume()
                         }
                     },
@@ -193,18 +214,38 @@ class LeetCodeViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Preload All Users Data
+    
+    func preloadAllUsersData(usernames: [String], forceRefresh: Bool = false) async {
+        await withTaskGroup(of: Void.self) { group in
+            for username in usernames {
+                group.addTask { [weak self] in
+                    guard let self = self else { return }
+                    // Fetch stats and calendar in parallel
+                    async let dataFetch = self.fetchData(for: username, forceRefresh: forceRefresh)
+                    async let profileFetch = self.fetchUserProfile(for: username, forceRefresh: forceRefresh)
+                    
+                    // Wait for both to complete
+                    let _ = await (dataFetch, profileFetch)
+                }
+            }
+        }
+    }
+    
     // MARK: - Cache Management
     
-    func getCacheInfo(for username: String) -> (hasCache: Bool, lastFetched: Date?, needsRefresh: Bool) {
-        let hasStats = storageService.getStatsJSONResponse(forUsername: username) != nil
-        let hasCalendar = storageService.getCalendarJSONResponse(forUsername: username) != nil
-        let hasProfile = storageService.getProfileJSONResponse(forUsername: username) != nil
-        
-        return (
-            hasCache: hasStats && hasCalendar && hasProfile,
-            lastFetched: storageService.getLastFetchedTime(forUsername: username),
-            needsRefresh: storageService.needsRefresh(forUsername: username)
-        )
+    func getCacheInfo(for username: String) async -> (hasCache: Bool, lastFetched: Date?, needsRefresh: Bool) {
+        return await Task.detached(priority: .userInitiated) {
+            let hasStats = self.storageService.getStatsJSONResponse(forUsername: username) != nil
+            let hasCalendar = self.storageService.getCalendarJSONResponse(forUsername: username) != nil
+            let hasProfile = self.storageService.getProfileJSONResponse(forUsername: username) != nil
+            
+            return (
+                hasCache: hasStats && hasCalendar && hasProfile,
+                lastFetched: self.storageService.getLastFetchedTime(forUsername: username),
+                needsRefresh: self.storageService.needsRefresh(forUsername: username)
+            )
+        }.value
     }
     
     func clearCache(for username: String? = nil) {
@@ -217,9 +258,9 @@ class LeetCodeViewModel: ObservableObject {
             calendarResponses.removeValue(forKey: username)
             profileResponses.removeValue(forKey: username)
             
-            UserDefaults(suiteName: AppGroup)?.set(statsResponses, forKey: "leetcode_stats_json_responses")
-            UserDefaults(suiteName: AppGroup)?.set(calendarResponses, forKey: "leetcode_calendar_json_responses")
-            UserDefaults(suiteName: AppGroup)?.set(profileResponses, forKey: "leetcode_profile_json_responses")
+            UserDefaults(suiteName: AppGroup)?.set(statsResponses, forKey: UserDefaultsKeys.leetcodeStatsJSONResponses)
+            UserDefaults(suiteName: AppGroup)?.set(calendarResponses, forKey: UserDefaultsKeys.leetcodeCalendarJSONResponses)
+            UserDefaults(suiteName: AppGroup)?.set(profileResponses, forKey: UserDefaultsKeys.leetcodeProfileJSONResponses)
             
             // Clear from memory
             Task { @MainActor in
@@ -229,10 +270,10 @@ class LeetCodeViewModel: ObservableObject {
             }
         } else {
             // Clear all cache
-            UserDefaults(suiteName: AppGroup)?.removeObject(forKey: "leetcode_stats_json_responses")
-            UserDefaults(suiteName: AppGroup)?.removeObject(forKey: "leetcode_calendar_json_responses")
-            UserDefaults(suiteName: AppGroup)?.removeObject(forKey: "leetcode_profile_json_responses")
-            UserDefaults(suiteName: AppGroup)?.removeObject(forKey: "leetcode_last_fetched_time")
+            UserDefaults(suiteName: AppGroup)?.removeObject(forKey: UserDefaultsKeys.leetcodeStatsJSONResponses)
+            UserDefaults(suiteName: AppGroup)?.removeObject(forKey: UserDefaultsKeys.leetcodeCalendarJSONResponses)
+            UserDefaults(suiteName: AppGroup)?.removeObject(forKey: UserDefaultsKeys.leetcodeProfileJSONResponses)
+            UserDefaults(suiteName: AppGroup)?.removeObject(forKey: UserDefaultsKeys.leetcodeLastFetchedTime)
             
             // Clear from memory
             Task { @MainActor in
@@ -242,6 +283,5 @@ class LeetCodeViewModel: ObservableObject {
             }
         }
         
-        UserDefaults(suiteName: AppGroup)?.synchronize()
     }
 }

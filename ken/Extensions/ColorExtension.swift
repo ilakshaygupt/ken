@@ -1,3 +1,9 @@
+//
+//  ColorExtension.swift
+//  ken
+//
+//  Created by Lakshay Gupta on 21/02/25.
+//
 
 import SwiftUI
 
@@ -13,6 +19,6 @@ extension Color {
         let green = Double((rgb & 0x00FF00) >> 8) / 255.0
         let blue = Double(rgb & 0x0000FF) / 255.0
         
-        self.init(red: red, green: green, blue: blue,opacity: opacity)
+        self.init(red: red, green: green, blue: blue, opacity: opacity)
     }
 }

@@ -5,18 +5,15 @@
 //  Created by Lakshay Gupta on 31/01/25.
 //
 
-
 import SwiftUI
-
-
-
 
 class SavedUsersViewModel: ObservableObject {
     @Published var savedUsernames: [String] = []
     @Published var primaryUsername: String?
     
-    private let userDefaultsKey = "leetcode_usernames"
-    private let primaryUsernameKey = "primary_leetcode_username"
+    private var userDefaults: UserDefaults? {
+        UserDefaults(suiteName: AppGroup)
+    }
     
     init() {
         loadSavedUsernames()
@@ -24,13 +21,15 @@ class SavedUsersViewModel: ObservableObject {
     }
     
     func loadSavedUsernames() {
-        if let usernames = UserDefaults(suiteName: AppGroup)!.stringArray(forKey: userDefaultsKey) {
+        guard let userDefaults = userDefaults else { return }
+        if let usernames = userDefaults.stringArray(forKey: UserDefaultsKeys.leetcodeUsernames) {
             savedUsernames = usernames
         }
     }
     
     func loadPrimaryUsername() {
-        primaryUsername = UserDefaults(suiteName: AppGroup)!.string(forKey: primaryUsernameKey)
+        guard let userDefaults = userDefaults else { return }
+        primaryUsername = userDefaults.string(forKey: UserDefaultsKeys.primaryLeetcodeUsername)
     }
     
     func hasPrimaryUsername() -> Bool {
@@ -38,10 +37,9 @@ class SavedUsersViewModel: ObservableObject {
     }
     
     func setPrimaryUsername(_ username: String) {
-        
+        guard let userDefaults = userDefaults else { return }
         primaryUsername = username
-        UserDefaults(suiteName: AppGroup)!.set(username, forKey: primaryUsernameKey)
-        
+        userDefaults.set(username, forKey: UserDefaultsKeys.primaryLeetcodeUsername)
         
         if !savedUsernames.contains(username) {
             savedUsernames.append(username)
@@ -50,11 +48,9 @@ class SavedUsersViewModel: ObservableObject {
     }
     
     func changePrimaryUsername(_ username: String) {
-        
         if !savedUsernames.contains(username) {
             return
         }
-        
         
         setPrimaryUsername(username)
     }
@@ -78,7 +74,7 @@ class SavedUsersViewModel: ObservableObject {
     }
     
     private func saveToDisk() {
-        UserDefaults(suiteName: AppGroup)!.set(savedUsernames, forKey: userDefaultsKey)
-        UserDefaults(suiteName: AppGroup)!.synchronize()
+        guard let userDefaults = userDefaults else { return }
+        userDefaults.set(savedUsernames, forKey: UserDefaultsKeys.leetcodeUsernames)
     }
-} 
+}

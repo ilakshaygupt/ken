@@ -29,27 +29,48 @@ struct FriendsView: View {
         return savedUsersVM.savedUsernames.filter { $0.localizedCaseInsensitiveContains(searchText) }
     }
     
+    @State private var cachedSortedUsernames: [String] = []
+    @State private var lastFilteredCount: Int = 0
+    @State private var lastSortOption: SortOption = .name
+    
     private var sortedUsernames: [String] {
         let filtered = filteredUsernames
         
+        // Use cached result if nothing changed
+        if !cachedSortedUsernames.isEmpty && 
+           cachedSortedUsernames.count == filtered.count &&
+           lastFilteredCount == filtered.count &&
+           lastSortOption == sortOption {
+            return cachedSortedUsernames
+        }
+        
+        let sorted: [String]
+        
         switch sortOption {
         case .name:
-            return filtered.sorted()
+            sorted = filtered.sorted()
             
         case .rank:
-            return filtered.sorted { username1, username2 in
-                let rank1 = leetCodeVM.userStats[username1]?.ranking ?? Int.max
-                let rank2 = leetCodeVM.userStats[username2]?.ranking ?? Int.max
-                return rank1 < rank2
-            }
+            // Pre-extract ranks to avoid multiple dictionary lookups
+            let ranks = Dictionary(uniqueKeysWithValues: filtered.map { username in
+                (username, leetCodeVM.userStats[username]?.ranking ?? Int.max)
+            })
+            sorted = filtered.sorted { ranks[$0] ?? Int.max < ranks[$1] ?? Int.max }
             
         case .solved:
-            return filtered.sorted { username1, username2 in
-                let solved1 = leetCodeVM.userStats[username1]?.totalSolved ?? 0
-                let solved2 = leetCodeVM.userStats[username2]?.totalSolved ?? 0
-                return solved1 > solved2
-            }
+            // Pre-extract solved counts to avoid multiple dictionary lookups
+            let solved = Dictionary(uniqueKeysWithValues: filtered.map { username in
+                (username, leetCodeVM.userStats[username]?.totalSolved ?? 0)
+            })
+            sorted = filtered.sorted { solved[$0] ?? 0 > solved[$1] ?? 0 }
         }
+        
+        // Update cache synchronously
+        cachedSortedUsernames = sorted
+        lastFilteredCount = filtered.count
+        lastSortOption = sortOption
+        
+        return sorted
     }
     
     var body: some View {
@@ -102,6 +123,15 @@ struct FriendsView: View {
                 sortMenu
             }
         }
+        .onChange(of: searchText) { _ in
+            cachedSortedUsernames = []
+        }
+        .onChange(of: sortOption) { _ in
+            cachedSortedUsernames = []
+        }
+        .onChange(of: leetCodeVM.userStats) { _ in
+            cachedSortedUsernames = []
+        }
         .sheet(isPresented: $showingAddSheet) {
             AddFriendView(
                 leetCodeVM: leetCodeVM,
@@ -139,26 +169,26 @@ struct FriendsView: View {
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: UIConstants.spacingXLarge) {
             Spacer()
-                .frame(height: 20)
+                .frame(height: UIConstants.spacingLarge)
             
             Image(systemName: "person.3.fill")
                 .font(.system(size: 70))
                 .foregroundColor(.blue.opacity(0.7))
-                .padding(.bottom, 10)
+                .padding(.bottom, UIConstants.paddingSmall)
             
             Text("No Friends Added")
-                .font(.title2)
+                .font(UIConstants.title2Font)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
             
             Text("Add friends to compare progress and track their LeetCode journey")
-                .font(.subheadline)
+                .font(UIConstants.subheadlineFont)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-                .padding(.bottom, 10)
+                .padding(.horizontal, UIConstants.paddingXLarge)
+                .padding(.bottom, UIConstants.paddingSmall)
             
             Button(action: { showingAddSheet = true }) {
                 HStack {
@@ -167,8 +197,8 @@ struct FriendsView: View {
                     Text("Add Friend")
                         .fontWeight(.semibold)
                 }
-                .padding(.vertical, 12)
-                .padding(.horizontal, 24)
+                .padding(.vertical, UIConstants.paddingMedium)
+                .padding(.horizontal, UIConstants.spacingXLarge)
                 .background(
                     LinearGradient(
                         gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
@@ -177,13 +207,13 @@ struct FriendsView: View {
                     )
                 )
                 .foregroundColor(.white)
-                .cornerRadius(12)
+                .cornerRadius(UIConstants.cornerRadius)
                 .shadow(color: Color.blue.opacity(0.2), radius: 4, x: 0, y: 2)
             }
             
             Spacer()
         }
-        .padding()
+        .padding(UIConstants.padding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     

@@ -1,10 +1,9 @@
 //
-//  UICOlors.swift
+//  UIColors.swift
 //  ken
 //
 //  Created by Lakshay Gupta on 21/02/25.
 //
-
 
 import SwiftUI
 

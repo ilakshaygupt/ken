@@ -9,37 +9,37 @@ struct UserStatsCardView: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIConstants.spacing) {
             // Header
             HStack {
                 Text("LeetCode Progress")
-                    .font(.headline)
+                    .font(UIConstants.headlineFont)
                     .foregroundColor(.primary)
                 
                 Spacer()
                 
                 if let ranking = stats.ranking {
                     Text("Rank: \(ranking)")
-                        .font(.subheadline)
+                        .font(UIConstants.subheadlineFont)
                         .foregroundColor(.secondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, UIConstants.spacingSmall)
+                        .padding(.vertical, UIConstants.paddingSmall / 2)
                         .background(Color.yellow.opacity(0.2))
-                        .cornerRadius(8)
+                        .cornerRadius(UIConstants.cornerRadiusSmall)
                 }
             }
             
             // Progress Bar
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: UIConstants.spacingSmall) {
                 HStack {
                     Text("Total Problems Solved")
-                        .font(.subheadline)
+                        .font(UIConstants.subheadlineFont)
                         .foregroundColor(.secondary)
                     
                     Spacer()
                     
                     Text("\(stats.totalSolved) / \(stats.totalProblems)")
-                        .font(.subheadline)
+                        .font(UIConstants.subheadlineFont)
                         .foregroundColor(.primary)
                 }
                 
@@ -48,36 +48,34 @@ struct UserStatsCardView: View {
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
                             .frame(width: geometry.size.width, height: 8)
-                            .cornerRadius(4)
+                            .cornerRadius(UIConstants.paddingSmall / 2)
                         
                         Rectangle()
                             .fill(LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing))
                             .frame(width: geometry.size.width * CGFloat(solvedPercentage), height: 8)
-                            .cornerRadius(4)
+                            .cornerRadius(UIConstants.paddingSmall / 2)
                     }
                 }
                 .frame(height: 8)
             }
             
             // Difficulty breakdown
-            HStack(spacing: 16) {
+            HStack(spacing: UIConstants.spacing) {
                 difficultyCard(title: "Easy", solved: stats.easySolved, total: stats.easyTotal, color: .green)
                 difficultyCard(title: "Medium", solved: stats.mediumSolved, total: stats.mediumTotal, color: .orange)
                 difficultyCard(title: "Hard", solved: stats.hardSolved, total: stats.hardTotal, color: .red)
             }
         }
-        .padding()
-        .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
+        .modifier(AppTheme.shared.cardStyle(in: colorScheme))
     }
     
     private func difficultyCard(title: String, solved: Int, total: Int, color: Color) -> some View {
         let percentage = total > 0 ? Double(solved) / Double(total) : 0
         
-        return VStack(alignment: .leading, spacing: 6) {
+        return VStack(alignment: .leading, spacing: UIConstants.spacingSmall) {
             Text(title)
-                .font(.subheadline)
+                .font(UIConstants.subheadlineFont)
                 .foregroundColor(color)
             
             ZStack(alignment: .leading) {
@@ -93,7 +91,7 @@ struct UserStatsCardView: View {
             }
             
             Text("\(solved) / \(total)")
-                .font(.caption)
+                .font(UIConstants.captionFont)
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)

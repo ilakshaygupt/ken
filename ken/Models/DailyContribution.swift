@@ -12,18 +12,25 @@ struct DailyContribution {
     let count: Int
     
     static func parse(from calendar: String) -> [DailyContribution] {
-        guard let data = calendar.data(using: .utf8),
+        guard !calendar.isEmpty,
+              let data = calendar.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Int] else {
             return []
         }
         
-        return json.compactMap { dateString, count in
+        // Pre-allocate capacity for better performance with large datasets
+        var contributions: [DailyContribution] = []
+        contributions.reserveCapacity(json.count)
+        
+        for (dateString, count) in json {
             guard let timestampDouble = Double(dateString) else {
-                return nil
+                continue
             }
             let date = Date(timeIntervalSince1970: timestampDouble)
-            return DailyContribution(date: date, count: count)
+            contributions.append(DailyContribution(date: date, count: count))
         }
+        
+        return contributions
     }
 }
 

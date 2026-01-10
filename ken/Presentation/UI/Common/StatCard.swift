@@ -14,18 +14,21 @@ import WidgetKit
 struct StatCard: View {
     let title: String
     let value: Int
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: UIConstants.spacingSmall) {
             Text(title)
-                .font(.headline)
+                .font(UIConstants.headlineFont)
+                .foregroundColor(.secondary)
             Text("\(value)")
-                .font(.title)
-                .bold()
+                .font(UIConstants.titleFont)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
         }
         .frame(maxWidth: .infinity)
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(12)
+        .padding(UIConstants.padding)
+        .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
+        .cornerRadius(UIConstants.cornerRadius)
     }
 }

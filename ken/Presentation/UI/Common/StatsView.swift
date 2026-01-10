@@ -14,10 +14,10 @@ struct StatsView: View {
     let stats: UserStats
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIConstants.spacing) {
             StatCard(title: "Total Solved", value: stats.totalSolved)
             
-            HStack(spacing: 12) {
+            HStack(spacing: UIConstants.itemSpacing) {
                 StatCard(title: "Easy", value: stats.easySolved)
                     .foregroundColor(Color(hex: "1cbbba"))
                 StatCard(title: "Medium", value: stats.mediumSolved)

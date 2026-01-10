@@ -4,6 +4,7 @@
 //
 //  Created by Lakshay Gupta on 03/05/25.
 //
+
 import SwiftUI
 import Foundation
 import Combine
@@ -113,7 +114,11 @@ struct CompareView: View {
                 setupInitialUser()
             }
             .onChange(of: selectedUsername) { newUsername in
-                fetchDataForSelectedUser(newUsername)
+                // Debounce to avoid rapid-fire requests
+                Task {
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
+                    fetchDataForSelectedUser(newUsername)
+                }
             }
         }
     }
@@ -125,8 +130,9 @@ struct CompareView: View {
             selectedUsername = firstOtherUser
         }
         
+        // Preload data in background without blocking UI
         if let primaryUsername = savedUsersVM.primaryUsername {
-            Task {
+            Task(priority: .userInitiated) {
                 async let dataFetch = leetCodeVM.fetchData(for: primaryUsername)
                 async let profileFetch = leetCodeVM.fetchUserProfile(for: primaryUsername)
                 
@@ -138,22 +144,12 @@ struct CompareView: View {
     private func fetchDataForSelectedUser(_ username: String?) {
         guard let username = username else { return }
         
-        Task {
+        // Preload data in background without blocking UI
+        Task(priority: .userInitiated) {
             async let dataFetch = leetCodeVM.fetchData(for: username)
             async let profileFetch = leetCodeVM.fetchUserProfile(for: username)
             
             let _ = await (dataFetch, profileFetch)
-        }
-    }
-    
-    private func getOffset(offset: CGFloat) -> CGFloat {
-        let absOffset = abs(offset)
-        let extraSpace = maxHeight - minHeight
-                
-        if absOffset < extraSpace {
-            return -absOffset
-        } else {
-            return -extraSpace
         }
     }
     

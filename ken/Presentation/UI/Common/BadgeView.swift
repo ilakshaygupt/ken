@@ -16,8 +16,7 @@ struct BadgeView: View {
     let badge: Badge
     
     var body: some View {
-        VStack(spacing: 4) {
-            
+        VStack(spacing: UIConstants.paddingSmall / 2) {
             AsyncImage(url: URL(string: baseURL + badge.icon)) { image in
                 image
                     .resizable()
@@ -33,9 +32,9 @@ struct BadgeView: View {
             .frame(width: 70, height: 70)
         }
         .frame(width: 80)
-        .padding(8)
+        .padding(UIConstants.spacingSmall)
         .background(Color.clear)
-        .cornerRadius(8)
-        .shadow(radius: 2)
+        .cornerRadius(UIConstants.cornerRadiusSmall)
+        .shadow(radius: UIConstants.shadowRadius)
     }
 }

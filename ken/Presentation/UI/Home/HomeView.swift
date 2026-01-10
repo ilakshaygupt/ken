@@ -32,7 +32,7 @@ struct HomeView: View {
             
             if let primaryUsername = savedUsersVM.primaryUsername {
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: UIConstants.spacingXLarge) {
                         UserProfileHeaderView(
                             username: primaryUsername,
                             userProfile: leetCodeVM.userProfiles[primaryUsername],
@@ -43,11 +43,11 @@ struct HomeView: View {
                         
                         if leetCodeVM.isLoading && !isRefreshing {
                             LoadingView(message: "Loading your LeetCode data...")
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, UIConstants.horizontalPadding)
                         } else if let stats = leetCodeVM.userStats[primaryUsername],
                                   let calendar = leetCodeVM.userCalendars[primaryUsername] {
                             
-                            VStack(spacing: 24) {
+                            VStack(spacing: UIConstants.spacingXLarge) {
                                 CardView(
                                     title: "Statistics",
                                     systemImage: "chart.bar",
@@ -55,7 +55,7 @@ struct HomeView: View {
                                     animate: animate
                                 ) {
                                     StatisticsContentView(stats: stats)
-                                        .padding()
+                                        .padding(UIConstants.padding)
                                 }
                                 
                                 CardView(
@@ -68,15 +68,15 @@ struct HomeView: View {
                                         contributions: calendar.contributions,
                                         monthsToShow: 12
                                     )
-                                    .padding()
+                                    .padding(UIConstants.padding)
                                 }
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, UIConstants.horizontalPadding)
                         }
                         
                         if let error = leetCodeVM.error {
                             ErrorView(message: error.localizedDescription)
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, UIConstants.horizontalPadding)
                         }
                         
                         Spacer(minLength: 50)

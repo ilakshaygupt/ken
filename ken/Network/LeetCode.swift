@@ -8,17 +8,16 @@
 import Combine
 import SwiftUI
 
-
 public enum LeetCode {
     public static func getUserStats(for username: String, queue: DispatchQueue = .global()) -> Future<UserStats, Error> {
         return LeetCodeAPIClient.getUserStats(for: username, queue: queue)
     }
     
-     static func getUserCalendar(for username: String, queue: DispatchQueue = .global()) -> Future<UserCalendar, Error> {
+    static func getUserCalendar(for username: String, queue: DispatchQueue = .global()) -> Future<UserCalendar, Error> {
         return LeetCodeAPIClient.getUserCalendar(for: username, queue: queue)
     }
     
-     static func getUserProfile(for username: String, queue: DispatchQueue = .global()) -> Future<(UserProfile, Data), Error> {
+    static func getUserProfile(for username: String, queue: DispatchQueue = .global()) -> Future<(UserProfile, Data), Error> {
         return LeetCodeAPIClient.getUserProfile(for: username, queue: queue)
     }
 }

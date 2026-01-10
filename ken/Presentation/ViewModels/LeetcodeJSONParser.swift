@@ -2,7 +2,7 @@
 //  LeetCodeJSONParser.swift
 //  ken
 //
-//  Created on @Date
+//  Created by Lakshay Gupta on 24/04/25.
 //
 
 import Foundation
@@ -39,7 +39,7 @@ class LeetCodeJSONParser {
             let ranking = profile?["ranking"] as? Int ?? 0
             
             let contestBadgeData = matchedUser["contestBadge"] as? [String: Any]
-            var contestBadge: ContestBadge? = nil
+            var contestBadge: ContestBadge?
             if let badgeData = contestBadgeData {
                 let name = badgeData["name"] as? String ?? ""
                 let expired = badgeData["expired"] as? Bool ?? false
@@ -139,6 +139,7 @@ class LeetCodeJSONParser {
             
             let profile = matchedUser["profile"] as? [String: Any]
             let ranking = profile?["ranking"] as? Int
+            
             return UserStats(
                 totalSolved: totalSolved,
                 easySolved: easySolved,

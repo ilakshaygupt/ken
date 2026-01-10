@@ -10,7 +10,7 @@ import SwiftUI
 struct KenApp: App {
     @StateObject private var leetCodeVM = LeetCodeViewModel()
     @StateObject private var savedUsersVM = SavedUsersViewModel()
-    @AppStorage("has_completed_onboarding") private var hasCompletedOnboarding = false
+    @AppStorage(UserDefaultsKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
     @State private var deepLinkedUsername: String?
 
     var body: some Scene {
@@ -43,4 +43,3 @@ struct KenApp: App {
         }
     }
 }
-

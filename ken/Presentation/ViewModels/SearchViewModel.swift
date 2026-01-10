@@ -4,6 +4,7 @@
 //
 //  Created by Lakshay Gupta on 09/05/25.
 //
+
 import Foundation
 import Combine
 import SwiftUI
@@ -18,8 +19,8 @@ class SearchViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     private let queue = DispatchQueue(label: "com.leetcode.search", qos: .userInitiated)
-
-
+    
+    // MARK: - Public Methods
     
     func searchUser() {
         guard !username.isEmpty else { return }
@@ -34,7 +35,7 @@ class SearchViewModel: ObservableObject {
         var receivedValidData = false
         
         group.enter()
-        LeetCode.getUserStats(for: username,queue: queue)
+        LeetCode.getUserStats(for: username, queue: queue)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
@@ -48,7 +49,7 @@ class SearchViewModel: ObservableObject {
             .store(in: &cancellables)
         
         group.enter()
-        LeetCode.getUserCalendar(for: username,queue: queue)
+        LeetCode.getUserCalendar(for: username, queue: queue)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {

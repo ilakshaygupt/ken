@@ -4,13 +4,7 @@
 //
 //  Created by Lakshay Gupta on 04/05/25.
 //
-import SwiftUI
-//
-//  AddFriendView.swift
-//  ken
-//
-//  Created by Lakshay Gupta on 04/05/25.
-//
+
 import SwiftUI
 
 struct AddFriendView: View {
@@ -32,8 +26,7 @@ struct AddFriendView: View {
                 backgroundView
                 
                 ScrollView {
-                    VStack(spacing: 32) {
-                
+                    VStack(spacing: UIConstants.spacingXLarge * 2) {
                         UsernameInputSection(
                             username: $username,
                             errorMessage: errorMessage,
@@ -47,10 +40,10 @@ struct AddFriendView: View {
                             action: addFriend
                         )
                         
-                        Spacer(minLength: 40)
+                        Spacer(minLength: UIConstants.paddingXLarge)
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 20)
+                    .padding(.horizontal, UIConstants.horizontalPadding)
+                    .padding(.top, UIConstants.spacingLarge)
                 }
                 
                 // Success overlay
@@ -132,15 +125,15 @@ private struct UsernameInputSection: View {
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: UIConstants.spacingSmall) {
             // Label
             Text("LeetCode username")
-                .font(.subheadline)
+                .font(UIConstants.subheadlineFont)
                 .foregroundColor(.secondary)
-                .padding(.leading, 4)
+                .padding(.leading, UIConstants.paddingSmall / 2)
             
             // Input field
-            HStack(spacing: 12) {
+            HStack(spacing: UIConstants.itemSpacing) {
                 Image(systemName: "person")
                     .foregroundColor(.secondary)
                     .frame(width: 20)
@@ -151,36 +144,36 @@ private struct UsernameInputSection: View {
                     .focused(isTextFieldFocused)
                     .submitLabel(.go)
                     .onSubmit(onSubmit)
-                    .font(.body)
+                    .font(UIConstants.bodyFont)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 14)
+            .padding(.horizontal, UIConstants.paddingMedium)
+            .padding(.vertical, UIConstants.paddingMedium + 2)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: UIConstants.cornerRadius)
                     .strokeBorder(
                         errorMessage != nil ? Color.red.opacity(0.6) : Color.gray.opacity(0.3),
                         lineWidth: errorMessage != nil ? 1.5 : 1
                     )
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: UIConstants.cornerRadius)
                             .fill(AppTheme.shared.cardBackgroundColor(in: colorScheme))
                     )
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .shadow(color: Color.black.opacity(0.03), radius: 2, x: 0, y: 1)
+            .clipShape(RoundedRectangle(cornerRadius: UIConstants.cornerRadius))
+            .shadow(color: Color.black.opacity(UIConstants.shadowOpacity), radius: UIConstants.shadowRadius, x: 0, y: 1)
             
             if let errorMessage = errorMessage {
-                HStack(spacing: 6) {
+                HStack(spacing: UIConstants.spacingSmall) {
                     Image(systemName: "exclamationmark.circle")
                         .font(.system(size: 12))
                         .foregroundColor(.red)
                     
                     Text(errorMessage)
-                        .font(.caption)
+                        .font(UIConstants.captionFont)
                         .foregroundColor(.red)
                 }
-                .padding(.leading, 4)
-                .padding(.top, 4)
+                .padding(.leading, UIConstants.paddingSmall / 2)
+                .padding(.top, UIConstants.paddingSmall / 2)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
@@ -217,11 +210,11 @@ private struct AddFriendButton: View {
                 )
                 .opacity(isDisabled ? 0.5 : 1.0)
             )
-            .cornerRadius(15)
-            .shadow(color: isDisabled ? Color.clear : Color.blue.opacity(0.3), radius: 5, x: 0, y: 3)
+            .cornerRadius(UIConstants.cornerRadiusLarge)
+            .shadow(color: isDisabled ? Color.clear : Color.blue.opacity(UIConstants.shadowOpacityLarge), radius: 5, x: 0, y: 3)
         }
         .disabled(isDisabled)
-        .padding(.top, 10)
+        .padding(.top, UIConstants.paddingSmall)
     }
 }
 

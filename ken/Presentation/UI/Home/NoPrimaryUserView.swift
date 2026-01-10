@@ -15,25 +15,25 @@ struct NoPrimaryUserView: View {
     }
     
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: UIConstants.spacingXLarge) {
             Image(systemName: "person.fill.questionmark")
                 .font(.system(size: 60))
                 .foregroundColor(.blue.opacity(0.7))
             
             Text("No Primary Username Set")
-                .font(.title2)
+                .font(UIConstants.title2Font)
                 .fontWeight(.bold)
             
             Text("Please set a primary username in your profile settings.")
-                .font(.body)
+                .font(UIConstants.bodyFont)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
-                .padding(.horizontal, 32)
+                .padding(.horizontal, UIConstants.paddingXLarge)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 300)
         .background(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: UIConstants.cornerRadiusXLarge)
                 .fill(cardBackgroundColor)
         )
     }

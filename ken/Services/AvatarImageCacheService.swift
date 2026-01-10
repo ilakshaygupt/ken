@@ -13,11 +13,11 @@ final class AvatarImageCacheService {
     static let avatarUpdatedNotification = Notification.Name("AvatarImageCacheService.avatarUpdated")
     
     private let fileManager = FileManager.default
-    private let userDefaults: UserDefaults
+    private let userDefaults: UserDefaults?
     private let avatarURLMapKey = "avatar_url_map"
     
     private init() {
-        self.userDefaults = UserDefaults(suiteName: AppGroup)!
+        self.userDefaults = UserDefaults(suiteName: AppGroup)
         createCacheDirectoryIfNeeded()
     }
     
@@ -36,10 +36,10 @@ final class AvatarImageCacheService {
     }
     
     func saveAvatarURLString(_ urlString: String?, for username: String) {
+        guard let userDefaults = userDefaults else { return }
         var map = avatarURLMap()
         map[username] = urlString
         userDefaults.set(map, forKey: avatarURLMapKey)
-        userDefaults.synchronize()
     }
     
     func needsDownload(for username: String, remoteURLString: String?, force: Bool) -> Bool {
@@ -82,8 +82,10 @@ final class AvatarImageCacheService {
     }
     
     // MARK: - Private
+    
     private func avatarURLMap() -> [String: String] {
-        userDefaults.dictionary(forKey: avatarURLMapKey) as? [String: String] ?? [:]
+        guard let userDefaults = userDefaults else { return [:] }
+        return userDefaults.dictionary(forKey: avatarURLMapKey) as? [String: String] ?? [:]
     }
     
     private func fileURL(for username: String) -> URL? {

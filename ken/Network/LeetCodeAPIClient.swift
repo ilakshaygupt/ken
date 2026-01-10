@@ -10,7 +10,15 @@ import Foundation
 import Combine
 
 public class LeetCodeAPIClient {
-    private static let baseURL = URL(string: "https://leetcode.com/graphql")!
+    private static let baseURLString = "https://leetcode.com/graphql"
+
+    private static var baseURL: URL {
+        guard let url = URL(string: baseURLString) else {
+            fatalError("Invalid base URL: \(baseURLString)")
+        }
+        return url
+    }
+    
     private static let storageService = LeetCodeJSONStorageService()
     
     private static func createRequest(query: String, variables: [String: Any], operationName: String? = nil) -> URLRequest {

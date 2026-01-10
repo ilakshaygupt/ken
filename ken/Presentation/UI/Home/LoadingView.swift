@@ -17,19 +17,19 @@ struct LoadingView: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIConstants.spacing) {
             ProgressView()
                 .scaleEffect(1.5)
-                .padding()
+                .padding(UIConstants.padding)
             
             Text(message)
-                .font(.headline)
+                .font(UIConstants.headlineFont)
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 250)
         .background(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: UIConstants.cornerRadiusXLarge)
                 .fill(cardBackgroundColor)
         )
     }

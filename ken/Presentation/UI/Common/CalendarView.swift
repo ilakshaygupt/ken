@@ -12,14 +12,15 @@ import Combine
 
 struct CalendarView: View {
     let calendar: UserCalendar
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIConstants.spacing) {
             Text("Calendar Stats")
-                .font(.title2)
-                .bold()
+                .font(UIConstants.title2Font)
+                .fontWeight(.bold)
             
-            HStack(spacing: 12) {
+            HStack(spacing: UIConstants.itemSpacing) {
                 StatCard(title: "Current Streak", value: calendar.streak)
                     .foregroundColor(.blue)
                 StatCard(title: "Active Days", value: calendar.totalActiveDays)
@@ -27,34 +28,34 @@ struct CalendarView: View {
             }
             
             if !calendar.dccBadges.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: UIConstants.spacingSmall) {
                     Text("Badges")
-                        .font(.headline)
+                        .font(UIConstants.headlineFont)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
+                        HStack(spacing: UIConstants.itemSpacing) {
                             ForEach(calendar.dccBadges, id: \.timestamp) { badge in
                                 BadgeView(badge: badge)
                             }
                         }
-                        .padding(.horizontal, 4)
+                        .padding(.horizontal, UIConstants.paddingSmall / 2)
                     }
                 }
             }
             
             if !calendar.activeYears.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: UIConstants.spacingSmall) {
                     Text("Active Years")
-                        .font(.headline)
+                        .font(UIConstants.headlineFont)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: UIConstants.spacingSmall) {
                             ForEach(calendar.activeYears, id: \.self) { year in
                                 Text("\(year)")
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
+                                    .padding(.horizontal, UIConstants.paddingMedium)
+                                    .padding(.vertical, UIConstants.paddingSmall)
                                     .background(Color.blue.opacity(0.1))
-                                    .cornerRadius(8)
+                                    .cornerRadius(UIConstants.cornerRadiusSmall)
                             }
                         }
                     }
@@ -63,8 +64,6 @@ struct CalendarView: View {
             
             ContributionsView(contributions: calendar.contributions)
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(12)
+        .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
     }
 }

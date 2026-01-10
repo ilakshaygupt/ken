@@ -4,23 +4,15 @@
 //
 //  Created by Lakshay Gupta on 25/04/25.
 //
-//
-//  ContentView.swift
-//  ken
-//
-//  Created by Lakshay Gupta on 25/04/25.
-//
 
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
+    @EnvironmentObject private var leetCodeVM: LeetCodeViewModel
     @EnvironmentObject private var savedUsersVM: SavedUsersViewModel
     @Environment(\.colorScheme) private var colorScheme
-    @State private var isLoading = true
     
     var body: some View {
-
         TabView {
             NavigationView {
                 HomeView(savedUsersVM: savedUsersVM)
@@ -30,9 +22,6 @@ struct ContentView: View {
                 Label("Home", systemImage: "house")
             }
             .navigationViewStyle(StackNavigationViewStyle())
-
-            
-            
             
             NavigationView {
                 CompareView(savedUsersVM: savedUsersVM)
@@ -42,7 +31,6 @@ struct ContentView: View {
                 Label("Compare", systemImage: "chart.bar.xaxis")
             }
             .navigationViewStyle(StackNavigationViewStyle())
-
             
             NavigationView {
                 FriendsView(savedUsersVM: savedUsersVM)
@@ -64,9 +52,7 @@ struct ContentView: View {
                 Label("Search", systemImage: "magnifyingglass")
             }
             .navigationViewStyle(StackNavigationViewStyle())
-
         }
-
     }
 }
 

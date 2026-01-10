@@ -15,9 +15,10 @@ struct ErrorView: View {
     
     var body: some View {
         Text(message)
+            .font(UIConstants.bodyFont)
             .foregroundColor(.red)
-            .padding()
+            .padding(UIConstants.padding)
             .background(Color.red.opacity(0.1))
-            .cornerRadius(8)
+            .cornerRadius(UIConstants.cornerRadiusSmall)
     }
 }

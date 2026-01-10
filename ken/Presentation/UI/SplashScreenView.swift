@@ -75,17 +75,19 @@ struct SplashScreenView: View {
                 showTitle = true
                 
                 Task {
-                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    // Show splash screen for minimum time
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
                     withAnimation {
                         showLoadingText = true
                     }
                     
-                    for username in savedUsersVM.savedUsernames {
-                        let success = await leetCodeVM.fetchData(for: username)
-                        print("Fetched data for \(username): \(success)")
+                    // Preload all users' data in parallel for better performance
+                    if !savedUsersVM.savedUsernames.isEmpty {
+                        await leetCodeVM.preloadAllUsersData(usernames: savedUsersVM.savedUsernames, forceRefresh: false)
                     }
                             
-                    try? await Task.sleep(nanoseconds: 500_000_000) 
+                    // Small delay before showing main UI
+                    try? await Task.sleep(nanoseconds: 300_000_000)
                     withAnimation {
                         isActive = true
                     }

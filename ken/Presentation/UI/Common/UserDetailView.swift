@@ -9,52 +9,61 @@ import SwiftUI
 
 struct UserDetailView: View {
     let username: String
-    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
+    @EnvironmentObject private var leetCodeVM: LeetCodeViewModel
+    @State private var hasLoadedData = false
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-
-                VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: UIConstants.spacingLarge) {
+                VStack(alignment: .leading, spacing: UIConstants.spacingSmall) {
                     Text(username)
-                        .font(.title)
-                        .bold()
-                    
-                    
+                        .font(UIConstants.titleFont)
+                        .fontWeight(.bold)
                     
                     if let stats = leetCodeVM.userStats[username] {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: UIConstants.itemSpacing) {
                             Text("Statistics")
-                                .font(.title2)
-                                .bold()
+                                .font(UIConstants.title2Font)
+                                .fontWeight(.bold)
                             
                             StatsView(stats: stats)
                         }
-                        .padding()
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
-                        .shadow(radius: 2)
+                        .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
+                        .modifier(AppTheme.shared.cardStyle(in: colorScheme))
                     }
                     
                     if let calendar = leetCodeVM.userCalendars[username] {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: UIConstants.itemSpacing) {
                             Text("Activity")
-                                .font(.title2)
-                                .bold()
+                                .font(UIConstants.title2Font)
+                                .fontWeight(.bold)
                             
                             CalendarView(calendar: calendar)
                         }
-                        .padding()
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
-                        .shadow(radius: 2)
+                        .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
+                        .modifier(AppTheme.shared.cardStyle(in: colorScheme))
                     }
                 }
-                .padding()
+                .padding(UIConstants.padding)
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
-            .background(Color(.systemGroupedBackground))
+            .background(AppTheme.shared.backgroundColor(in: colorScheme))
+        }
+        .onAppear {
+            // Data should already be loaded from app startup
+            // Only fetch if somehow missing
+            if !hasLoadedData {
+                hasLoadedData = true
+                Task {
+                    if leetCodeVM.userStats[username] == nil || leetCodeVM.userCalendars[username] == nil {
+                        async let dataFetch = leetCodeVM.fetchData(for: username)
+                        async let profileFetch = leetCodeVM.fetchUserProfile(for: username)
+                        let _ = await (dataFetch, profileFetch)
+                    }
+                }
+            }
         }
     }
 }

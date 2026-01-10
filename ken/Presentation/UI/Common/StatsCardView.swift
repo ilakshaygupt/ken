@@ -16,13 +16,13 @@ struct StatsCardView: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIConstants.spacing) {
             Text("Solved Problems")
-                .font(.headline)
+                .font(UIConstants.headlineFont)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
+                .padding(.horizontal, UIConstants.horizontalPadding)
             
-            HStack(spacing: 16) {
+            HStack(spacing: UIConstants.spacing) {
                 StatPieChart(
                     total: stats.totalSolved,
                     maximum: stats.totalProblems,
@@ -34,7 +34,7 @@ struct StatsCardView: View {
                 Divider()
                     .frame(height: 100)
                 
-                VStack(spacing: 20) {
+                VStack(spacing: UIConstants.spacingLarge) {
                     DifficultyBar(
                         solved: stats.easySolved,
                         total: stats.easyTotal,
@@ -61,9 +61,9 @@ struct StatsCardView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            .padding()
+            .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: UIConstants.cornerRadiusLarge)
                     .fill(cardBackgroundColor)
                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
             )

@@ -12,7 +12,7 @@ struct ComparisonView: View {
     let compareUsername: String
     let primaryStats: UserStats
     let compareStats: UserStats
-    @EnvironmentObject private var leetCodeVM : LeetCodeViewModel
+    @EnvironmentObject private var leetCodeVM: LeetCodeViewModel
     @Environment(\.colorScheme) private var colorScheme
     
     private let primaryColor = Color.blue
@@ -20,54 +20,52 @@ struct ComparisonView: View {
     private let neutralColor = Color.gray
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: UIConstants.spacingLarge) {
             header
             statsComparison
             contributionGraphComparison
             progressComparison
             difficultyBarChart
         }
-        .padding()
+        .padding(UIConstants.padding)
     }
     
     private var header: some View {
-        HStack(spacing: 15) {
+        HStack(spacing: UIConstants.spacingMedium) {
             VStack(alignment: .center) {
                 Text(primaryUsername)
-                    .font(.headline)
+                    .font(UIConstants.headlineFont)
                     .foregroundColor(primaryColor)
                     .lineLimit(1)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, UIConstants.paddingMedium)
+                    .padding(.vertical, UIConstants.paddingSmall)
                     .background(primaryColor.opacity(0.1))
-                    .cornerRadius(8)
+                    .cornerRadius(UIConstants.cornerRadiusSmall)
             }
             .frame(maxWidth: .infinity)
             
             Text("VS")
-                .font(.headline)
+                .font(UIConstants.headlineFont)
                 .foregroundColor(neutralColor)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, UIConstants.paddingSmall)
+                .padding(.vertical, UIConstants.paddingSmall / 2)
             
             VStack(alignment: .center) {
                 Text(compareUsername)
-                    .font(.headline)
+                    .font(UIConstants.headlineFont)
                     .foregroundColor(compareColor)
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
         }
-        .padding()
-        .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+        .padding(UIConstants.padding)
+        .modifier(AppTheme.shared.cardStyle(in: colorScheme))
     }
     
     private var statsComparison: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: UIConstants.spacingLarge) {
             Text("Problems Solved")
-                .font(.headline)
+                .font(UIConstants.headlineFont)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             comparisonRow(label: "Total", value1: primaryStats.totalSolved, value2: compareStats.totalSolved)
@@ -78,10 +76,8 @@ struct ComparisonView: View {
             Divider()
             comparisonRow(label: "Hard", value1: primaryStats.hardSolved, value2: compareStats.hardSolved)
         }
-        .padding()
-        .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+        .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
+        .modifier(AppTheme.shared.cardStyle(in: colorScheme))
     }
     
     private func comparisonRow(label: String, value1: Int, value2: Int) -> some View {
@@ -117,31 +113,29 @@ struct ComparisonView: View {
     }
     
     private var contributionGraphComparison: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIConstants.spacing) {
             Text("Contribution Activity")
-                .font(.headline)
+                .font(UIConstants.headlineFont)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            HStack(spacing: 20) {
+            HStack(spacing: UIConstants.spacingLarge) {
                 contributionSection(username: primaryUsername, color: primaryColor)
                 
                 Divider()
-                    .padding(.vertical, 4)
+                    .padding(.vertical, UIConstants.paddingSmall / 2)
                 
                 contributionSection(username: compareUsername, color: compareColor)
             }
         }
-        .padding()
-        .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+        .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
+        .modifier(AppTheme.shared.cardStyle(in: colorScheme))
     }
     
     private func contributionSection(username: String, color: Color) -> some View {
         let calendar = leetCodeVM.userCalendars[username]
         let contributions = calendar?.contributions ?? []
         
-        return VStack(alignment: .leading, spacing: 8) {
+        return VStack(alignment: .leading, spacing: UIConstants.spacingSmall) {
             VStack {
                 Text(username)
                     .fontWeight(.medium)
@@ -150,7 +144,7 @@ struct ComparisonView: View {
                 if let calendar = calendar {
                     Spacer()
                     
-                    HStack(spacing: 12) {
+                    HStack(spacing: UIConstants.itemSpacing) {
                         VStack(alignment: .center, spacing: 0) {
                             Text("\(calendar.streak)")
                                 .font(.system(size: 14, weight: .bold))
@@ -195,14 +189,14 @@ struct ComparisonView: View {
     }
     
     private var progressComparison: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIConstants.spacing) {
             Text("Progress Comparison")
-                .font(.headline)
+                .font(UIConstants.headlineFont)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            HStack(spacing: 30) {
+            HStack(spacing: UIConstants.spacingXLarge) {
                 // Primary user progress
-                VStack(spacing: 8) {
+                VStack(spacing: UIConstants.spacingSmall) {
                     MultiArcProgressView(
                         easyProgress: Double(primaryStats.easySolved) / Double(primaryStats.easyTotal),
                         mediumProgress: Double(primaryStats.mediumSolved) / Double(primaryStats.mediumTotal),
@@ -214,7 +208,7 @@ struct ComparisonView: View {
                     .frame(width: 120, height: 120)
                     
                     Text(primaryUsername)
-                        .font(.caption)
+                        .font(UIConstants.captionFont)
                         .foregroundColor(primaryColor)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -223,7 +217,7 @@ struct ComparisonView: View {
                 Divider()
                 
                 // Compare user progress
-                VStack(spacing: 8) {
+                VStack(spacing: UIConstants.spacingSmall) {
                     MultiArcProgressView(
                         easyProgress: Double(compareStats.easySolved) / Double(compareStats.easyTotal),
                         mediumProgress: Double(compareStats.mediumSolved) / Double(compareStats.mediumTotal),
@@ -235,7 +229,7 @@ struct ComparisonView: View {
                     .frame(width: 120, height: 120)
                     
                     Text(compareUsername)
-                        .font(.caption)
+                        .font(UIConstants.captionFont)
                         .foregroundColor(compareColor)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -243,19 +237,19 @@ struct ComparisonView: View {
                 }
             }
         }
-        .padding()
+        .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
         .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-        .cornerRadius(16)
+        .cornerRadius(UIConstants.cornerRadiusLarge)
         .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
     }
     
     private var difficultyBarChart: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIConstants.spacing) {
             Text("Problem Difficulty Breakdown")
-                .font(.headline)
+                .font(UIConstants.headlineFont)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            VStack(spacing: 20) {
+            VStack(spacing: UIConstants.spacingLarge) {
                 // Easy problems
                 difficultySection(
                     label: "Easy",
@@ -288,30 +282,30 @@ struct ComparisonView: View {
             }
             
             // Legend
-            HStack(spacing: 20) {
-                HStack(spacing: 6) {
+            HStack(spacing: UIConstants.spacingLarge) {
+                HStack(spacing: UIConstants.spacingSmall) {
                     Circle()
                         .fill(primaryColor)
                         .frame(width: 8, height: 8)
                     Text(primaryUsername)
-                        .font(.caption)
+                        .font(UIConstants.captionFont)
                         .foregroundColor(.secondary)
                 }
                 
-                HStack(spacing: 6) {
+                HStack(spacing: UIConstants.spacingSmall) {
                     Circle()
                         .fill(compareColor)
                         .frame(width: 8, height: 8)
                     Text(compareUsername)
-                        .font(.caption)
+                        .font(UIConstants.captionFont)
                         .foregroundColor(.secondary)
                 }
             }
-            .padding(.top, 8)
+            .padding(.top, UIConstants.spacingSmall)
         }
-        .padding()
+        .modifier(AppTheme.shared.sectionStyle(in: colorScheme))
         .background(AppTheme.shared.cardBackgroundColor(in: colorScheme))
-        .cornerRadius(16)
+        .cornerRadius(UIConstants.cornerRadiusLarge)
         .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
     }
     
@@ -323,34 +317,34 @@ struct ComparisonView: View {
         total2: Int,
         color: Color
     ) -> some View {
-        VStack(spacing: 8) {
+        VStack(spacing: UIConstants.spacingSmall) {
             HStack {
                 Text(label)
-                    .font(.subheadline)
+                    .font(UIConstants.subheadlineFont)
                     .foregroundColor(.secondary)
                 Spacer()
             }
             
-            HStack(spacing: 12) {
+            HStack(spacing: UIConstants.itemSpacing) {
                 // Primary user progress
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: UIConstants.paddingSmall / 2) {
                     ProgressView(value: Double(value1), total: Double(total1))
                         .progressViewStyle(LinearProgressViewStyle(tint: color))
                         .frame(height: 8)
                     
                     Text("\(value1)/\(total1)")
-                        .font(.caption)
+                        .font(UIConstants.captionFont)
                         .foregroundColor(color)
                 }
                 
                 // Compare user progress
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: UIConstants.paddingSmall / 2) {
                     ProgressView(value: Double(value2), total: Double(total2))
                         .progressViewStyle(LinearProgressViewStyle(tint: color))
                         .frame(height: 8)
                     
                     Text("\(value2)/\(total2)")
-                        .font(.caption)
+                        .font(UIConstants.captionFont)
                         .foregroundColor(color)
                 }
             }

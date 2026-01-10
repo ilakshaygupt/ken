@@ -8,30 +8,25 @@
 import Foundation
 
 class LeetCodeJSONStorageService {
-    // Keys for UserDefaults
-    private let statsResponseKey = "leetcode_stats_json_responses"
-    private let calendarResponseKey = "leetcode_calendar_json_responses"
-    private let lastFetchedKey = "leetcode_last_fetched_time"
-    private let profileResponseKey = "leetcode_profile_json_responses"
-    
-    private let userDefaults: UserDefaults
+    private let userDefaults: UserDefaults?
     
     init() {
-        self.userDefaults = UserDefaults(suiteName: AppGroup)!
+        self.userDefaults = UserDefaults(suiteName: AppGroup)
     }
     
     // MARK: - Stats JSON Storage
     
     func saveStatsJSONResponse(_ jsonData: Data, forUsername username: String) {
+        guard let userDefaults = userDefaults else { return }
         var responses = getStatsJSONResponses()
         responses[username] = jsonData.base64EncodedString()
-        userDefaults.set(responses, forKey: statsResponseKey)
-        userDefaults.synchronize()
+        userDefaults.set(responses, forKey: UserDefaultsKeys.leetcodeStatsJSONResponses)
         updateLastFetchedTime(forUsername: username)
     }
     
     func getStatsJSONResponses() -> [String: String] {
-        return userDefaults.dictionary(forKey: statsResponseKey) as? [String: String] ?? [:]
+        guard let userDefaults = userDefaults else { return [:] }
+        return userDefaults.dictionary(forKey: UserDefaultsKeys.leetcodeStatsJSONResponses) as? [String: String] ?? [:]
     }
     
     func getStatsJSONResponse(forUsername username: String) -> Data? {
@@ -43,15 +38,16 @@ class LeetCodeJSONStorageService {
     // MARK: - Calendar JSON Storage
     
     func saveCalendarJSONResponse(_ jsonData: Data, forUsername username: String) {
+        guard let userDefaults = userDefaults else { return }
         var responses = getCalendarJSONResponses()
         responses[username] = jsonData.base64EncodedString()
-        userDefaults.set(responses, forKey: calendarResponseKey)
-        userDefaults.synchronize()
+        userDefaults.set(responses, forKey: UserDefaultsKeys.leetcodeCalendarJSONResponses)
         updateLastFetchedTime(forUsername: username)
     }
     
     func getCalendarJSONResponses() -> [String: String] {
-        return userDefaults.dictionary(forKey: calendarResponseKey) as? [String: String] ?? [:]
+        guard let userDefaults = userDefaults else { return [:] }
+        return userDefaults.dictionary(forKey: UserDefaultsKeys.leetcodeCalendarJSONResponses) as? [String: String] ?? [:]
     }
     
     func getCalendarJSONResponse(forUsername username: String) -> Data? {
@@ -63,7 +59,8 @@ class LeetCodeJSONStorageService {
     // MARK: - Last Fetched Time
     
     private func lastFetchedTimes() -> [String: Date] {
-        guard let timesDict = userDefaults.dictionary(forKey: lastFetchedKey) as? [String: Double] else {
+        guard let userDefaults = userDefaults,
+              let timesDict = userDefaults.dictionary(forKey: UserDefaultsKeys.leetcodeLastFetchedTime) as? [String: Double] else {
             return [:]
         }
         
@@ -73,10 +70,11 @@ class LeetCodeJSONStorageService {
     }
     
     func getLastFetchedTime(forUsername username: String) -> Date? {
-        return lastFetchedTimes()[username]
+        lastFetchedTimes()[username]
     }
     
     private func updateLastFetchedTime(forUsername username: String) {
+        guard let userDefaults = userDefaults else { return }
         var times = lastFetchedTimes()
         times[username] = Date()
         
@@ -84,17 +82,13 @@ class LeetCodeJSONStorageService {
             (key, date.timeIntervalSince1970)
         })
         
-        userDefaults.set(timeDict, forKey: lastFetchedKey)
-        userDefaults.synchronize()
+        userDefaults.set(timeDict, forKey: UserDefaultsKeys.leetcodeLastFetchedTime)
     }
     
     func needsRefresh(forUsername username: String) -> Bool {
-        
         guard let lastFetched = getLastFetchedTime(forUsername: username) else {
-            
             return true
         }
-        print("last fetched time\(lastFetched) ")
         let oneHour: TimeInterval = 3600
         return Date().timeIntervalSince(lastFetched) > oneHour
     }
@@ -102,15 +96,16 @@ class LeetCodeJSONStorageService {
     // MARK: - Profile JSON Storage
     
     func saveProfileJSONResponse(_ jsonData: Data, forUsername username: String) {
+        guard let userDefaults = userDefaults else { return }
         var responses = getProfileJSONResponses()
         responses[username] = jsonData.base64EncodedString()
-        userDefaults.set(responses, forKey: profileResponseKey)
-        userDefaults.synchronize()
+        userDefaults.set(responses, forKey: UserDefaultsKeys.leetcodeProfileJSONResponses)
         updateLastFetchedTime(forUsername: username)
     }
     
     func getProfileJSONResponses() -> [String: String] {
-        return userDefaults.dictionary(forKey: profileResponseKey) as? [String: String] ?? [:]
+        guard let userDefaults = userDefaults else { return [:] }
+        return userDefaults.dictionary(forKey: UserDefaultsKeys.leetcodeProfileJSONResponses) as? [String: String] ?? [:]
     }
     
     func getProfileJSONResponse(forUsername username: String) -> Data? {
