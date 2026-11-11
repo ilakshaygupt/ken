@@ -204,11 +204,13 @@ private struct AddFriendButton: View {
             .frame(height: 54)
             .background(
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                    gradient: Gradient(colors: [
+                        Color.blue.opacity(isDisabled ? 0.5 : 1.0),
+                        Color.blue.opacity(isDisabled ? 0.4 : 0.8)
+                    ]),
                     startPoint: .leading,
                     endPoint: .trailing
                 )
-                .opacity(isDisabled ? 0.5 : 1.0)
             )
             .cornerRadius(UIConstants.cornerRadiusLarge)
             .shadow(color: isDisabled ? Color.clear : Color.blue.opacity(UIConstants.shadowOpacityLarge), radius: 5, x: 0, y: 3)

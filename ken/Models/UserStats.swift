@@ -9,7 +9,7 @@
 
 import Foundation
 
-public struct UserStats {
+public struct UserStats: Equatable {
     public let totalSolved: Int
     public let easySolved: Int
     public let mediumSolved: Int

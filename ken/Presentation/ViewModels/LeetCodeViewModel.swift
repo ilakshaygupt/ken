@@ -40,28 +40,28 @@ class LeetCodeViewModel: ObservableObject {
             guard let self = self else { return }
             
             // Load all cached data in parallel
-            async let statsTask = Task {
+            async let statsTask = Task { () -> (String, UserStats)? in
                 if let statsData = self.storageService.getStatsJSONResponse(forUsername: username),
                    let stats = LeetCodeJSONParser.parseUserStats(from: statsData) {
                     return (username, stats)
                 }
-                return nil as (String, UserStats)?
+                return nil
             }
-            
-            async let calendarTask = Task {
+
+            async let calendarTask = Task { () -> (String, UserCalendar)? in
                 if let calendarData = self.storageService.getCalendarJSONResponse(forUsername: username),
                    let calendar = LeetCodeJSONParser.parseUserCalendar(from: calendarData) {
                     return (username, calendar)
                 }
-                return nil as (String, UserCalendar)?
+                return nil
             }
-            
-            async let profileTask = Task {
+
+            async let profileTask = Task { () -> (String, UserProfile)? in
                 if let profileData = self.storageService.getProfileJSONResponse(forUsername: username),
                    let profile = LeetCodeJSONParser.parseUserProfile(from: profileData) {
                     return (username, profile)
                 }
-                return nil as (String, UserProfile)?
+                return nil
             }
             
             // Update UI on main thread after all data is loaded
