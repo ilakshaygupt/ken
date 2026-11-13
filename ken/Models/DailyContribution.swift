@@ -10,7 +10,12 @@ import Foundation
 struct DailyContribution {
     let date: Date
     let count: Int
-    
+    var detail: ActivityDetail? = nil
+
+    enum ActivityDetail {
+        case text(String)
+    }
+
     static func parse(from calendar: String) -> [DailyContribution] {
         guard !calendar.isEmpty,
               let data = calendar.data(using: .utf8),

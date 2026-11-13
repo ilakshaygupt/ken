@@ -15,4 +15,6 @@ enum UserDefaultsKeys {
     static let leetcodeProfileJSONResponses = "leetcode_profile_json_responses"
     static let leetcodeLastFetchedTime = "leetcode_last_fetched_time"
     static let hasCompletedOnboarding = "has_completed_onboarding"
+    static let trackedSourceIDs = "tracked_source_ids"
+    static let primaryTrackedSourceID = "primary_tracked_source_id"
 }

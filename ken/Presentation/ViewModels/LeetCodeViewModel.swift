@@ -282,6 +282,6 @@ class LeetCodeViewModel: ObservableObject {
                 userProfiles.removeAll()
             }
         }
-        
+
     }
 }

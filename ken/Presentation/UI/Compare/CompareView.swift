@@ -488,8 +488,9 @@ struct ComparePreviewHelper {
         let leetCodeVM = LeetCodeViewModel()
         let savedUsersVM = SavedUsersViewModel()
 
-        savedUsersVM.savedUsernames = ["demolisherguts", "bob"]
-        savedUsersVM.primaryUsername = "demolisherguts"
+        savedUsersVM.addUsername("demolisherguts")
+        savedUsersVM.addUsername("bob")
+        savedUsersVM.setPrimaryUsername("demolisherguts")
 
         leetCodeVM.userProfiles["demolisherguts"] = UserProfile(
             username: "demolisherguts",
